@@ -1,0 +1,32 @@
+{
+  "fsm": [
+    {
+      "condition_name": "IsRoot",
+      "state_name": "CharacterIdleState",
+      "states": [
+        {
+          "condition_name": "!IsMoveToTargetBlock",
+          "state_name": "CharacterActiveState",
+          "states": [
+            {
+              "condition_name": "IsMoveToTargetBlock",
+              "state_name": "IdleState",
+              "states": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition_name": "IsAnyState",
+      "state_name": "AnyState",
+      "states": [
+        {
+          "condition_name": "!IsActive",
+          "state_name": "InactiveState",
+          "states": []
+        }
+      ]
+    }
+  ]
+}
