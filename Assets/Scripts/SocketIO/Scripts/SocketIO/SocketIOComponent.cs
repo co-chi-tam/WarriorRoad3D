@@ -42,7 +42,7 @@ namespace SocketIO
 	{
 		#region Public Properties
 
-		public string url = "ws://127.0.0.1:4567/socket.io/?EIO=4&transport=websocket";
+		public string url = "wss://dorian-apps.herokuapp.com/socket.io/?EIO=4&transport=websocket";
 		public bool autoConnect = true;
 		public int reconnectDelay = 5;
 		public float ackExpirationTime = 1800f;
@@ -170,6 +170,12 @@ namespace SocketIO
 
 		public void AddHeader(string key, string value) {
 			ws.additionHeader[key] = value;
+		}
+
+		public void RemoveHeader(string key) {
+			if (ws.additionHeader.ContainsKey (key)) {
+				ws.additionHeader.Remove (key);
+			}
 		}
 		
 		public void Connect()

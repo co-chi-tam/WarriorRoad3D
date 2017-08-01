@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Singleton {
+namespace SimpleSingleton {
 	public class CMonoSingleton<T>: MonoBehaviour where T : MonoBehaviour {
 
 		#region Singleton
@@ -37,7 +37,7 @@ namespace Singleton {
 
 		#region Implementation Monobehaviour
 
-		private void Awake() {
+		protected virtual void Awake() {
 			m_Instance = this as T;
 		} 
 

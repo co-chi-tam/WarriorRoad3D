@@ -64,6 +64,15 @@ namespace WebSocketSharp
 
     #endregion
 
+	#region Public Fields
+
+	public string base64Key {
+		get { return _base64Key; }
+		private set { _base64Key = value; }
+	}
+
+	#endregion
+
     #region Private Fields
 
     private AuthenticationChallenge _authChallenge;
@@ -942,7 +951,7 @@ namespace WebSocketSharp
       if (_cookies.Count > 0)
         req.SetCookies (_cookies);
 		
-			// UPDATE HEADER CLIENT TO SERVER AUTHORIZE
+		// UPDATE HEADER CLIENT TO SERVER AUTHORIZE
 		if (additionHeader.Count > 0) {
 			foreach (var item in additionHeader) {
 				headers [item.Key] = item.Value;

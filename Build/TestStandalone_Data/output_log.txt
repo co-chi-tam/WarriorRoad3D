@@ -1,0 +1,64 @@
+Initialize engine version: 5.6.0f3 (497a0f351392)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Intel(R) HD Graphics Family (ID=0xa16)
+    Vendor:   Intel
+    VRAM:     1116 MB
+    Driver:   20.19.15.4531
+Begin MonoManager ReloadAssembly
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+- Completed reload, in  0.050 seconds
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\System.dll (this message is harmless)
+Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Mono.Security.dll (this message is harmless)
+desktop: 1366x768 60Hz; virtual: 3286x1147 at -1920,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.728577 ms
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.460583 ms
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 680.
+Total: 1.590017 ms (FindLiveObjects: 0.127868 ms CreateObjectMapping: 0.141981 ms MarkObjects: 1.309476 ms  DeleteObjects: 0.009836 ms)
+
+8/1/2017 2:08:12 PM|Error|WebSocket.Send|A WebSocket connection isn't established.
+[SocketIOEvent: name=error, data=]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnUserAlready
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.764065 ms
+
+Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 1897.
+Total: 4.599418 ms (FindLiveObjects: 0.230505 ms CreateObjectMapping: 0.300213 ms MarkObjects: 3.994715 ms  DeleteObjects: 0.072701 ms)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 2b64 -> priority: 1 
+  Thread -> id: 326c -> priority: 1 

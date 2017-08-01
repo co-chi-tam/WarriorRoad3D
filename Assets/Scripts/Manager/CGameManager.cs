@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Singleton;
+using SimpleSingleton;
 
 namespace WarriorRoad {
 	public class CGameManager : CMonoSingleton<CGameManager> {

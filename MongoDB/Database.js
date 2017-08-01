@@ -1,9 +1,9 @@
 
-db.createCollection('clUsers');
+db.createCollection('clUsers');
 db.clUsers.createIndex({'uName': 1, 'uEmail': 1, 'uDisplayName': 1}, {unique: true});
 db.clUsers.insert({
     "uID": "0cef72b6-a5c8-490d-ba6c-efb28a80bcc1",
-    "uName": "user0001",
+    "uName": "user0001",
     "uPassword": "123456",
     "uDisplayName": "Hero-01",
     "uEmail": "user0001@gmail.com",
@@ -12,15 +12,16 @@ db.clUsers.insert({
     "uExpireTime": new Date(),
     "uCreateTime": new Date(),
     "uActive": true
-});
+});
 
 
-db.createCollection('clHeroes');
+db.createCollection('clHeroes');
+db.clHeroes.createIndex({'uID': 1, 'heroName': 1}, {unique: true});
 db.clHeroes.insertMany([{
     'uID': '4baf73401e6b68e50768edfbdb22dfad',
-    'heroName': 'Warrior',
-    'heroAvatar': 'Warrior-avatar',
-    'heroModel': 'Warrior-model',
+    'objectName': 'Warrior',
+    'objectAvatar': 'Warrior-avatar',
+    'objectModel': 'Warrior-model',
     'heroAttackPoint': 20,
     'heroAttackSpeed': 1.2,
     'heroDefendPoint': 20,
@@ -28,9 +29,9 @@ db.clHeroes.insertMany([{
     'heroSkillSlots': []
     },{
     'uID': 'b7a23f1b6b9c27fc5b8c6d840dc83f93',
-    'heroName': 'Wizard',
-    'heroAvatar': 'Wizard-avatar',
-    'heroModel': 'Wizard-model',
+    'objectName': 'Wizard',
+    'objectAvatar': 'Wizard-avatar',
+    'objectModel': 'Wizard-model',
     'heroAttackPoint': 35,
     'heroAttackSpeed': 2.2,
     'heroDefendPoint': 10,
@@ -38,40 +39,58 @@ db.clHeroes.insertMany([{
     'heroSkillSlots': []
     },{
     'uID': 'bb383f1abab8cdf7619b1723a21c6e1f',
-    'heroName': 'Archer',
-    'heroAvatar': 'Archer-avatar',
-    'heroModel': 'Archer-model',
+    'objectName': 'Archer',
+    'objectAvatar': 'Archer-avatar',
+    'objectModel': 'Archer-model',
     'heroAttackPoint': 15,
     'heroAttackSpeed': 0.75,
     'heroDefendPoint': 15,
     'heroHealthPoint': 90,
     'heroSkillSlots': []
-    }])
+    }]);
 
-db.createCollection('clSkills');
+db.createCollection('clSkills');
+db.clSkills.createIndex({'uID': 1, 'skillName': 1}, {unique: true});   
 db.clSkills.insertMany([{
     'uID': '502ec8465441f1d108b8c963ec402b08',
-    'skillName': 'Normal Attack',
-    'skillAvatar': 'NormalAttack-avatar',
-    'skillModel': 'NormalAttack-model',
-    'skillValue': [10],
-    'SkillMethod': 'ApplyDamage'
+    'objectName': 'Normal Attack',
+    'objectAvatar': 'NormalAttack-avatar',
+    'objectModel': 'NormalAttack-model',
+    'skillTime': 0,
+    'skillEffectPerTime': 0,
+    'skillEffects': [
+        {
+            'skillValue': 15,
+            'SkillMethod': 'ApplyDamage'
+        }
+    ]
     },{
     'uID': 'b4d0a149ec60fb7124d3d4d72ea8174b',
-    'skillName': 'Bash',
-    'skillAvatar': 'Bash-avatar',
-    'skillModel': 'Bash-model',
-    'skillValue': [20],
-    'SkillMethod': 'ApplyDamage'
+    'objectName': 'Bash',
+    'objectAvatar': 'Bash-avatar',
+    'objectModel': 'Bash-model',
+    'skillTime': 0,
+    'skillEffectPerTime': 0,
+    'skillTriggers': [
+        {
+            'skillValue': 20,
+            'SkillMethod': 'ApplyDamage'
+        }
+    ]
     },{
     'uID': '38c3a4da101090c04ae3428422e80c3f',
-    'skillName': 'Fire ball',
-    'skillAvatar': 'FireBall-avatar',
-    'skillModel': 'FireBall-model',
-    'skillValue': [15],
-    'SkillMethod': 'ApplyDamage'
+    'objectName': 'Fire ball',
+    'objectAvatar': 'FireBall-avatar',
+    'objectModel': 'FireBall-model',
+    'skillTime': 0,
+    'skillEffectPerTime': 0,
+    'skillTriggers': [
+        {
+            'skillValue': 25,
+            'SkillMethod': 'ApplyDamage'
+        }
+    ]
     }]);
-
-db.clUsers.find({});
-db.clUsers.remove({});
+
+db.clSkills.find({});
 
