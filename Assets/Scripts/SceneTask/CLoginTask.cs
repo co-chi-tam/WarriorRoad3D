@@ -18,6 +18,7 @@ namespace WarriorRoad {
 			this.taskName = "LoginScene";
 			this.nextTask = "PlayScene";
 
+//			PlayerPrefs.DeleteAll();
 //			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0005");
 //			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
 		}

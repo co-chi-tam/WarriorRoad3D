@@ -239,8 +239,6 @@ namespace WarriorRoad {
 			if (this.OnEventConectServerCompleted != null) {
 				this.OnEventConectServerCompleted ();
 			}
-			// Stop loading UI.
-			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
 		public virtual void OnClientConnectServerFailed (string error) {
@@ -265,6 +263,32 @@ namespace WarriorRoad {
 		public virtual void OnClientChangeSceneTask(JSONObject receiveData) {
 			// NEXT TASK
 			var processTask = receiveData.GetField ("taskChange").ToString().Replace ("\"", string.Empty);
+			switch (processTask) {
+			case "CreateHeroScene":
+				this.OnClientSetupCreateHeroScene (receiveData);
+				break;
+			case "PlayScene": 
+				this.OnClientSetupPlayScene (receiveData);
+				break;
+			case "Login":
+				this.OnClientSetupLoginScene (receiveData);
+				break;
+			default:
+				processTask = "Login";
+				this.OnClientSetupLoginScene (receiveData);
+				break;
+			}
+			// TRIGGER EVENT
+			if (this.OnEventInitUserCompleted != null) {
+				this.OnEventInitUserCompleted ();
+			}
+			// COMPLETE TASK
+			CRootTask.Instance.ProcessNextTask (processTask);
+			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+			CUICustomManager.Instance.ActiveLoading (false);
+		}
+
+		protected virtual void OnClientSetupCreateHeroScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
 			CHeroData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
@@ -282,14 +306,22 @@ namespace WarriorRoad {
 				heroesTemplate = TinyJSON.JSON.Load (heroTemplateJson).Make <Dictionary<string, CHeroData>> ();
 			}
 			CTaskUtil.Set (CTaskUtil.HERO_TEMPLATES, heroesTemplate);
-			// TRIGGER EVENT
-			if (this.OnEventInitUserCompleted != null) {
-				this.OnEventInitUserCompleted ();
-			}
-			// COMPLETE TASK
-			CRootTask.Instance.ProcessNextTask (processTask);
-			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
-			CUICustomManager.Instance.ActiveLoading (false);
+		}
+
+		protected virtual void OnClientSetupPlayScene(JSONObject receiveData) {
+			// HERO DATA
+			var isHeroData = receiveData.HasField ("heroData");
+			CHeroData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			if (isHeroData) {
+				var heroDataJson = receiveData.GetField ("heroData").ToString ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+			} 
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			this.currentHeroData = heroData;
+		}
+
+		protected virtual void OnClientSetupLoginScene(JSONObject receiveData) {
+
 		}
 
 		public virtual void OnClientCreateHero(string heroType, string heroName) {
