@@ -7,6 +7,8 @@ namespace WarriorRoad {
 
 		#region Properties
 
+		protected CGameManager m_GameManager;
+
 		#endregion
 
 		#region Constructor
@@ -20,6 +22,13 @@ namespace WarriorRoad {
 		#endregion
 
 		#region Implementation Task
+
+		public override void StartTask ()
+		{
+			base.StartTask ();
+			this.m_GameManager = CGameManager.GetInstance ();
+			this.m_GameManager.StartGame ();
+		}
 
 		#endregion
 

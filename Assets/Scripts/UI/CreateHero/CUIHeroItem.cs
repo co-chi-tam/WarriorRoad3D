@@ -10,7 +10,7 @@ namespace WarriorRoad {
 		public Image heroAvatarImage;
 
 		public virtual void SetupHeroItem(string avatar) {
-			var avatarSprite = Resources.Load<Sprite> ("/Avatar/" + avatar);
+			var avatarSprite = Resources.Load<Sprite> ("Avatar/" + avatar);
 			if (avatarSprite != null) {
 				this.heroAvatarImage.sprite = avatarSprite;
 			}

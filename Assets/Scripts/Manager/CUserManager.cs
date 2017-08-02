@@ -289,6 +289,7 @@ namespace WarriorRoad {
 			// COMPLETE TASK
 			CRootTask.Instance.ProcessNextTask (processTask);
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
 		public virtual void OnClientCreateHero(string heroType, string heroName) {

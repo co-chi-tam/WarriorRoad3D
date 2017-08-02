@@ -15,6 +15,9 @@ namespace WarriorRoad {
 		public CBlockController targetBlock;
 		public int blockIndex = 0;
 
+		[Header ("Data")]
+		[SerializeField]	protected CHeroData m_CharacterData;
+
 		[Header ("Component")]
 		[SerializeField]	protected CJumperComponent m_JumpComponent;
 		[SerializeField]	protected CFSMComponent m_FSMComponent;
@@ -85,6 +88,19 @@ namespace WarriorRoad {
 
 		#endregion
 
+		#region Getter && Setter
+
+		public override void SetData (CObjectData value)
+		{
+			base.SetData (value);
+			this.m_CharacterData = value as CHeroData;
+		}
+
+		public override CObjectData GetData ()
+		{
+			return this.m_CharacterData as CObjectData;
+		}
+
 		public virtual void SetJumpCurve(float time) {
 			this.m_JumpComponent.SetJumpCurve (time);
 		}
@@ -104,6 +120,8 @@ namespace WarriorRoad {
 				this.m_Animator.SetTrigger (name);
 			}
 		}
+
+		#endregion
 		
 	}
 }

@@ -51,7 +51,7 @@ db.clHeroes.insertMany([{
     'heroSkillSlots': [],
     'uOwner': ''
     }]);
-db.clHeroes.find({});
+db.clHeroes.find({});
 
 db.createCollection('clSkills');
 db.clSkills.createIndex({'uID': 1, 'skillName': 1}, {unique: true});   

@@ -18,8 +18,8 @@ namespace WarriorRoad {
 			this.taskName = "LoginScene";
 			this.nextTask = "PlayScene";
 
-			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0001");
-			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
+//			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0005");
+//			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
 		}
 
 		#endregion

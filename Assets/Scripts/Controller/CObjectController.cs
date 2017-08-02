@@ -64,6 +64,14 @@ namespace WarriorRoad {
 
 		#region Getter && Setter
 
+		public virtual void SetData(CObjectData value) {
+			
+		}
+
+		public virtual CObjectData GetData() {
+			return null;
+		}
+
 		public virtual void SetActive(bool value) {
 			this.m_Active = value;
 			if (value == false) {
