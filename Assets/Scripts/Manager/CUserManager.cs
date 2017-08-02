@@ -11,25 +11,29 @@ namespace WarriorRoad {
 
 		#region Fields
 
+		// SOCKET IO
+		[Header ("SocketIO")]
 		[SerializeField]	protected SocketIOComponent m_SocketIO;
 
-		private CUICustomManager m_UICustomManager;
+		// CURRENT USER
+		[Header ("USER DATA")]
+		public CUserData currentUser;
+
+		[Header ("HERO DATA")]
+		public CHeroData currentHeroData;
+
+		// EVENT
+		public Action<CUserData> OnEventLoginCompleted;
+		public Action<CUserData> OnEventRegisterCompleted;
+		public Action OnEventConectServerCompleted;
+		public Action<JSONObject> OnEventReceiveMessage;
+		public Action<string> OnEventClientError;
+		public Action OnEventInitUserCompleted;
+
+		// PRIVATE FIELDS
 		private float m_PingDelayTime = 3f;
 		private JSONObject jsonObject;
 		private int m_MessageReceived;
-
-		public CUserData currentUser;
-
-		public Action OnLoginCompleted;
-		public Action<string> OnLoginFailed;
-
-		public Action OnRegisterCompleted;
-		public Action<string> OnRegisterFailed;
-
-		public Action OnConectServerCompleted;
-		public Action<string> OnConectServerFailed;
-
-		public Action<string> OnReceiveMessage;
 
 		#endregion
 
@@ -45,7 +49,6 @@ namespace WarriorRoad {
 		}
 
 		protected virtual void Start() {
-//			this.m_UICustomManager = CUICustomManager.GetInstance ();
 			var msgDict = new Dictionary<string, string> ();
 			msgDict.Add ("msg", "This is message ping.");
 			jsonObject = JSONObject.Create (msgDict);
@@ -85,7 +88,7 @@ namespace WarriorRoad {
 			this.currentUser.userDisplayName = value.text;
 		}
 
-		public virtual void Login() {
+		public virtual void LoginUser() {
 			var url = CTaskUtil.LOGIN_URL;
 			var header = CTaskUtil.VERIFY_HEADERS;
 			var loginParam = new Dictionary<string, string> ();
@@ -100,47 +103,43 @@ namespace WarriorRoad {
 					currentUser.userEmail = userResponse["userEmail"].ToString();
 					currentUser.userDisplayName = userResponse["userDisplayName"].ToString();
 					currentUser.token = userResponse["token"].ToString();
-					this.OnUserLoginCompleted ();
+					this.OnClientLoginCompleted (currentUser);
 				} else if (objContent.ContainsKey ("errorCode")) {
 					var errorContent = objContent["errorContent"].ToString();
-					this.OnUserLoginFailed (errorContent);
+					this.OnClientLoginFailed (errorContent);
 				}
 			}, (err) => {
-				this.OnUserLoginFailed (err);
+				this.OnClientLoginFailed (err);
 			}, null);
 			// Start loading UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveLoading (true);
-			}
+			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
 		public virtual void Logout() {
 		
 		}
 
-		public virtual void OnUserLoginCompleted() {
-			if (this.OnLoginCompleted != null) {
-				this.OnLoginCompleted ();
+		public virtual void OnClientLoginCompleted(CUserData user) {
+			if (this.OnEventLoginCompleted != null) {
+				this.OnEventLoginCompleted (user);
 			}
 			// TRY CONNECT TO SERVER
-			this.OnUserConnectServer ();
+			this.OnClientConnectServer ();
+			// SAVE USER DATA
+			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
 		}
 
-		public virtual void OnUserLoginFailed (string error) {
-			if (this.OnLoginFailed != null) {
-				this.OnLoginFailed (error);
-			}
+		public virtual void OnClientLoginFailed (string error) {
+			this.OnClientError (error);
 			// Start message UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveMessage (true, error);
-			}
+			CUICustomManager.Instance.ActiveMessage (true, error);
 		}
 
 		#endregion
 
 		#region Register
 
-		public virtual void Register () {
+		public virtual void RegisterUser () {
 			var url = CTaskUtil.REGISTER_URL;
 			var header = CTaskUtil.VERIFY_HEADERS;
 			var registerParam = new Dictionary<string, string> ();
@@ -158,36 +157,34 @@ namespace WarriorRoad {
 					currentUser.userEmail = userResponse["userEmail"].ToString();
 					currentUser.userDisplayName = userResponse["userDisplayName"].ToString();
 					currentUser.token = userResponse["token"].ToString();
-					this.OnUserRegisterCompleted ();
+					this.OnClientRegisterCompleted (currentUser);
 				} else if (objContent.ContainsKey ("errorCode")) {
 					var errorContent = objContent["errorContent"].ToString();
-					this.OnUserRegisterFailed (errorContent);
+					this.OnClientError (errorContent);
 				}
 			}, (err) => {
-				this.OnRegisterFailed (err);
+				this.OnClientError (err);
 			}, null);
 			// Start loading UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveLoading (true);
-			}
+			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
-		public virtual void OnUserRegisterCompleted() {
-			if (this.OnRegisterCompleted != null) {
-				this.OnRegisterCompleted ();
+		public virtual void OnClientRegisterCompleted(CUserData user) {
+			if (this.OnEventRegisterCompleted != null) {
+				this.OnEventRegisterCompleted (user);
 			}
 			// TRY CONNECT TO SERVER
-			this.OnUserConnectServer ();
+			this.OnClientConnectServer ();
+			// SAVE USER DATA
+			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
 		}
 
-		public virtual void OnUserRegisterFailed (string error) {
-			if (this.OnRegisterFailed != null) {
-				this.OnRegisterFailed (error);
+		public virtual void OnClientError (string error) {
+			if (this.OnEventClientError != null) {
+				this.OnEventClientError (error);
 			}
 			// Start message UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveMessage (true, error);
-			}
+			CUICustomManager.Instance.ActiveMessage (true, error);
 			Debug.LogError (error);
 		}
 
@@ -195,53 +192,61 @@ namespace WarriorRoad {
 
 		#region Connect server
 
-		public virtual void OnUserConnectServer() {
+		public virtual void OnClientConnectServer() {
 			// UPDATE SOCKET CONNECT
 			this.m_SocketIO.AddHeader ("username", this.currentUser.userName);
 			this.m_SocketIO.AddHeader ("token", this.currentUser.token);
 			this.m_SocketIO.Connect ();
 			this.m_SocketIO.On ("connect", delegate(SocketIOEvent obj) {
-				this.OnUserConnectServerCompleted ();
+				this.OnClientConnectCompleted ();
 
 				this.m_SocketIO.On ("message", delegate(SocketIOEvent mes) {
-					if (this.OnReceiveMessage != null) {
-						this.OnReceiveMessage (mes.ToString());
-					}	
+					this.OnClientReceiveMessage (mes.data);
 				});
 
-				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent oserverPingMsg) {
+				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onClientInitMsg) {
+					Debug.LogWarning ("clientInit " + onClientInitMsg.ToString());
+					this.OnClientInitAccount ();
+				});
+
+				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
 					this.m_MessageReceived += 1;
-					Debug.LogWarning ("serverSendPing " + oserverPingMsg.ToString());	
+					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());	
+				});
+
+				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
+					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());
+					this.OnClientChangeSceneTask (onClientChangeTaskMsg.data);
+				});
+
+				this.m_SocketIO.On ("clientInitGame", delegate(SocketIOEvent onClientInitGameMsg) {
+					Debug.LogWarning ("clientInitGame " + onClientInitGameMsg.ToString());	
 				});
 
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
-					this.OnUserRegisterFailed (errorMsg.ToString ());
+					this.OnClientError (errorMsg.ToString ());
 				});
 			});
 		}
 
-		public virtual void OnUserConnectServerCompleted() {
-			if (this.OnConectServerCompleted != null) {
-				this.OnConectServerCompleted ();
+		public virtual void OnClientReceiveMessage(JSONObject msg) {
+			if (this.OnEventReceiveMessage != null) {
+				this.OnEventReceiveMessage (msg);
+			}	
+		}
+
+		public virtual void OnClientConnectCompleted() {
+			if (this.OnEventConectServerCompleted != null) {
+				this.OnEventConectServerCompleted ();
 			}
 			// Stop loading UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveLoading (false);
-			}
+			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
-		public virtual void OnUserRegisterClose() {
-			Debug.Log ("Socket client closed.");
-		}
-
-		public virtual void OnUserConnectServerFailed (string error) {
-			if (this.OnConectServerFailed != null) {
-				this.OnConectServerFailed (error);
-			}
+		public virtual void OnClientConnectServerFailed (string error) {
+			this.OnClientError (error);
 			// Start message UI.
-			if (this.m_UICustomManager != null) {
-				this.m_UICustomManager.ActiveMessage (true, error);
-			}
+			CUICustomManager.Instance.ActiveMessage (true, error);
 			Debug.LogError (error);
 		}
 
@@ -249,6 +254,53 @@ namespace WarriorRoad {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
 			this.m_SocketIO.Emit ("clientSendPing", jsonObject);
+		}
+
+		public virtual void OnClientInitAccount() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientInitAccount", new JSONObject());
+		}
+
+		public virtual void OnClientChangeSceneTask(JSONObject receiveData) {
+			// NEXT TASK
+			var processTask = receiveData.GetField ("taskChange").ToString().Replace ("\"", string.Empty);
+			// HERO DATA
+			var isHeroData = receiveData.HasField ("heroData");
+			CHeroData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			if (isHeroData) {
+				var heroDataJson = receiveData.GetField ("heroData").ToString ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+			} 
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			this.currentHeroData = heroData;
+			// HEROES TEMPLATE
+			var isHeroTemplate = receiveData.HasField ("heroesTemplate");
+			Dictionary<string, CHeroData> heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CHeroData>;
+			if (isHeroTemplate) {
+				var heroTemplateJson = receiveData.GetField ("heroesTemplate").ToString ();
+				heroesTemplate = TinyJSON.JSON.Load (heroTemplateJson).Make <Dictionary<string, CHeroData>> ();
+			}
+			CTaskUtil.Set (CTaskUtil.HERO_TEMPLATES, heroesTemplate);
+			// TRIGGER EVENT
+			if (this.OnEventInitUserCompleted != null) {
+				this.OnEventInitUserCompleted ();
+			}
+			// COMPLETE TASK
+			CRootTask.Instance.ProcessNextTask (processTask);
+			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+		}
+
+		public virtual void OnClientCreateHero(string heroType, string heroName) {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			var heroSubmitData = new Dictionary<string, string> ();
+			heroSubmitData.Add ("htype", heroType);
+			heroSubmitData.Add ("hname", heroName);
+			heroSubmitData.Add ("uname", this.currentUser.userName);
+			heroSubmitData.Add ("token", this.currentUser.token);
+			var jsonCreateHero = JSONObject.Create (heroSubmitData);
+			this.m_SocketIO.Emit ("clientCreateHero", jsonCreateHero);
 		}
 
 		#endregion

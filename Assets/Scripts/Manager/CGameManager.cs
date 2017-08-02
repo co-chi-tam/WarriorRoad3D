@@ -19,7 +19,6 @@ namespace WarriorRoad {
 			this.m_MapManager = CMapManager.GetInstance ();
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
 			this.m_MapManager.OnMapGenerateComplete += this.SpawnCharacter;
-			this.m_MapManager.GenerateRoadMap ();
 		}
 
 		protected void Update() {
@@ -32,6 +31,18 @@ namespace WarriorRoad {
 				this.m_MapManager.ClearMap ();
 			}
 			this.m_MainCamera.transform.LookAt (this.m_CharacterController.GetPosition ());
+		}
+
+		public virtual void StartGame() {
+			this.m_MapManager.GenerateRoadMap ();
+		}
+
+		public virtual void UpdateGame() {
+		
+		}
+
+		public virtual void EndGame() {
+			
 		}
 
 		public virtual void SpawnCharacter() {

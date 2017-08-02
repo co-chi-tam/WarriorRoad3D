@@ -13,12 +13,18 @@ namespace WarriorRoad {
 		public static string USER_NAME		= "USER_NAME";
 		public static string USER_PASSWORD	= "USER_PASSWORD";
 
+		public static string USER_DATA 		= "USER_DATA";
+		public static string HERO_DATA 		= "HERO_DATA";
+		public static string HERO_TEMPLATES = "HERO_TEMPLATES";
+
 		public static Dictionary<string, string> VERIFY_HEADERS = new Dictionary<string, string> () { 
 			{"verify", "THIS IS VERIFY HEADERS."}
 		};
 
 		public static Dictionary<string, object> REFERENCES = new Dictionary<string, object> () { 
-			
+			{ USER_DATA,		new CUserData()	},
+			{ HERO_DATA, 		new CHeroData() },
+			{ HERO_TEMPLATES, 	new Dictionary<string, CHeroData>() }
 		};
 
 		public static object Get(string name) {

@@ -13,10 +13,10 @@ db.clUsers.insert({
     "uCreateTime": new Date(),
     "uActive": true
 });
+db.clUsers.find({});
 
-
-db.createCollection('clHeroes');
-db.clHeroes.createIndex({'uID': 1, 'heroName': 1}, {unique: true});
+db.createCollection('clHeroes');
+db.clHeroes.createIndex({'uID': 1, 'objectName': 1, 'uOwner': 1}, {unique: true});
 db.clHeroes.insertMany([{
     'uID': '4baf73401e6b68e50768edfbdb22dfad',
     'objectName': 'Warrior',
@@ -26,7 +26,8 @@ db.clHeroes.insertMany([{
     'heroAttackSpeed': 1.2,
     'heroDefendPoint': 20,
     'heroHealthPoint': 100,
-    'heroSkillSlots': []
+    'heroSkillSlots': [],
+    'uOwner': ''
     },{
     'uID': 'b7a23f1b6b9c27fc5b8c6d840dc83f93',
     'objectName': 'Wizard',
@@ -36,7 +37,8 @@ db.clHeroes.insertMany([{
     'heroAttackSpeed': 2.2,
     'heroDefendPoint': 10,
     'heroHealthPoint': 80,
-    'heroSkillSlots': []
+    'heroSkillSlots': [],
+    'uOwner': ''
     },{
     'uID': 'bb383f1abab8cdf7619b1723a21c6e1f',
     'objectName': 'Archer',
@@ -46,49 +48,51 @@ db.clHeroes.insertMany([{
     'heroAttackSpeed': 0.75,
     'heroDefendPoint': 15,
     'heroHealthPoint': 90,
-    'heroSkillSlots': []
+    'heroSkillSlots': [],
+    'uOwner': ''
     }]);
+db.clHeroes.find({});
 
-db.createCollection('clSkills');
+db.createCollection('clSkills');
 db.clSkills.createIndex({'uID': 1, 'skillName': 1}, {unique: true});   
 db.clSkills.insertMany([{
     'uID': '502ec8465441f1d108b8c963ec402b08',
     'objectName': 'Normal Attack',
     'objectAvatar': 'NormalAttack-avatar',
-    'objectModel': 'NormalAttack-model',
-    'skillTime': 0,
+    'objectModel': 'NormalAttack-model',
+    'skillTime': 0,
     'skillEffectPerTime': 0,
-    'skillEffects': [
-        {
-            'skillValue': 15,
-            'SkillMethod': 'ApplyDamage'
-        }
+    'skillEffects': [
+        {
+            'skillValue': 15,
+            'SkillMethod': 'ApplyDamage'
+        }
     ]
     },{
     'uID': 'b4d0a149ec60fb7124d3d4d72ea8174b',
     'objectName': 'Bash',
     'objectAvatar': 'Bash-avatar',
-    'objectModel': 'Bash-model',
-    'skillTime': 0,
+    'objectModel': 'Bash-model',
+    'skillTime': 0,
     'skillEffectPerTime': 0,
-    'skillTriggers': [
-        {
-            'skillValue': 20,
-            'SkillMethod': 'ApplyDamage'
-        }
+    'skillTriggers': [
+        {
+            'skillValue': 20,
+            'SkillMethod': 'ApplyDamage'
+        }
     ]
     },{
     'uID': '38c3a4da101090c04ae3428422e80c3f',
     'objectName': 'Fire ball',
     'objectAvatar': 'FireBall-avatar',
-    'objectModel': 'FireBall-model',
-    'skillTime': 0,
-    'skillEffectPerTime': 0,
-    'skillTriggers': [
-        {
-            'skillValue': 25,
-            'SkillMethod': 'ApplyDamage'
-        }
+    'objectModel': 'FireBall-model',
+    'skillTime': 0,
+    'skillEffectPerTime': 0,
+    'skillTriggers': [
+        {
+            'skillValue': 25,
+            'SkillMethod': 'ApplyDamage'
+        }
     ]
     }]);
 

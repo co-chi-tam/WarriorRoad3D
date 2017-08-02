@@ -15,6 +15,8 @@ namespace WarriorRoad {
 		private CMapTask m_MapTask;
 		private string m_PreviousTask;
 
+		private string m_NextTaskInProcess = string.Empty;
+
 		#endregion
 
 		#region Implementation MonoBehavious
@@ -72,12 +74,21 @@ namespace WarriorRoad {
 
 		#region Main methods
 
-		public void NextTask() {
-			this.TransmissionTask (this.m_CurrentTask.nextTask);
+		public virtual void NextTask() {
+			if (string.IsNullOrEmpty (this.m_NextTaskInProcess)) { 
+				this.TransmissionTask (this.m_CurrentTask.nextTask);
+			} else {
+				this.TransmissionTask (this.m_NextTaskInProcess);
+			}
+			this.m_NextTaskInProcess = string.Empty;
 		}
 
-		public void PreviousTask() {
+		public virtual void PreviousTask() {
 			this.TransmissionTask (this.m_PreviousTask);
+		}
+
+		public virtual void ProcessNextTask(string name) {
+			this.m_NextTaskInProcess = name;
 		}
 
 		private void SetupTask() {
@@ -96,6 +107,8 @@ namespace WarriorRoad {
 				if (this.m_CurrentTask.taskName != CSceneManager.Instance.GetActiveSceneName ()) {
 					StartCoroutine (this.LoadScene (this.m_CurrentTask.taskName));	
 				}
+			} else {
+				Debug.LogError ("[TASK ERROR] " + taskName);
 			}
 			this.m_CurrentTaskName = this.m_CurrentTask.GetTaskName ();
 		}

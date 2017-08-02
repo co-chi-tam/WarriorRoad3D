@@ -8,13 +8,22 @@ namespace WarriorRoad {
 
 		#region Properties
 
-		public string taskName;
-		public string nextTask;
+		public string taskName {
+			get { return this.m_TaskName; }
+			protected set { this.m_TaskName = value; }
+		}
+		public string nextTask {
+			get { return this.m_NextTask; }
+			set { this.m_NextTask = value; }
+		}
 
 		public Action OnCompleteTask;
 
 		protected bool m_IsLoadingTask = true;
 		protected bool m_IsCompleteTask = false;
+
+		protected string m_TaskName;
+		protected string m_NextTask;
 
 		#endregion
 
