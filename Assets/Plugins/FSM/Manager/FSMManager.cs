@@ -16,6 +16,9 @@ namespace FSM
 		public EState currentState;
 		public string currentStateName;
 		public string firstStateName;
+		public Action<string> OnStartState;
+		public Action<string> OnUpdateState;
+		public Action<string> OnEndState;
 
         private Dictionary<string, Func<bool>> m_Conditions;
         private Dictionary<string, IState> m_States;
@@ -75,17 +78,26 @@ namespace FSM
 			currentStateName = m_Map.StateName;
             switch (m_CurrentState)
             {
-            case EState.StartState:
-				stateNow.StartState();
-                m_CurrentState = EState.UpdateState;
+			case EState.StartState:
+				stateNow.StartState ();
+				m_CurrentState = EState.UpdateState;
+				if (OnStartState != null) {
+					OnStartState (currentStateName);
+				}
                 break;
 			case EState.UpdateState:
 				CalculateStateCondition ();
 				if (m_CurrentState == EState.UpdateState) {
 					stateNow.UpdateState (dt);
+					if (OnUpdateState != null) {
+						OnUpdateState (currentStateName);
+					}
 				}
 	            break;
-            case EState.EndState:
+			case EState.EndState:
+				if (OnEndState != null) {
+					OnEndState (currentStateName);
+				}
                 stateNow.ExitState();
                 m_Map = m_LastState;
                 m_CurrentState = EState.StartState;

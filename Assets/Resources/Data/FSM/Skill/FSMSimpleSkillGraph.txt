@@ -2,7 +2,8 @@
 	"fsm": [{
 		"condition_name": "IsRoot",
 		"state_name": "SkillIdleState",
-		"states": [{
+		"states": [
+		{
 			"condition_name": "HaveEnemy",
 			"state_name": "SkillActiveState",
 			"states": [{

@@ -59,6 +59,8 @@ namespace WarriorRoad {
 			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
 			this.m_CharacterController = Instantiate (Resources.Load<CHeroController>("CharacterPrefabs/" + heroData.objectModel));
 			yield return this.m_CharacterController;
+			// Init Events
+			this.m_CharacterController.AddAction ("StartIdleState", this.OnPlayerStartRollDice);
 			// INIT DATA
 			this.m_CharacterController.SetActive (true);
 			this.m_CharacterController.SetData (heroData);
@@ -70,6 +72,19 @@ namespace WarriorRoad {
 			this.m_CharacterController.SetPosition (currentBlock.GetMovePointPosition());
 			this.OnLoadingCompleted ();
 		}
-		
+
+		public virtual void OnPlayerStartRollDice() {
+			Debug.LogWarning ("OnPlayerStartRollDice ");
+			CUIGameManager.Instance.OnStartRoll ();
+		}
+
+		public virtual void OnPlayerRollDice() {
+			Debug.LogWarning ("OnPlayerRollDice ");
+			var randomStep = UnityEngine.Random.Range (1, 7);
+			var currentStep = this.m_CharacterController.GetStep ();
+			var randomBlock = this.m_MapManager.CalculateCurrentBlock (currentStep + randomStep);
+			this.m_CharacterController.targetBlock = randomBlock;
+		}
+
 	}
 }

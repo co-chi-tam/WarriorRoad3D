@@ -123,6 +123,7 @@ namespace WarriorRoad {
 
 		public virtual void SetRotation(Vector3 value) {
 			var direction = value - this.m_Transform.position;
+			direction.y = 0f;
 			var angle = Mathf.Atan2 (direction.x, direction.z) * Mathf.Rad2Deg;
 			this.m_Transform.rotation = Quaternion.AngleAxis (angle, Vector3.up);
 		}

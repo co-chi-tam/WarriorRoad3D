@@ -16,6 +16,7 @@ namespace WarriorRoad {
 		public override void StartState()
 		{
 			base.StartState ();
+			this.m_Controller.InvokeAction ("StartActiveState");
 		}
 
 		public override void UpdateState(float dt)

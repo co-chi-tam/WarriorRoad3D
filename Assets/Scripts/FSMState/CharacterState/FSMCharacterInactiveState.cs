@@ -3,7 +3,7 @@ using System.Collections;
 using FSM;
 
 namespace WarriorRoad {
-	public class FSMCharacterInactiveState : FSMBaseState
+	public class FSMCharacterInactiveState : FSMInactiveState
 	{
 		
 		protected CCharacterController m_Controller;
@@ -17,6 +17,8 @@ namespace WarriorRoad {
 		{
 			base.StartState ();
 			this.m_Controller.SetActive (false);
+			this.m_Controller.InvokeAction ("StartInactiveState");
+			this.m_Controller.gameObject.SetActive (false);
 		}
 
 		public override void UpdateState(float dt)

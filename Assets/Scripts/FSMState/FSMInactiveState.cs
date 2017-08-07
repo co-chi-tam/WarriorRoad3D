@@ -5,6 +5,7 @@ using FSM;
 namespace WarriorRoad {
 	public class FSMInactiveState : FSMBaseState
 	{
+
 		public FSMInactiveState(IContext context) : base (context)
 		{
 

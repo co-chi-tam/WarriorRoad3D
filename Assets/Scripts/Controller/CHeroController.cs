@@ -5,15 +5,12 @@ using FSM;
 
 namespace WarriorRoad {
 	public class CHeroController : CCharacterController {
-
-		[Header ("Block")]
-		public CBlockController nextBlock;
-		public CBlockController targetBlock;
-
+		
 		[Header ("Component")]
 		[SerializeField]	protected CJumperComponent m_JumpComponent;
 		[SerializeField]	protected CSimpleSkillSlotComponent m_SkillSlotComponent;
 
+		protected CBlockController m_NextBlock;
 		protected float m_AttackDelay = 0f;
 
 		protected override void Awake ()
@@ -47,11 +44,10 @@ namespace WarriorRoad {
 
 		public override bool HaveEnemy ()
 		{
-			if (this.targetBlock == null)
+			base.HaveEnemy ();
+			if (this.m_TargetEnemy == null)
 				return false;
-			if (this.targetBlock.blockGuest == null)
-				return false;
-			return this.targetBlock.blockGuest.GetActive ();
+			return this.m_TargetEnemy.GetActive ();
 		}
 
 		#endregion
@@ -65,6 +61,10 @@ namespace WarriorRoad {
 		public override void UpdateAction(float dt) {
 			base.UpdateAction (dt);
 			this.MoveToBlock (dt);
+			var guestBlock = this.targetBlock.blockGuest;
+			if (guestBlock != null) {
+				this.SetTargetEnemy (guestBlock);
+			}
 		}
 
 		protected virtual void MoveToBlock(float dt) {
@@ -73,7 +73,7 @@ namespace WarriorRoad {
 			var nextBlockCtrl = this.m_MapManager.CalculateCurrentBlock (nextBlockIndex);
 			if (nextBlockCtrl == null)
 				return;
-			this.nextBlock = nextBlockCtrl;
+			this.m_NextBlock = nextBlockCtrl;
 			var direction = nextBlockCtrl.GetMovePointPosition() - this.GetPosition();
 			var maxLength = nextBlockCtrl.GetMovePointPosition() - currentBlockCtrl.GetMovePointPosition();
 			if (direction.sqrMagnitude < 0.01f) {
@@ -89,7 +89,7 @@ namespace WarriorRoad {
 
 		public override void UpdateAttackAction(float dt) {
 			base.UpdateAttackAction (dt);
-			var target = this.targetBlock.blockGuest as CCharacterController;
+			var target = this.m_TargetEnemy as CCharacterController;
 			if (target != null) {
 				if (this.m_AttackDelay < 0f) {
 					this.m_AttackDelay = 1f / this.m_CharacterData.characterAttackSpeed;
@@ -98,7 +98,7 @@ namespace WarriorRoad {
 				} else {
 					this.m_AttackDelay -= dt;
 				}
-				this.SetRotation (this.targetBlock.GetEnemyPointPosition());
+				this.SetRotation (target.GetPosition());
 			}
 		}
 

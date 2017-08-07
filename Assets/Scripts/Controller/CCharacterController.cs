@@ -8,15 +8,18 @@ namespace WarriorRoad {
 
 		[Header ("Control")]
 		[SerializeField]	protected Animator m_Animator;
+		[SerializeField]	protected CObjectController m_TargetEnemy;
 
 		[Header ("Block")]
 		public CBlockController currentBlock;
+		public CBlockController targetBlock;
 
 		[Header ("Data")]
 		[SerializeField]	protected CCharacterData m_CharacterData;
 
 		[Header ("Component")]
 		[SerializeField]	protected CFSMComponent m_FSMComponent;
+		[SerializeField]	protected CEventComponent m_EventComponent;
 
 		protected CMapManager m_MapManager;
 
@@ -24,6 +27,7 @@ namespace WarriorRoad {
 		{
 			base.Awake ();
 			this.m_FSMComponent.Init (this);
+			this.m_EventComponent.Init ();
 		}
 
 		protected override void Start() {
@@ -36,6 +40,7 @@ namespace WarriorRoad {
 		{
 			base.RegisterComponent ();
 			this.m_ListComponents.Add (this.m_FSMComponent);
+			this.m_ListComponents.Add (this.m_EventComponent);
 		}
 
 		#region FSM
@@ -50,7 +55,9 @@ namespace WarriorRoad {
 		}
 
 		public virtual bool HaveEnemy() {
-			return false;
+			if (this.m_TargetEnemy == null)
+				return false;
+			return this.m_TargetEnemy.GetActive ();
 		}
 
 		public virtual bool IsActionCompleted() {
@@ -70,11 +77,23 @@ namespace WarriorRoad {
 		}
 
 		public virtual void UpdateAttackAction (float dt) {
-		
+			var target = this.m_TargetEnemy as CCharacterController;
+			if (target != null) {
+				target.SetTargetEnemy (this);
+				this.SetTargetEnemy (target);
+			}
 		}
 
 		public virtual void ApplySkill (string name, object[] values) {
 			
+		}
+
+		public virtual void InvokeAction(string name) {
+			this.m_EventComponent.TriggerCallback (name);
+		}
+
+		public virtual void AddAction(string name, System.Action callback) {
+			this.m_EventComponent.AddCallback (name, callback);
 		}
 
 		#endregion
@@ -91,6 +110,17 @@ namespace WarriorRoad {
 		public override CObjectData GetData ()
 		{
 			return this.m_CharacterData as CObjectData;
+		}
+
+		public override void SetTargetEnemy (CObjectController target)
+		{
+			base.SetTargetEnemy (target);
+			this.m_TargetEnemy = target;
+		}
+
+		public override CObjectController GetTargetEnemy ()
+		{
+			return this.m_TargetEnemy;
 		}
 
 		public virtual void SetJumpCurve(float time) {

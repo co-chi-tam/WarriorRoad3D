@@ -2,16 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace WarriorRoad {
 	[Serializable]
 	public class CSimpleEffectComponent : CComponent {
 
-		[SerializeField]	protected ISimpleStatusContext m_OwnerContext;
-		[SerializeField]	protected ISimpleStatusContext m_TargetContext;
+		[Header("Data")]
 		[SerializeField]	protected CSkillData m_SkillData;
 
+		[Header("Events")]
+		public UnityEvent OnApplyEffect;
+
 		protected Dictionary<string, Action<object>> m_SkillMethods;
+		protected ISimpleStatusContext m_OwnerContext;
+		protected ISimpleStatusContext m_TargetContext;
 
 		public new void Init(CSkillData data, ISimpleStatusContext owner) {
 			base.Init ();
@@ -30,6 +35,9 @@ namespace WarriorRoad {
 				if (this.m_SkillMethods.ContainsKey (name)) {
 					this.m_SkillMethods [name] (value);
 				}
+			}
+			if (this.OnApplyEffect != null) {
+				this.OnApplyEffect.Invoke ();
 			}
 		}
 

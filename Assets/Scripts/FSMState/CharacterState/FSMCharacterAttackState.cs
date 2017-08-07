@@ -3,7 +3,7 @@ using System.Collections;
 using FSM;
 
 namespace WarriorRoad {
-	public class FSMCharacterAttackState : FSMIdleState
+	public class FSMCharacterAttackState : FSMBaseState
 	{
 
 		protected CCharacterController m_Controller;
@@ -16,6 +16,7 @@ namespace WarriorRoad {
 		public override void StartState()
 		{
 			base.StartState ();
+			this.m_Controller.InvokeAction ("StartAttackState");
 		}
 
 		public override void UpdateState(float dt)
