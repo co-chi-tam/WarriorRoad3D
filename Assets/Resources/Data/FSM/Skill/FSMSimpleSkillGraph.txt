@@ -1,0 +1,24 @@
+{
+	"fsm": [{
+		"condition_name": "IsRoot",
+		"state_name": "SkillIdleState",
+		"states": [{
+			"condition_name": "HaveEnemy",
+			"state_name": "SkillActiveState",
+			"states": [{
+				"condition_name": "IsActionCompleted",
+				"state_name": "SkillInactiveState",
+				"states": []
+			}]
+		},{
+			"condition_name": "!HaveEnemy",
+			"state_name": "SkillInactiveState",
+			"states": []
+		}]
+	},
+	{
+		"condition_name": "IsAnyState",
+		"state_name": "AnyState",
+		"states": []
+	}]
+}

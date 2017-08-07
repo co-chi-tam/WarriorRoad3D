@@ -9,16 +9,19 @@ namespace FSM
     public class FSMReader
     {
         private Dictionary<string, FSMStateData> m_Maps;
-        private FSMStateData m_CurrentState;
-        private FSMStateData m_AnyState;
-        public FSMStateData FSMCurrentState
+        private FSMStateData m_RootStates;
+		private FSMStateData m_AnyStates;
+
+        public FSMStateData FSMRootStates
         {
-            get { return m_CurrentState; }
+			get { return m_RootStates; }
         }
-        public FSMStateData FSMAnyState
+
+        public FSMStateData FSMAnyStates
         {
-            get { return m_AnyState; }
+            get { return m_AnyStates; }
         }
+
 		public Dictionary<string, FSMStateData> FSMMaps
 		{
 			get { return m_Maps; }
@@ -33,8 +36,8 @@ namespace FSM
         {
 			var jsonObject = Json.Deserialize (jsonText) as Dictionary<string, object>;
 			var states = jsonObject ["fsm"] as List<object>;
-			LoadFSM (states [0] as Dictionary<string, object>, ref m_CurrentState);
-			LoadFSM (states [1] as Dictionary<string, object>, ref m_AnyState);
+			LoadFSM (states [0] as Dictionary<string, object>, ref m_RootStates);
+			LoadFSM (states [1] as Dictionary<string, object>, ref m_AnyStates);
         }
 
         private void LoadFSM(Dictionary<string, object> data, ref FSMStateData stateData)

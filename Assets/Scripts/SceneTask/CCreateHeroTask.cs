@@ -38,7 +38,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientSelectedHero(int index, string name) {
-			var heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CHeroData>;
+			var heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
 			var heroType = heroesTemplate.Keys.ToList () [index];
 			this.m_UserManager.OnClientCreateHero (heroType, name);
 		}

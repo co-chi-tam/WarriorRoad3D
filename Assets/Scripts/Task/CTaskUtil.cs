@@ -23,8 +23,8 @@ namespace WarriorRoad {
 
 		public static Dictionary<string, object> REFERENCES = new Dictionary<string, object> () { 
 			{ USER_DATA,		new CUserData()	},
-			{ HERO_DATA, 		new CHeroData() },
-			{ HERO_TEMPLATES, 	new Dictionary<string, CHeroData>() }
+			{ HERO_DATA, 		new CCharacterData() },
+			{ HERO_TEMPLATES, 	new Dictionary<string, CCharacterData>() }
 		};
 
 		public static object Get(string name) {

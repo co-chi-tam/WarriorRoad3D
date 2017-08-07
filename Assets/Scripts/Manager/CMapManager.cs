@@ -16,9 +16,6 @@ namespace WarriorRoad {
 		[SerializeField]	private CBlockController m_LeftBottomBlock;
 		[SerializeField]	private CBlockController m_RightBottomBlock;
 
-		[Header ("Monster")]
-		[SerializeField]	private GameObject[] m_Monsters;
-
 		[Header ("Map Control")]
 		[SerializeField]	private CBlockController[] m_Blocks;
 
@@ -32,7 +29,8 @@ namespace WarriorRoad {
 			return this.m_Blocks[fitIndex];
 		}
 
-		public virtual void GenerateRoadMap() {
+		public virtual void GenerateRoadMap(int mapSize = 5) {
+			this.m_MapSize = mapSize;
 			this.m_Blocks = new CBlockController[(this.m_MapSize - 1) * 4];
 			var blockX = 0;
 			var blockY = 0;
@@ -76,6 +74,14 @@ namespace WarriorRoad {
 			this.m_Blocks = null;
 		}
 
+		public virtual void LoadMapObject(List<CCharacterData> mapObjects) {
+			for (int i = 0; i < mapObjects.Count; i++) {
+				var block = this.m_Blocks [i];
+				var data = mapObjects [i];
+				StartCoroutine (this.HandleSpawnBlockGuest(block, data));
+			}
+		}
+
 		private IEnumerator HandleSpawnBlock(int index, CBlockController block, int x, int y) {
 			var spawnedBlock = Instantiate (block);
 			spawnedBlock.name = string.Format ("Block {0}-{1}", x, y);
@@ -84,7 +90,6 @@ namespace WarriorRoad {
 			spawnedBlock.transform.position = this.GetBlockPosition (x, y);
 			spawnedBlock.transform.rotation = this.GetBlockRotation (x, y);
 			spawnedBlock.SetActive (true);
-			yield return this.HandleSpawnMonster (spawnedBlock);
 			this.m_Blocks [index] = spawnedBlock;
 			if (this.OnMapGenerateProcess != null) {
 				this.OnMapGenerateProcess ((float) index / this.m_Blocks.Length);
@@ -96,14 +101,17 @@ namespace WarriorRoad {
 			}
 		}
 
-		private IEnumerator HandleSpawnMonster(CBlockController parent) {
-			if (parent.enemyPoint != null) {
-				var monsterPrefabIndex = Random.Range (0, this.m_Monsters.Length); 
-				var monsterGO = Instantiate (this.m_Monsters [monsterPrefabIndex]);
+		private IEnumerator HandleSpawnBlockGuest(CBlockController parent, CCharacterData data) {
+			if (parent.enemyPoint != null && data != null) {
+				var monsterGO = Instantiate (Resources.Load<CCharacterController>("CharacterPrefabs/" + data.objectModel));
 				yield return monsterGO != null;
+				parent.blockGuest = monsterGO;
 				monsterGO.transform.SetParent (parent.enemyPoint.transform);
 				monsterGO.transform.localPosition = Vector3.zero;
 				monsterGO.transform.localRotation = Quaternion.identity;
+				monsterGO.SetActive (true);
+				monsterGO.SetData (data);
+				monsterGO.Init ();
 			}
 			yield return null;
 		}

@@ -16,12 +16,12 @@ namespace WarriorRoad {
 		[SerializeField]	protected InputField m_HeroNameInputField;
 		[SerializeField]	protected Button m_HeroSubmitButton;
 
-		protected Dictionary<string, CHeroData> m_HeroTemplates;
+		protected Dictionary<string, CCharacterData> m_HeroTemplates;
 
 		public Action<int, string> OnEventSubmitHero;
 
 		public virtual void SetupHeroItem() {
-			this.m_HeroTemplates = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CHeroData>;
+			this.m_HeroTemplates = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
 			this.m_HeroPage.gameObject.SetActive (false);
 			var guild = Guid.NewGuid ().ToString ();
 			this.m_HeroNameInputField.text = "Player" + guild.Substring(guild.Length - 5)	;

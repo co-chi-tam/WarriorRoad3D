@@ -4,22 +4,18 @@ using UnityEngine;
 using FSM;
 
 namespace WarriorRoad {
-	public class CCharacterController : CObjectController, ISimpleContext {
+	public class CCharacterController : CObjectController, ISimpleContext, ISimpleStatusContext {
 
 		[Header ("Control")]
 		[SerializeField]	protected Animator m_Animator;
 
 		[Header ("Block")]
 		public CBlockController currentBlock;
-		public CBlockController nextBlock;
-		public CBlockController targetBlock;
-		public int blockIndex = 0;
 
 		[Header ("Data")]
-		[SerializeField]	protected CHeroData m_CharacterData;
+		[SerializeField]	protected CCharacterData m_CharacterData;
 
 		[Header ("Component")]
-		[SerializeField]	protected CJumperComponent m_JumpComponent;
 		[SerializeField]	protected CFSMComponent m_FSMComponent;
 
 		protected CMapManager m_MapManager;
@@ -27,7 +23,6 @@ namespace WarriorRoad {
 		protected override void Awake ()
 		{
 			base.Awake ();
-			this.m_JumpComponent.Init ();
 			this.m_FSMComponent.Init (this);
 		}
 
@@ -40,18 +35,26 @@ namespace WarriorRoad {
 		protected override void RegisterComponent ()
 		{
 			base.RegisterComponent ();
-			this.m_ListComponents.Add (this.m_JumpComponent);
 			this.m_ListComponents.Add (this.m_FSMComponent);
 		}
 
 		#region FSM
 
-		public virtual bool IsActive() {
-			return this.GetActive ();
+		public override bool IsActive() {
+			base.IsActive ();
+			return this.GetActive () && this.GetHealth () > 0f;
 		}
 
 		public virtual bool IsMoveToTargetBlock() {
-			return this.currentBlock == this.targetBlock;
+			return this.currentBlock != null;
+		}
+
+		public virtual bool HaveEnemy() {
+			return false;
+		}
+
+		public virtual bool IsActionCompleted() {
+			return false;
 		}
 
 		#endregion
@@ -63,27 +66,15 @@ namespace WarriorRoad {
 		}
 
 		public virtual void UpdateAction(float dt) {
-			this.MoveToBlock (dt);
+			
 		}
 
-		protected virtual void MoveToBlock(float dt) {
-			var nextBlockIndex = this.blockIndex + 1;
-			var currentBlockCtrl = this.currentBlock;
-			var nextBlockCtrl = this.m_MapManager.CalculateCurrentBlock (nextBlockIndex);
-			if (nextBlockCtrl == null)
-				return;
-			this.nextBlock = nextBlockCtrl;
-			var direction = nextBlockCtrl.GetMovePointPosition() - this.GetPosition();
-			var maxLength = nextBlockCtrl.GetMovePointPosition() - currentBlockCtrl.GetMovePointPosition();
-			if (direction.sqrMagnitude < 0.01f) {
-				this.currentBlock = nextBlockCtrl;
-				this.blockIndex = nextBlockIndex;
-			} else {
-				var movePos = (direction.normalized * 1f * dt) + this.GetPosition();
-				this.SetPosition (movePos);
-				this.SetRotation (nextBlockCtrl.GetMovePointPosition());
-				this.SetJumpCurve (direction.sqrMagnitude / maxLength.sqrMagnitude);
-			}
+		public virtual void UpdateAttackAction (float dt) {
+		
+		}
+
+		public virtual void ApplySkill (string name, object[] values) {
+			
 		}
 
 		#endregion
@@ -93,7 +84,8 @@ namespace WarriorRoad {
 		public override void SetData (CObjectData value)
 		{
 			base.SetData (value);
-			this.m_CharacterData = value as CHeroData;
+			this.m_CharacterData = value as CCharacterData;
+			this.m_FSMComponent.ActiveFSM (true);
 		}
 
 		public override CObjectData GetData ()
@@ -102,7 +94,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void SetJumpCurve(float time) {
-			this.m_JumpComponent.SetJumpCurve (time);
+			
 		}
 
 		public override void SetAnimation (string name, object param)
@@ -119,6 +111,90 @@ namespace WarriorRoad {
 			} else if (param == null) {
 				this.m_Animator.SetTrigger (name);
 			}
+		}
+
+		public virtual void SetStep (int value)
+		{
+			this.m_CharacterData.characterStep = value;
+		}
+
+		public virtual int GetStep ()
+		{
+			return this.m_CharacterData.characterStep;
+		}
+
+		public void SetHealth (int value)
+		{
+			var totalHealth = value <= 0 
+				? 0 
+				: value >= this.m_CharacterData.characterMaxHealthPoint 
+				? this.m_CharacterData.characterMaxHealthPoint 
+				: value;
+			
+			totalHealth = totalHealth > this.m_CharacterData.maxHealthPoint 
+				? this.m_CharacterData.maxHealthPoint 
+				: totalHealth;
+			
+			this.m_CharacterData.characterHealthPoint = totalHealth;
+		}
+
+		public int GetHealth ()
+		{
+			return this.m_CharacterData.characterHealthPoint;
+		}
+
+		public int GetMaxHealth ()
+		{
+			return this.m_CharacterData.characterMaxHealthPoint;
+		}
+
+		public void SetAttackPoint (int value)
+		{
+			var totalPoint = value <= 0 
+				? 0 
+				: value >= this.m_CharacterData.maxAttackPoint 
+				? this.m_CharacterData.maxAttackPoint 
+				: value;
+			this.m_CharacterData.characterAttackPoint = totalPoint;
+		}
+
+		public int GetAttackPoint ()
+		{
+			return this.m_CharacterData.characterAttackPoint;
+		}
+
+		public void SetAttackSpeed (float value)
+		{
+			var totalPoint = value <= 0f 
+				? 0f
+				: value >= this.m_CharacterData.maxAttackSpeed 
+				? this.m_CharacterData.maxAttackSpeed 
+				: value;
+			this.m_CharacterData.characterAttackSpeed = totalPoint;
+		}
+
+		public float GetAttackSpeed ()
+		{
+			return this.m_CharacterData.characterAttackSpeed;
+		}
+
+		public void SetDefendPoint (int value)
+		{
+			var totalPoint = value <= 0 
+				? 0 
+				: value >= this.m_CharacterData.maxDefendPoint 
+				? this.m_CharacterData.maxDefendPoint 
+				: value;
+			this.m_CharacterData.characterDefendPoint = totalPoint;
+		}
+
+		public int GetDefendPoint ()
+		{
+			return this.m_CharacterData.characterDefendPoint;
+		}
+
+		public virtual object GetController() {
+			return this;
 		}
 
 		#endregion

@@ -27,7 +27,7 @@ namespace WarriorRoad {
 		{
 			base.StartTask ();
 			this.m_GameManager = CGameManager.GetInstance ();
-			this.m_GameManager.StartGame ();
+			this.m_GameManager.OnStartGame ();
 		}
 
 		#endregion

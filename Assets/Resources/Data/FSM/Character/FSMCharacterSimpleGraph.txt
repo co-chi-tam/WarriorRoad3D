@@ -10,9 +10,19 @@
           "states": [
             {
               "condition_name": "IsMoveToTargetBlock",
-              "state_name": "IdleState",
+              "state_name": "CharacterIdleState",
               "states": []
             }
+          ]
+        }, {
+          "condition_name": "HaveEnemy",
+          "state_name": "CharacterAttackState",
+          "states": [
+	          {
+	          "condition_name": "!HaveEnemy",
+	          "state_name": "CharacterIdleState",
+	          "states": []
+	        }
           ]
         }
       ]
@@ -23,7 +33,7 @@
       "states": [
         {
           "condition_name": "!IsActive",
-          "state_name": "InactiveState",
+          "state_name": "CharacterInactiveState",
           "states": []
         }
       ]

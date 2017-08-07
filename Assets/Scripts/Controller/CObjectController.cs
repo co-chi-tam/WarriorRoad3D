@@ -15,14 +15,18 @@ namespace WarriorRoad {
 
 		#region Implementation MonoBehaviour
 
+		public virtual void Init() {
+			
+		}
+
 		protected virtual void Awake() {
 			this.m_Transform = this.transform;
 			this.m_ListComponents = new List<CComponent> ();
-			this.RegisterComponent ();
 			this.m_Active = true;
 		}
 
 		protected virtual void Start() {
+			this.RegisterComponent ();
 			this.OnStartComponent ();
 		}
 
@@ -55,6 +59,8 @@ namespace WarriorRoad {
 		}
 
 		private void OnEndComponent() {
+			if (this.GetActive () == false)
+				return;
 			for (int i = 0; i < this.m_ListComponents.Count; i++) {
 				this.m_ListComponents [i].EndComponent ();
 			}
@@ -62,7 +68,31 @@ namespace WarriorRoad {
 
 		#endregion
 
+		#region FSM
+
+		public virtual bool IsActive() {
+			return this.GetActive ();
+		}
+
+		#endregion
+
 		#region Getter && Setter
+
+		public virtual void SetTargetEnemy(CObjectController target) {
+			
+		}
+
+		public virtual CObjectController GetTargetEnemy() {
+			return null;
+		}
+
+		public virtual void SetOwner(CObjectController value) {
+			
+		}
+
+		public virtual CObjectController GetOwner() {
+			return null;
+		}
 
 		public virtual void SetData(CObjectData value) {
 			

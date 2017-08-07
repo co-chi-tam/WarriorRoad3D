@@ -15,6 +15,8 @@ namespace FSM
 	{
 		public EState currentState;
 		public string currentStateName;
+		public string firstStateName;
+
         private Dictionary<string, Func<bool>> m_Conditions;
         private Dictionary<string, IState> m_States;
         private FSMReader m_FSMLoader;
@@ -22,23 +24,24 @@ namespace FSM
         private FSMStateData m_AnyState;
         private FSMStateData m_LastState;
         private EState m_CurrentState;
-		private bool m_Init;
+		private bool m_Inited;
 
         public FSMManager()
         {
             m_Conditions = new Dictionary<string, Func<bool>>();
             m_States = new Dictionary<string, IState>();
             m_FSMLoader = new FSMReader();
-			m_Init = false;
+			m_Inited = false;
         }
 
         public void LoadFSM(string jsonText) {
 			m_FSMLoader.LoadJSON(jsonText);
-            m_Map = m_FSMLoader.FSMCurrentState;
-            m_AnyState = m_FSMLoader.FSMAnyState;
+            m_Map = m_FSMLoader.FSMRootStates;
+            m_AnyState = m_FSMLoader.FSMAnyStates;
             m_Conditions["IsRoot"] = IsRoot;
             m_Conditions["IsAnyState"] = IsAnyState;
-			m_Init = true;
+			m_Inited = true;
+			firstStateName = m_FSMLoader.FSMRootStates.StateName;
         }
 
         private bool IsRoot()
@@ -52,7 +55,7 @@ namespace FSM
 
         public void UpdateState(float dt)
         {
-			if (m_Init == false)
+			if (m_Inited == false)
 				return;
 			for (int i = 0; i < m_AnyState.ListStates.Count; i++)
 			{
@@ -107,7 +110,7 @@ namespace FSM
         }
 
 		public void SetState(string name) {
-			if (m_Init == false)
+			if (m_Inited == false)
 				return;
 			m_Map = m_FSMLoader.FSMMaps [name];
 			m_CurrentState = EState.StartState;

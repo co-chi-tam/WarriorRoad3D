@@ -1,0 +1,20 @@
+{
+	"fsm": [{
+		"condition_name": "IsRoot",
+		"state_name": "IdleState",
+		"states": [{
+			"condition_name": "IsActive",
+			"state_name": "ActiveState",
+			"states": [{
+				"condition_name": "!IsActive",
+				"state_name": "InactiveState",
+				"states": []
+			}]
+		}]
+	},
+	{
+		"condition_name": "IsAnyState",
+		"state_name": "AnyState",
+		"states": []
+	}]
+}

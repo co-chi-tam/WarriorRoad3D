@@ -1,12 +1,12 @@
-﻿<Properties StartupItem="Assembly-CSharp.csproj">
+﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Manager\CUserManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Component\CSimpleSkillComponent.cs">
     <Files>
-      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="222" Column="54" />
-      <File FileName="Assets\Scripts\SceneTask\CLoginTask.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Task\CRootTask.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Task\CTaskUtil.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SceneTask\CCreateHeroTask.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Component\CSimpleSkillComponent.cs" Line="71" Column="1" />
+      <File FileName="Assets\Scripts\Controller\CHeroController.cs" Line="36" Column="14" />
+      <File FileName="Assets\Scripts\Data\CSkillData.cs" Line="18" Column="24" />
+      <File FileName="Assets\Scripts\Controller\CCharacterController.cs" Line="7" Column="65" />
+      <File FileName="Assets\Scripts\FSMState\ISimpleContext.cs" Line="6" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

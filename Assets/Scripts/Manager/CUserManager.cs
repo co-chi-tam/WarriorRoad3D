@@ -20,7 +20,7 @@ namespace WarriorRoad {
 		public CUserData currentUser;
 
 		[Header ("HERO DATA")]
-		public CHeroData currentHeroData;
+		public CCharacterData currentHeroData;
 
 		// EVENT
 		public Action<CUserData> OnEventLoginCompleted;
@@ -94,25 +94,31 @@ namespace WarriorRoad {
 			var loginParam = new Dictionary<string, string> ();
 			loginParam ["uname"] = this.currentUser.userName;
 			loginParam ["upass"] = this.currentUser.userPassword;
-			var request = new CRequest (url, header);
-			request.Post (url, loginParam, (CResult obj) =>  {
-				var objContent = obj.ToJSONObject();
-				if (objContent.ContainsKey ("resultCode")) {
-					var userResponse = objContent["resultContent"] as Dictionary<string, object>;
-					currentUser.userName = userResponse["userName"].ToString();
-					currentUser.userEmail = userResponse["userEmail"].ToString();
-					currentUser.userDisplayName = userResponse["userDisplayName"].ToString();
-					currentUser.token = userResponse["token"].ToString();
-					this.OnClientLoginCompleted (currentUser);
-				} else if (objContent.ContainsKey ("errorCode")) {
-					var errorContent = objContent["errorContent"].ToString();
-					this.OnClientLoginFailed (errorContent);
-				}
-			}, (err) => {
-				this.OnClientLoginFailed (err);
-			}, null);
-			// Start loading UI.
-			CUICustomManager.Instance.ActiveLoading (true);
+			bool canSubmit = string.IsNullOrEmpty (this.currentUser.userName) == false
+				&& string.IsNullOrEmpty (this.currentUser.userPassword) == false;
+			if (canSubmit) {
+				var request = new CRequest (url, header);
+				request.Post (url, loginParam, (CResult obj) => {
+					var objContent = obj.ToJSONObject ();
+					if (objContent.ContainsKey ("resultCode")) {
+						var userResponse = objContent ["resultContent"] as Dictionary<string, object>;
+						currentUser.userName = userResponse ["userName"].ToString ();
+						currentUser.userEmail = userResponse ["userEmail"].ToString ();
+						currentUser.userDisplayName = userResponse ["userDisplayName"].ToString ();
+						currentUser.token = userResponse ["token"].ToString ();
+						this.OnClientLoginCompleted (currentUser);
+					} else if (objContent.ContainsKey ("errorCode")) {
+						var errorContent = objContent ["errorContent"].ToString ();
+						this.OnClientError (errorContent);
+					}
+				}, (err) => {
+					this.OnClientError (err);
+				}, null);
+				// Start loading UI.
+				CUICustomManager.Instance.ActiveLoading (true);
+			} else {
+				this.OnClientError ("Field do not empty.");
+			}
 		}
 
 		public virtual void Logout() {
@@ -129,12 +135,6 @@ namespace WarriorRoad {
 			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
 		}
 
-		public virtual void OnClientLoginFailed (string error) {
-			this.OnClientError (error);
-			// Start message UI.
-			CUICustomManager.Instance.ActiveMessage (true, error);
-		}
-
 		#endregion
 
 		#region Register
@@ -148,25 +148,33 @@ namespace WarriorRoad {
 			registerParam ["uemail"] = this.currentUser.userEmail;
 			registerParam ["udisplayname"] = this.currentUser.userDisplayName;
 			registerParam ["uloginmethod"] = "ANDROID";
-			var request = new CRequest (url, header);
-			request.Post (url, registerParam, (CResult obj) =>  {
-				var objContent = obj.ToJSONObject();
-				if (objContent.ContainsKey ("resultCode")) {
-					var userResponse = objContent["resultContent"] as Dictionary<string, object>;
-					currentUser.userName = userResponse["userName"].ToString();
-					currentUser.userEmail = userResponse["userEmail"].ToString();
-					currentUser.userDisplayName = userResponse["userDisplayName"].ToString();
-					currentUser.token = userResponse["token"].ToString();
-					this.OnClientRegisterCompleted (currentUser);
-				} else if (objContent.ContainsKey ("errorCode")) {
-					var errorContent = objContent["errorContent"].ToString();
-					this.OnClientError (errorContent);
-				}
-			}, (err) => {
-				this.OnClientError (err);
-			}, null);
-			// Start loading UI.
-			CUICustomManager.Instance.ActiveLoading (true);
+			bool canSubmit = string.IsNullOrEmpty (this.currentUser.userName) == false
+			                 && string.IsNullOrEmpty (this.currentUser.userPassword) == false
+			                 && string.IsNullOrEmpty (this.currentUser.userEmail) == false
+			                 && string.IsNullOrEmpty (this.currentUser.userDisplayName) == false;
+			if (canSubmit) {
+				var request = new CRequest (url, header);
+				request.Post (url, registerParam, (CResult obj) => {
+					var objContent = obj.ToJSONObject ();
+					if (objContent.ContainsKey ("resultCode")) {
+						var userResponse = objContent ["resultContent"] as Dictionary<string, object>;
+						currentUser.userName = userResponse ["userName"].ToString ();
+						currentUser.userEmail = userResponse ["userEmail"].ToString ();
+						currentUser.userDisplayName = userResponse ["userDisplayName"].ToString ();
+						currentUser.token = userResponse ["token"].ToString ();
+						this.OnClientRegisterCompleted (currentUser);
+					} else if (objContent.ContainsKey ("errorCode")) {
+						var errorContent = objContent ["errorContent"].ToString ();
+						this.OnClientError (errorContent);
+					}
+				}, (err) => {
+					this.OnClientError (err);
+				}, null);
+				// Start loading UI.
+				CUICustomManager.Instance.ActiveLoading (true);
+			} else {
+				this.OnClientError ("Field do not empty.");
+			}
 		}
 
 		public virtual void OnClientRegisterCompleted(CUserData user) {
@@ -219,8 +227,9 @@ namespace WarriorRoad {
 					this.OnClientChangeSceneTask (onClientChangeTaskMsg.data);
 				});
 
-				this.m_SocketIO.On ("clientInitGame", delegate(SocketIOEvent onClientInitGameMsg) {
-					Debug.LogWarning ("clientInitGame " + onClientInitGameMsg.ToString());	
+				this.m_SocketIO.On ("clientInitMap", delegate(SocketIOEvent onClientInitGameMsg) {
+					Debug.LogWarning ("clientInitMap " + onClientInitGameMsg.ToString());	
+					this.OnClientReceiveMap (onClientInitGameMsg.data);
 				});
 
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
@@ -270,11 +279,11 @@ namespace WarriorRoad {
 			case "PlayScene": 
 				this.OnClientSetupPlayScene (receiveData);
 				break;
-			case "Login":
+			case "LoginScene":
 				this.OnClientSetupLoginScene (receiveData);
 				break;
 			default:
-				processTask = "Login";
+				processTask = "LoginScene";
 				this.OnClientSetupLoginScene (receiveData);
 				break;
 			}
@@ -291,19 +300,19 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupCreateHeroScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CHeroData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 			this.currentHeroData = heroData;
 			// HEROES TEMPLATE
 			var isHeroTemplate = receiveData.HasField ("heroesTemplate");
-			Dictionary<string, CHeroData> heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CHeroData>;
+			Dictionary<string, CCharacterData> heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
 			if (isHeroTemplate) {
 				var heroTemplateJson = receiveData.GetField ("heroesTemplate").ToString ();
-				heroesTemplate = TinyJSON.JSON.Load (heroTemplateJson).Make <Dictionary<string, CHeroData>> ();
+				heroesTemplate = TinyJSON.JSON.Load (heroTemplateJson).Make <Dictionary<string, CCharacterData>> ();
 			}
 			CTaskUtil.Set (CTaskUtil.HERO_TEMPLATES, heroesTemplate);
 		}
@@ -311,10 +320,10 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupPlayScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CHeroData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 			this.currentHeroData = heroData;
@@ -334,6 +343,27 @@ namespace WarriorRoad {
 			heroSubmitData.Add ("token", this.currentUser.token);
 			var jsonCreateHero = JSONObject.Create (heroSubmitData);
 			this.m_SocketIO.Emit ("clientCreateHero", jsonCreateHero);
+		}
+
+		public virtual void OnClientInitMap() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientInitMap", new JSONObject());
+		}
+
+		public virtual void OnClientReceiveMap(JSONObject data) {
+			var mapList = data.GetField ("mapBlocks").list;
+			var mapBlock = new List<CCharacterData> ();
+			for (int i = 0; i < mapList.Count; i++) {
+				var objectStr = mapList [i].ToString ();
+				if (objectStr.Equals ("null") == false) {
+					var objectData = TinyJSON.JSON.Load (objectStr).Make<CCharacterData> ();
+					mapBlock.Add (objectData);
+				} else {
+					mapBlock.Add (null);
+				}
+			}
+			CMapManager.Instance.LoadMapObject (mapBlock);
 		}
 
 		#endregion
