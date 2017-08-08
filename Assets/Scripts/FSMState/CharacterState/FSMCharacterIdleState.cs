@@ -18,6 +18,7 @@ namespace WarriorRoad {
 			base.StartState ();
 			this.m_Controller.StartIdle ();
 			this.m_Controller.InvokeAction ("StartIdleState");
+			this.m_Controller.SetAnimation ("AnimParam", 0);
 		}
 
 		public override void UpdateState(float dt)

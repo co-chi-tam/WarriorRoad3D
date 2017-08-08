@@ -14,7 +14,7 @@ namespace WarriorRoad {
 		public Animator characterAnimator;
 
 		[Header("Parent")]
-		public GameObject characterParent;
+		public CCharacterController characterParent;
 
 		protected Transform m_Transform;
 
@@ -24,18 +24,18 @@ namespace WarriorRoad {
 
 		protected virtual void LateUpdate() {
 			if (characterParent == null 
-				&& characterParent.activeInHierarchy == false)
+				&& characterParent.gameObject.activeInHierarchy == false)
 				return;
 			var screenPosition = Camera.main.WorldToScreenPoint (characterParent.transform.position);
 			this.m_Transform.position = screenPosition;
-			this.gameObject.SetActive (characterParent.activeInHierarchy);
+			this.gameObject.SetActive (characterParent.gameObject.activeInHierarchy);
 		}
 
-		public virtual void SetupInfo(string name, string level, CCharacterController parent, bool isEnemy) {
+		public virtual void SetupInfo(CCharacterController parent, bool isEnemy) {
 			this.characterNameText.text = name;
 			this.characterNameText.color = isEnemy ? Color.red : Color.green;
-			this.characterLevelText.text = "lv: " + level;
-			this.characterParent = parent.gameObject;
+			this.characterLevelText.text = "lv: " + (parent.GetData() as CCharacterData).characterLevel;
+			this.characterParent = parent;
 			parent.AddAction ("UpdateHealth", this.OnUpdateHealth);
 		}
 

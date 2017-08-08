@@ -242,6 +242,6 @@ db.clHeroes.find({characterLevel: { $gte:1, $lt: 4 }})
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }}}, {$sample: {size: 5}}])
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: '91c7e267-4767-482f-9e16-8af0ba056ca0s'}}}, {$sample: {size: 5}}])
 
-db.clSkills.find({});
-db.clSkills.updateMany({}, {$set: {skillTime: 0.1}});
+db.clHeroes.find({});
+db.clHeroes.updateMany({}, {$inc: {characterStep: 1}});
 

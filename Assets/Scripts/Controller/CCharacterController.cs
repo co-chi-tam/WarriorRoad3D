@@ -20,8 +20,10 @@ namespace WarriorRoad {
 		[Header ("Component")]
 		[SerializeField]	protected CFSMComponent m_FSMComponent;
 		[SerializeField]	protected CEventComponent m_EventComponent;
+		[SerializeField]	protected CSimpleSkillSlotComponent m_SkillSlotComponent;
 
 		protected CMapManager m_MapManager;
+		protected float m_AttackDelay = 0f;
 
 		protected override void Awake ()
 		{
@@ -41,6 +43,7 @@ namespace WarriorRoad {
 			base.RegisterComponent ();
 			this.m_ListComponents.Add (this.m_FSMComponent);
 			this.m_ListComponents.Add (this.m_EventComponent);
+			this.m_ListComponents.Add (this.m_SkillSlotComponent);
 		}
 
 		#region FSM
@@ -69,7 +72,6 @@ namespace WarriorRoad {
 		#region Control
 
 		public virtual void StartIdle() {
-			
 		}
 
 		public virtual void UpdateAction(float dt) {
@@ -81,6 +83,14 @@ namespace WarriorRoad {
 			if (target != null) {
 				target.SetTargetEnemy (this);
 				this.SetTargetEnemy (target);
+				if (this.m_AttackDelay < 0f) {
+					this.m_AttackDelay = this.m_CharacterData.characterAttackSpeed;
+					// TEST
+					this.m_SkillSlotComponent.ActiveSkillSlot (0, target);
+				} else {
+					this.m_AttackDelay -= dt;
+				}
+				this.SetRotation (target.GetPosition());
 			}
 		}
 
@@ -117,6 +127,24 @@ namespace WarriorRoad {
 			base.SetData (value);
 			this.m_CharacterData = value as CCharacterData;
 			this.m_FSMComponent.ActiveFSM (true);
+			// TEST
+			this.m_CharacterData.characterSkillSlots = new CSkillData[] { 
+				new CSkillData () {
+					uID = "502ec8465441f1d108b8c963ec402b08",
+					objectName = "Normal Attack",
+					objectAvatar = "NormalAttack-avatar",
+					objectModel = "NormalAttack-model",
+					skillDelay = 0.1f,
+					skillTime = 0.1f,
+					skillTriggers = new CSkillEffect[] {
+						new CSkillEffect () {
+							skillValue = 1,
+							skillMethod = "ApplyDamage"
+						}
+					}
+				}
+			};
+			this.m_SkillSlotComponent.Init (this, this.m_CharacterData.characterSkillSlots);
 		}
 
 		public override CObjectData GetData ()

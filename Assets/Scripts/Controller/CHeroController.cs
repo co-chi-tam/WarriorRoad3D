@@ -8,10 +8,8 @@ namespace WarriorRoad {
 		
 		[Header ("Component")]
 		[SerializeField]	protected CJumperComponent m_JumpComponent;
-		[SerializeField]	protected CSimpleSkillSlotComponent m_SkillSlotComponent;
 
 		protected CBlockController m_NextBlock;
-		protected float m_AttackDelay = 0f;
 
 		protected override void Awake ()
 		{
@@ -28,7 +26,6 @@ namespace WarriorRoad {
 		{
 			base.RegisterComponent ();
 			this.m_ListComponents.Add (this.m_JumpComponent);
-			this.m_ListComponents.Add (this.m_SkillSlotComponent);
 		}
 
 		#region FSM
@@ -40,14 +37,6 @@ namespace WarriorRoad {
 
 		public override bool IsMoveToTargetBlock() {
 			return this.currentBlock == this.targetBlock;
-		}
-
-		public override bool HaveEnemy ()
-		{
-			base.HaveEnemy ();
-			if (this.m_TargetEnemy == null)
-				return false;
-			return this.m_TargetEnemy.GetActive ();
 		}
 
 		#endregion
@@ -87,21 +76,6 @@ namespace WarriorRoad {
 			}
 		}
 
-		public override void UpdateAttackAction(float dt) {
-			base.UpdateAttackAction (dt);
-			var target = this.m_TargetEnemy as CCharacterController;
-			if (target != null) {
-				if (this.m_AttackDelay < 0f) {
-					this.m_AttackDelay = this.m_CharacterData.characterAttackSpeed;
-					// TEST
-					this.m_SkillSlotComponent.ActiveSkillSlot (0, target);
-				} else {
-					this.m_AttackDelay -= dt;
-				}
-				this.SetRotation (target.GetPosition());
-			}
-		}
-
 		#endregion
 
 		#region Getter && Setter
@@ -109,29 +83,6 @@ namespace WarriorRoad {
 		public override void SetJumpCurve(float time) {
 			base.SetJumpCurve (time);
 			this.m_JumpComponent.SetJumpCurve (time);
-		}
-
-		public override void SetData (CObjectData value)
-		{
-			base.SetData (value);
-			// TEST
-			this.m_CharacterData.characterSkillSlots = new CSkillData[] { 
-				new CSkillData () {
-					uID = "502ec8465441f1d108b8c963ec402b08",
-					objectName = "Normal Attack",
-					objectAvatar = "NormalAttack-avatar",
-					objectModel = "NormalAttack-model",
-					skillDelay = 0.1f,
-					skillTime = 0.1f,
-					skillTriggers = new CSkillEffect[] {
-						new CSkillEffect () {
-							skillValue = 1,
-							skillMethod = "ApplyDamage"
-						}
-					}
-				}
-			};
-			this.m_SkillSlotComponent.Init (this, this.m_CharacterData.characterSkillSlots);
 		}
 
 		#endregion

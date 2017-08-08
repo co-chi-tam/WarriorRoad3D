@@ -111,8 +111,10 @@ namespace WarriorRoad {
 				monsterGO.transform.localRotation = Quaternion.identity;
 				monsterGO.SetActive (true);
 				monsterGO.SetData (data);
+				monsterGO.currentBlock = parent;
+				monsterGO.targetBlock = parent;
 				monsterGO.Init ();
-				CUIGameManager.Instance.OnLoadCharacterInfo (data, monsterGO, true);
+				CUIGameManager.Instance.OnLoadCharacterInfo (monsterGO, true);
 			}
 			yield return null;
 		}

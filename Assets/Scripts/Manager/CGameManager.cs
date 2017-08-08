@@ -65,7 +65,7 @@ namespace WarriorRoad {
 			this.m_CharacterController.targetBlock = currentBlock;
 			this.m_CharacterController.SetPosition (currentBlock.GetMovePointPosition());
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
-			CUIGameManager.Instance.OnLoadCharacterInfo (heroData, this.m_CharacterController, false);
+			CUIGameManager.Instance.OnLoadCharacterInfo (this.m_CharacterController, false);
 			this.OnLoadingCompleted ();
 		}
 
@@ -75,10 +75,15 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnPlayerRollDice() {
+			if (this.m_CharacterController.HaveEnemy ())
+				return;
 			Debug.LogWarning ("OnPlayerRollDice ");
-			var randomStep = UnityEngine.Random.Range (1, 7);
+			this.m_UserManager.OnClientRollDice ();
+		}
+
+		public virtual void OnPlayerUpdateStep (int value) {
 			var currentStep = this.m_CharacterController.GetStep ();
-			var randomBlock = this.m_MapManager.CalculateCurrentBlock (currentStep + randomStep);
+			var randomBlock = this.m_MapManager.CalculateCurrentBlock (currentStep + value);
 			this.m_CharacterController.targetBlock = randomBlock;
 		}
 

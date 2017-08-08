@@ -19,9 +19,6 @@ namespace WarriorRoad {
 		[Header ("USER DATA")]
 		public CUserData currentUser;
 
-		[Header ("HERO DATA")]
-		public CCharacterData currentHeroData;
-
 		// EVENT
 		public Action<CUserData> OnEventLoginCompleted;
 		public Action<CUserData> OnEventRegisterCompleted;
@@ -241,6 +238,11 @@ namespace WarriorRoad {
 					this.OnClientUpdatedMapObjects (onClientCompletedMapMsg.data);
 				});
 
+				this.m_SocketIO.On ("clientReceiveDice", delegate(SocketIOEvent onClientReceiveDiceMsg) {
+					Debug.LogWarning ("OnClientReceiveDice " + onClientReceiveDiceMsg.ToString());	
+					this.OnClientReceiveDice (onClientReceiveDiceMsg.data);
+				}); 
+					
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
 					this.OnClientError (errorMsg.ToString ());
 				});
@@ -294,9 +296,6 @@ namespace WarriorRoad {
 			case "LoadingScene":
 				this.OnClientSetupLoadingScene (receiveData);
 				break;
-			case "ErrorScene":
-				this.OnClientSetupErrorScene (receiveData);
-				break;
 			default:
 				processTask = "LoginScene";
 				this.OnClientSetupLoginScene (receiveData);
@@ -321,7 +320,6 @@ namespace WarriorRoad {
 				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
-			this.currentHeroData = heroData;
 			// HEROES TEMPLATE
 			var isHeroTemplate = receiveData.HasField ("heroesTemplate");
 			Dictionary<string, CCharacterData> heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
@@ -341,7 +339,6 @@ namespace WarriorRoad {
 				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
-			this.currentHeroData = heroData;
 		}
 
 		protected virtual void OnClientSetupLoginScene(JSONObject receiveData) {
@@ -350,10 +347,6 @@ namespace WarriorRoad {
 
 		public virtual void OnClientSetupLoadingScene(JSONObject receiveData) {
 
-		}
-
-		public virtual void OnClientSetupErrorScene(JSONObject receiveData) {
-		
 		}
 
 		public virtual void OnClientCreateHero(string heroType, string heroName) {
@@ -386,7 +379,6 @@ namespace WarriorRoad {
 					mapBlocks.Add (null);
 				}
 			}
-//			CMapManager.Instance.ClearMap ();
 			CMapManager.Instance.LoadMapObject (mapBlocks);
 		}
 
@@ -398,10 +390,29 @@ namespace WarriorRoad {
 
 		public virtual void OnClientUpdatedMapObjects(JSONObject data) {
 			var processTask = "LoadingScene";
+			// HERO DATA
+			var isHeroData = data.HasField ("heroData");
+			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			if (isHeroData) {
+				var heroDataJson = data.GetField ("heroData").ToString ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
+			} 
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 			// COMPLETE TASK
 			CRootTask.Instance.ProcessNextTask (processTask);
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
 			CUICustomManager.Instance.ActiveLoading (false);
+		}
+
+		public virtual void OnClientRollDice() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientRollDice", new JSONObject());
+		}
+
+		public virtual void OnClientReceiveDice(JSONObject data) {
+			var step = int.Parse (data.GetField ("diceStep").ToString());
+			CGameManager.Instance.OnPlayerUpdateStep (step);
 		}
 
 		#endregion
