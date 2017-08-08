@@ -19,7 +19,7 @@ namespace WarriorRoad {
 		public CCreateHeroTask () : base ()
 		{
 			this.taskName = "CreateHeroScene";
-			this.nextTask = "PlayScene";
+			this.nextTask = "LoadingScene";
 		}
 
 		#endregion

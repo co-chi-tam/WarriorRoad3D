@@ -92,7 +92,7 @@ namespace WarriorRoad {
 			var target = this.m_TargetEnemy as CCharacterController;
 			if (target != null) {
 				if (this.m_AttackDelay < 0f) {
-					this.m_AttackDelay = 1f / this.m_CharacterData.characterAttackSpeed;
+					this.m_AttackDelay = this.m_CharacterData.characterAttackSpeed;
 					// TEST
 					this.m_SkillSlotComponent.ActiveSkillSlot (0, target);
 				} else {

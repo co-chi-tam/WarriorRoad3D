@@ -28,8 +28,10 @@ namespace WarriorRoad {
 		public virtual void LoadMap() {
 			this.m_Map ["IntroScene"]		= new CIntroTask ();
 			this.m_Map ["LoginScene"]		= new CLoginTask ();
+			this.m_Map ["LoadingScene"]		= new CLoadingTask ();
 			this.m_Map ["CreateHeroScene"]	= new CCreateHeroTask ();
 			this.m_Map ["PlayScene"] 		= new CPlayTask ();
+			this.m_Map ["ErrorScene"] 		= new CErrorTask ();
 		}
 
 		#endregion

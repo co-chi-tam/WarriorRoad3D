@@ -19,12 +19,6 @@ namespace WarriorRoad {
 		protected void Update() {
 			if (this.m_LoadingCompleted == false)
 				return;
-			if (Input.GetKeyDown (KeyCode.G)) {
-				this.m_MapManager.GenerateRoadMap ();
-			}
-			if (Input.GetKeyDown (KeyCode.L)) {
-				this.m_MapManager.ClearMap ();
-			}
 			this.m_MainCamera.transform.LookAt (this.m_CharacterController.GetPosition ());
 		}
 
@@ -70,6 +64,8 @@ namespace WarriorRoad {
 			this.m_CharacterController.currentBlock = currentBlock;
 			this.m_CharacterController.targetBlock = currentBlock;
 			this.m_CharacterController.SetPosition (currentBlock.GetMovePointPosition());
+			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
+			CUIGameManager.Instance.OnLoadCharacterInfo (heroData, this.m_CharacterController.gameObject, false);
 			this.OnLoadingCompleted ();
 		}
 

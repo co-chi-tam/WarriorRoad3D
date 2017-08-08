@@ -112,6 +112,7 @@ namespace WarriorRoad {
 				monsterGO.SetActive (true);
 				monsterGO.SetData (data);
 				monsterGO.Init ();
+				CUIGameManager.Instance.OnLoadCharacterInfo (data, monsterGO.gameObject, true);
 			}
 			yield return null;
 		}

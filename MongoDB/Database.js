@@ -143,97 +143,101 @@ db.createCollection('clMonsters');
 db.clMonsters.createIndex({'uID': 1}, {unique: true});
 db.clMonsters.insertMany([{
     'uID': '0e9ce878-e95e-43b7-afd7-c23bcca1eb92',
-    'objectName': 'Bat',
-    'objectAvatar': 'Bat-avatar',
-    'objectModel': 'Bat-model',
-    'characterAttackPoint': 20,
-    'maxAttackPoint': 500,
-    'characterAttackSpeed': 1,
-    'maxAttackSpeed': 2,
-    'characterDefendPoint': 5,
-    'maxDefendPoint': 500,
-    'characterHealthPoint': 50,
-    'characterMaxHealthPoint': 50,
-    'maxHealthPoint': 9999,
-    'characterSkillSlots': [],
-    'characterLevel': 1,
-    'dataPerLevel': {
-            'characterAttackPoint': 2,
-            'characterAttackSpeed': 0.1,
-            'characterDefendPoint': 2,
-            'characterMaxHealthPoint': 5
-        }
+    'objectName': 'Bat',
+    'objectAvatar': 'Bat-avatar',
+    'objectModel': 'Bat-model',
+    'characterAttackPoint': 20,
+    'maxAttackPoint': 500,
+    'characterAttackSpeed': 1,
+    'maxAttackSpeed': 2,
+    'characterDefendPoint': 5,
+    'maxDefendPoint': 500,
+    'characterHealthPoint': 50,
+    'characterMaxHealthPoint': 50,
+    'maxHealthPoint': 9999,
+    'characterSkillSlots': [],
+    'characterLevel': 1,
+    'dataPerLevel': {
+            'characterAttackPoint': 2,
+            'characterAttackSpeed': 0.1,
+            'characterDefendPoint': 2,
+            'characterMaxHealthPoint': 5
+        }
     },{
     'uID': '3b3d7412-437a-4a73-901d-33a7811a44c2',
-    'objectName': 'Ghost',
-    'objectAvatar': 'Ghost-avatar',
-    'objectModel': 'Ghost-model',
-    'characterAttackPoint': 20,
-    'maxAttackPoint': 500,
-    'characterAttackSpeed': 1,
-    'maxAttackSpeed': 2,
-    'characterDefendPoint': 5,
-    'maxDefendPoint': 500,
-    'characterHealthPoint': 50,
-    'characterMaxHealthPoint': 50,
-    'maxHealthPoint': 9999,
-    'characterSkillSlots': [],
-    'characterLevel': 1,
-    'dataPerLevel': {
-            'characterAttackPoint': 2,
-            'characterAttackSpeed': 0.1,
-            'characterDefendPoint': 2,
-            'characterMaxHealthPoint': 5
-        }
-    },{
-    'uID': '7531c544-ce9a-4faf-bda4-8e38b6a9ffa3',
-    'objectName': 'Rabbit',
-    'objectAvatar': 'Rabbit-avatar',
-    'objectModel': 'Rabbit-model',
-    'characterAttackPoint': 20,
-    'maxAttackPoint': 500,
-    'characterAttackSpeed': 1,
-    'maxAttackSpeed': 2,
-    'characterDefendPoint': 5,
-    'maxDefendPoint': 500,
-    'characterHealthPoint': 50,
-    'characterMaxHealthPoint': 50,
-    'maxHealthPoint': 9999,
-    'characterSkillSlots': [],
-    'characterLevel': 1,
-    'dataPerLevel': {
-            'characterAttackPoint': 2,
-            'characterAttackSpeed': 0.1,
-            'characterDefendPoint': 2,
-            'characterMaxHealthPoint': 5
-        }
+    'objectName': 'Ghost',
+    'objectAvatar': 'Ghost-avatar',
+    'objectModel': 'Ghost-model',
+    'characterAttackPoint': 20,
+    'maxAttackPoint': 500,
+    'characterAttackSpeed': 1,
+    'maxAttackSpeed': 2,
+    'characterDefendPoint': 5,
+    'maxDefendPoint': 500,
+    'characterHealthPoint': 50,
+    'characterMaxHealthPoint': 50,
+    'maxHealthPoint': 9999,
+    'characterSkillSlots': [],
+    'characterLevel': 1,
+    'dataPerLevel': {
+            'characterAttackPoint': 2,
+            'characterAttackSpeed': 0.1,
+            'characterDefendPoint': 2,
+            'characterMaxHealthPoint': 5
+        }
+    },{
+    'uID': '7531c544-ce9a-4faf-bda4-8e38b6a9ffa3',
+    'objectName': 'Rabbit',
+    'objectAvatar': 'Rabbit-avatar',
+    'objectModel': 'Rabbit-model',
+    'characterAttackPoint': 20,
+    'maxAttackPoint': 500,
+    'characterAttackSpeed': 1,
+    'maxAttackSpeed': 2,
+    'characterDefendPoint': 5,
+    'maxDefendPoint': 500,
+    'characterHealthPoint': 50,
+    'characterMaxHealthPoint': 50,
+    'maxHealthPoint': 9999,
+    'characterSkillSlots': [],
+    'characterLevel': 1,
+    'dataPerLevel': {
+            'characterAttackPoint': 2,
+            'characterAttackSpeed': 0.1,
+            'characterDefendPoint': 2,
+            'characterMaxHealthPoint': 5
+        }
     },{
     'uID': '4183cf0f-807c-4ea1-9cd8-984d17321875',
-    'objectName': 'Slime',
-    'objectAvatar': 'Slime-avatar',
-    'objectModel': 'Slime-model',
-    'characterAttackPoint': 20,
-    'maxAttackPoint': 500,
-    'characterAttackSpeed': 1,
-    'maxAttackSpeed': 2,
-    'characterDefendPoint': 5,
-    'maxDefendPoint': 500,
-    'characterHealthPoint': 50,
-    'characterMaxHealthPoint': 50,
-    'maxHealthPoint': 9999,
-    'characterSkillSlots': [],
-    'characterLevel': 1,
-    'dataPerLevel': {
-            'characterAttackPoint': 2,
-            'characterAttackSpeed': 0.1,
-            'characterDefendPoint': 2,
-            'characterMaxHealthPoint': 5
-        }
-    }]);
+    'objectName': 'Slime',
+    'objectAvatar': 'Slime-avatar',
+    'objectModel': 'Slime-model',
+    'characterAttackPoint': 20,
+    'maxAttackPoint': 500,
+    'characterAttackSpeed': 1,
+    'maxAttackSpeed': 2,
+    'characterDefendPoint': 5,
+    'maxDefendPoint': 500,
+    'characterHealthPoint': 50,
+    'characterMaxHealthPoint': 50,
+    'maxHealthPoint': 9999,
+    'characterSkillSlots': [],
+    'characterLevel': 1,
+    'dataPerLevel': {
+            'characterAttackPoint': 2,
+            'characterAttackSpeed': 0.1,
+            'characterDefendPoint': 2,
+            'characterMaxHealthPoint': 5
+        }
+    }]);
     
+db.createCollection("clMaps");
+db.clMaps.createIndex({'uID': 1}, {unique: true});
+db.clMaps.find({});
+    
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
-db.clMonsters.find({objectName: /i/i}});
+db.clMonsters.find({objectName: /i/i}});
 db.clMonsters.remove({});
 
 db.clUsers.aggregate([{$match: {uName: {$in: ['user0001', 'user0005']}}}, {$sample: {size: 5}}])

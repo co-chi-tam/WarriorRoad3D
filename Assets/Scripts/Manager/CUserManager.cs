@@ -60,6 +60,10 @@ namespace WarriorRoad {
 				SendPing ();
 				m_PingDelayTime = 3f;
 			}
+
+			if (Input.GetKeyDown (KeyCode.G)) {
+				this.OnClientCompletedMap ();
+			}
 		}
 
 		protected virtual void OnGUI() {
@@ -229,7 +233,12 @@ namespace WarriorRoad {
 
 				this.m_SocketIO.On ("clientInitMap", delegate(SocketIOEvent onClientInitGameMsg) {
 					Debug.LogWarning ("clientInitMap " + onClientInitGameMsg.ToString());	
-					this.OnClientReceiveMap (onClientInitGameMsg.data);
+					this.OnClientReceiveMapObjects (onClientInitGameMsg.data);
+				});
+
+				this.m_SocketIO.On ("clientUpdatedMap", delegate(SocketIOEvent onClientCompletedMapMsg) {
+					Debug.LogWarning ("clientUpdatedMap " + onClientCompletedMapMsg.ToString());	
+					this.OnClientUpdatedMapObjects (onClientCompletedMapMsg.data);
 				});
 
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
@@ -282,6 +291,12 @@ namespace WarriorRoad {
 			case "LoginScene":
 				this.OnClientSetupLoginScene (receiveData);
 				break;
+			case "LoadingScene":
+				this.OnClientSetupLoadingScene (receiveData);
+				break;
+			case "ErrorScene":
+				this.OnClientSetupErrorScene (receiveData);
+				break;
 			default:
 				processTask = "LoginScene";
 				this.OnClientSetupLoginScene (receiveData);
@@ -333,6 +348,14 @@ namespace WarriorRoad {
 
 		}
 
+		public virtual void OnClientSetupLoadingScene(JSONObject receiveData) {
+
+		}
+
+		public virtual void OnClientSetupErrorScene(JSONObject receiveData) {
+		
+		}
+
 		public virtual void OnClientCreateHero(string heroType, string heroName) {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
@@ -351,19 +374,34 @@ namespace WarriorRoad {
 			this.m_SocketIO.Emit ("clientInitMap", new JSONObject());
 		}
 
-		public virtual void OnClientReceiveMap(JSONObject data) {
+		public virtual void OnClientReceiveMapObjects(JSONObject data) {
 			var mapList = data.GetField ("mapBlocks").list;
-			var mapBlock = new List<CCharacterData> ();
+			var mapBlocks = new List<CCharacterData> ();
 			for (int i = 0; i < mapList.Count; i++) {
 				var objectStr = mapList [i].ToString ();
 				if (objectStr.Equals ("null") == false) {
 					var objectData = TinyJSON.JSON.Load (objectStr).Make<CCharacterData> ();
-					mapBlock.Add (objectData);
+					mapBlocks.Add (objectData);
 				} else {
-					mapBlock.Add (null);
+					mapBlocks.Add (null);
 				}
 			}
-			CMapManager.Instance.LoadMapObject (mapBlock);
+//			CMapManager.Instance.ClearMap ();
+			CMapManager.Instance.LoadMapObject (mapBlocks);
+		}
+
+		public virtual void OnClientCompletedMap() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientCompletedMap", new JSONObject());
+		}
+
+		public virtual void OnClientUpdatedMapObjects(JSONObject data) {
+			var processTask = "LoadingScene";
+			// COMPLETE TASK
+			CRootTask.Instance.ProcessNextTask (processTask);
+			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
 		#endregion
