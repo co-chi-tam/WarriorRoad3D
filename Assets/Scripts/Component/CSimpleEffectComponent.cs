@@ -56,8 +56,28 @@ namespace WarriorRoad {
 			this.m_TargetContext = value;
 		}
 
+		public virtual void SetTarget(ISimpleStatusContext value) {
+			this.m_TargetContext = value;
+		}
+
 		public virtual ISimpleStatusContext GetTarget() {
 			return this.m_TargetContext;
+		}
+
+		public virtual void SetOwner(ISimpleStatusContext value) {
+			this.m_OwnerContext = value;
+		}
+
+		public virtual ISimpleStatusContext GetOwner() {
+			return this.m_OwnerContext;
+		}
+
+		public virtual CSkillData GetData() {
+			return this.m_SkillData;
+		}
+
+		public virtual void SetData(CSkillData value) {
+			this.m_SkillData = value;
 		}
 
 	}

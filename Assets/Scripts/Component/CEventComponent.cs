@@ -15,7 +15,7 @@ namespace WarriorRoad {
 			this.m_Events = new Dictionary<string, EVCallback> ();
 		}
 
-		public virtual void AddCallback(string name, Action callback) {
+		public virtual void AddCallback(string name, Action<object[]> callback) {
 			if (this.m_Events.ContainsKey (name))
 				return;
 			var callbackEvent = new EVCallback ();
@@ -33,13 +33,21 @@ namespace WarriorRoad {
 			if (this.m_Events.ContainsKey (name) == false)
 				return;
 			if (this.m_Events [name].callback != null) {
-				this.m_Events [name].callback ();
+				this.m_Events [name].callback (null);
+			}
+		}
+
+		public virtual void TriggerCallback(string name, params object[] prams) {
+			if (this.m_Events.ContainsKey (name) == false)
+				return;
+			if (this.m_Events [name].callback != null) {
+				this.m_Events [name].callback (prams);
 			}
 		}
 		
 	}
 
 	public class EVCallback {
-		public Action callback;
+		public Action<object[]> callback;
 	}
 }

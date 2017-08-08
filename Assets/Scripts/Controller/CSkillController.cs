@@ -23,13 +23,7 @@ namespace WarriorRoad {
 		{
 			base.Awake ();
 			this.m_FSMComponent.Init (this);
-		}
-
-		protected override void Update ()
-		{
-			base.Update ();
-			var dt = Time.deltaTime;
-			this.m_SkillTime -= dt;
+			this.m_EffectComponent.Init (this.m_SkillData, this.m_Owner);
 		}
 
 		protected override void RegisterComponent ()
@@ -67,8 +61,8 @@ namespace WarriorRoad {
 			this.m_FSMComponent.ActiveFSM (true);
 			if (value && this.m_SkillData != null) {
 				this.m_SkillTime = this.m_SkillData.skillTime;
-				this.m_EffectComponent.Init (this.m_SkillData, this.m_Owner);
 				this.m_FSMComponent.StartFirstState ();
+				this.m_EffectComponent.SetData (this.m_SkillData);
 			}
 		}
 
@@ -100,6 +94,7 @@ namespace WarriorRoad {
 
 		public override void SetOwner(CObjectController value) {
 			this.m_Owner = value as ISimpleStatusContext;
+			this.m_EffectComponent.SetOwner (this.m_Owner);
 		}
 
 		public virtual CObjectController GetOwner() {

@@ -99,9 +99,8 @@ db.clSkills.insertMany([{
     'objectName': 'Normal Attack',
     'objectAvatar': 'NormalAttack-avatar',
     'objectModel': 'NormalAttack-model',
-    'skillDelay': 0.01,
-    'skillTime': 0.01,
-    'skillEffectTime': 0.01,
+    'skillDelay': 0.1,
+    'skillTime': 0.1,
     'skillEffects': [
         {
             'skillValue': 1,
@@ -114,8 +113,7 @@ db.clSkills.insertMany([{
     'objectAvatar': 'Bash-avatar',
     'objectModel': 'Bash-model',
     'skillDelay': 5,
-    'skillTime': 0.01,
-    'skillEffectTime': 0.01,
+    'skillTime': 0.1,
     'skillTriggers': [
         {
             'skillValue': 20,
@@ -128,8 +126,7 @@ db.clSkills.insertMany([{
     'objectAvatar': 'FireBall-avatar',
     'objectModel': 'FireBall-model',
     'skillDelay': 10,
-    'skillTime': 0.01,
-    'skillEffectTime': 0.01,
+    'skillTime': 0.1,
     'skillTriggers': [
         {
             'skillValue': 25,
@@ -244,6 +241,7 @@ db.clUsers.aggregate([{$match: {uName: {$in: ['user0001', 'user0005']}}}, {$samp
 db.clHeroes.find({characterLevel: { $gte:1, $lt: 4 }})
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }}}, {$sample: {size: 5}}])
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: '91c7e267-4767-482f-9e16-8af0ba056ca0s'}}}, {$sample: {size: 5}}])
-
-
+
+db.clSkills.find({});
+db.clSkills.updateMany({}, {$set: {skillTime: 0.1}});
 

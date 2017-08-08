@@ -23,7 +23,7 @@ namespace WarriorRoad {
 			CGameManager.Instance.OnPlayerRollDice ();
 		}
 
-		public virtual void OnLoadCharacterInfo(CCharacterData info, GameObject parent, bool isEnemy) {
+		public virtual void OnLoadCharacterInfo(CCharacterData info, CCharacterController parent, bool isEnemy) {
 			var charInfo = GameObject.Instantiate (this.m_CharacterInfoPrefab);
 			charInfo.SetupInfo (info.objectName, info.characterLevel.ToString(), parent, isEnemy);
 			charInfo.transform.SetParent (this.m_CharacterInfoRoot.transform);

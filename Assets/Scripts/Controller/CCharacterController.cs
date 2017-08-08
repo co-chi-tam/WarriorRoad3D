@@ -92,8 +92,20 @@ namespace WarriorRoad {
 			this.m_EventComponent.TriggerCallback (name);
 		}
 
+		public virtual void InvokeAction(string name, params object[] prams) {
+			this.m_EventComponent.TriggerCallback (name, prams);
+		}
+
 		public virtual void AddAction(string name, System.Action callback) {
-			this.m_EventComponent.AddCallback (name, callback);
+			this.m_EventComponent.AddCallback (name, (objs) => {
+				if (callback != null) {
+					callback();
+				}
+			});
+		}
+
+		public virtual void AddAction(string name, System.Action<object[]> callbacks) {
+			this.m_EventComponent.AddCallback (name, callbacks);
 		}
 
 		#endregion
@@ -153,7 +165,7 @@ namespace WarriorRoad {
 			return this.m_CharacterData.characterStep;
 		}
 
-		public void SetHealth (int value)
+		public virtual void SetHealth (int value)
 		{
 			var totalHealth = value <= 0 
 				? 0 
@@ -164,21 +176,24 @@ namespace WarriorRoad {
 			totalHealth = totalHealth > this.m_CharacterData.maxHealthPoint 
 				? this.m_CharacterData.maxHealthPoint 
 				: totalHealth;
-			
+
+			var changedHealth = totalHealth - this.m_CharacterData.characterHealthPoint;
+			this.InvokeAction ("UpdateHealth", changedHealth);
+
 			this.m_CharacterData.characterHealthPoint = totalHealth;
 		}
 
-		public int GetHealth ()
+		public virtual int GetHealth ()
 		{
 			return this.m_CharacterData.characterHealthPoint;
 		}
 
-		public int GetMaxHealth ()
+		public virtual int GetMaxHealth ()
 		{
 			return this.m_CharacterData.characterMaxHealthPoint;
 		}
 
-		public void SetAttackPoint (int value)
+		public virtual void SetAttackPoint (int value)
 		{
 			var totalPoint = value <= 0 
 				? 0 
@@ -188,12 +203,12 @@ namespace WarriorRoad {
 			this.m_CharacterData.characterAttackPoint = totalPoint;
 		}
 
-		public int GetAttackPoint ()
+		public virtual int GetAttackPoint ()
 		{
 			return this.m_CharacterData.characterAttackPoint;
 		}
 
-		public void SetAttackSpeed (float value)
+		public virtual void SetAttackSpeed (float value)
 		{
 			var totalPoint = value <= 0f 
 				? 0f
@@ -203,12 +218,12 @@ namespace WarriorRoad {
 			this.m_CharacterData.characterAttackSpeed = totalPoint;
 		}
 
-		public float GetAttackSpeed ()
+		public virtual float GetAttackSpeed ()
 		{
 			return this.m_CharacterData.characterAttackSpeed;
 		}
 
-		public void SetDefendPoint (int value)
+		public virtual void SetDefendPoint (int value)
 		{
 			var totalPoint = value <= 0 
 				? 0 
@@ -218,7 +233,7 @@ namespace WarriorRoad {
 			this.m_CharacterData.characterDefendPoint = totalPoint;
 		}
 
-		public int GetDefendPoint ()
+		public virtual int GetDefendPoint ()
 		{
 			return this.m_CharacterData.characterDefendPoint;
 		}

@@ -8,14 +8,12 @@ namespace WarriorRoad {
 
 		public float skillDelay;		// DELAY TIME
 		public float skillTime;			// TIME AFFECT
-		public float skillEffectTime;	// EFFECT TIME
 		public CSkillEffect[] skillTriggers;
 
 		public CSkillData (): base ()
 		{
 			this.skillDelay 		= 0f;
 			this.skillTime 			= 0f;
-			this.skillEffectTime 	= 0f;
 		}
 
 	}

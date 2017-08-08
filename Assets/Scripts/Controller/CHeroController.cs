@@ -121,9 +121,8 @@ namespace WarriorRoad {
 					objectName = "Normal Attack",
 					objectAvatar = "NormalAttack-avatar",
 					objectModel = "NormalAttack-model",
-					skillDelay = 2f,
-					skillTime = 1f,
-					skillEffectTime = 0.2f,
+					skillDelay = 0.1f,
+					skillTime = 0.1f,
 					skillTriggers = new CSkillEffect[] {
 						new CSkillEffect () {
 							skillValue = 1,

@@ -65,7 +65,7 @@ namespace WarriorRoad {
 			this.m_CharacterController.targetBlock = currentBlock;
 			this.m_CharacterController.SetPosition (currentBlock.GetMovePointPosition());
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
-			CUIGameManager.Instance.OnLoadCharacterInfo (heroData, this.m_CharacterController.gameObject, false);
+			CUIGameManager.Instance.OnLoadCharacterInfo (heroData, this.m_CharacterController, false);
 			this.OnLoadingCompleted ();
 		}
 
