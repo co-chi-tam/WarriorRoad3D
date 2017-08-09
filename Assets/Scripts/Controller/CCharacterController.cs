@@ -86,7 +86,8 @@ namespace WarriorRoad {
 				if (this.m_AttackDelay < 0f) {
 					this.m_AttackDelay = this.m_CharacterData.characterAttackSpeed;
 					// TEST
-					this.m_SkillSlotComponent.ActiveSkillSlot (0, target);
+					var random = UnityEngine.Random.Range (0, this.m_CharacterData.characterSkillSlots.Length);
+					this.m_SkillSlotComponent.ActiveSkillSlot (random, target);
 				} else {
 					this.m_AttackDelay -= dt;
 				}
@@ -129,7 +130,7 @@ namespace WarriorRoad {
 			this.m_FSMComponent.ActiveFSM (true);
 			// TEST
 			this.m_CharacterData.characterSkillSlots = new CSkillData[] { 
-				new CSkillData () {
+				new CSkillData () { // DEFAULT SKILL
 					uID = "502ec8465441f1d108b8c963ec402b08",
 					objectName = "Normal Attack",
 					objectAvatar = "NormalAttack-avatar",
@@ -139,6 +140,34 @@ namespace WarriorRoad {
 					skillTriggers = new CSkillEffect[] {
 						new CSkillEffect () {
 							skillValue = 1,
+							skillMethod = "ApplyDamage"
+						}
+					}
+				},
+				new CSkillData () {
+					uID = "502ec8465441f1d108b8c963ec404a66",
+					objectName = "Bash",
+					objectAvatar = "BashSkill-avatar",
+					objectModel = "BashSkill-model",
+					skillDelay = 3f,
+					skillTime = 0.1f,
+					skillTriggers = new CSkillEffect[] {
+						new CSkillEffect () {
+							skillValue = 15,
+							skillMethod = "ApplyDamage"
+						}
+					}
+				},
+				new CSkillData () {
+					uID = "202ec346f441f1d1a8b8c963ec404a66",
+					objectName = "Fire ball",
+					objectAvatar = "FireBall-avatar",
+					objectModel = "FireBall-model",
+					skillDelay = 5f,
+					skillTime = 1f,
+					skillTriggers = new CSkillEffect[] {
+						new CSkillEffect () {
+							skillValue = 25,
 							skillMethod = "ApplyDamage"
 						}
 					}

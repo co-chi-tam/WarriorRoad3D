@@ -16,6 +16,9 @@ namespace WarriorRoad {
 		public override void StartState()
 		{
 			base.StartState ();
+			var skillData = this.m_Controller.GetData () as CSkillData;
+			CObjectPoolManager.Set <CSkillController> (skillData.objectName, this.m_Controller);
+			this.m_Controller.SetActive (false);
 		}
 
 		public override void UpdateState(float dt)

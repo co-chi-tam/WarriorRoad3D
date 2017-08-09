@@ -12,22 +12,16 @@ namespace WarriorRoad {
 
 		protected ISimpleStatusContext m_Owner;
 		protected float[] m_DelayTemps;
-		protected CSkillController[] m_SkillSlotCtrls;
+		protected int m_DefaultNormalAttack = 0;
 
-		public new void Init (ISimpleStatusContext owner, CSkillData[] slots)
+		public new void Init (ISimpleStatusContext owner, CSkillData[] slots, int defaultSkill = 0)
 		{
 			base.Init ();
 			this.m_Owner = owner;
 			this.m_SkillSlot = slots;
+			this.m_DefaultNormalAttack = defaultSkill;
 			this.m_DelayTemps = new float[slots.Length];
-			this.m_SkillSlotCtrls = new CSkillController[slots.Length];
-			for (int i = 0; i < this.m_DelayTemps.Length; i++) {
-				var skillData = slots [i];
-				this.m_DelayTemps [i] = skillData.skillDelay;
-				this.m_SkillSlotCtrls[i] = GameObject.Instantiate (
-					Resources.Load <CSkillController> ("ObjectPrefabs/" + skillData.objectModel));
-				this.m_SkillSlotCtrls [i].SetData (skillData);
-			}
+			this.m_DelayTemps [defaultSkill] = 0.1f;
 		}
 
 		public override void UpdateComponent (float dt)
@@ -47,13 +41,29 @@ namespace WarriorRoad {
 				|| slot > this.m_SkillSlot.Length - 1)
 				return;
 			if (this.m_DelayTemps [slot] > 0f)
-				return;
+				slot = this.m_DefaultNormalAttack;
+			CHandleEvent.Instance.AddEvent (HandleActiveSkillSlot (slot, targets));
+		}
+
+		protected virtual IEnumerator HandleActiveSkillSlot(int slot, params ISimpleStatusContext[] targets) {
 			var skillData = this.m_SkillSlot [slot];
 			var skillDelay = skillData.skillDelay;
+			var skillCtrl = CObjectPoolManager.Get<CSkillController> (skillData.objectName);
+			while (skillCtrl == null) {
+				skillCtrl = GameObject.Instantiate (Resources.Load <CSkillController> ("ObjectPrefabs/" + skillData.objectModel));
+				CObjectPoolManager.Set <CSkillController> (skillData.objectName, skillCtrl);
+				yield return skillCtrl != null;
+				skillCtrl = CObjectPoolManager.Get<CSkillController> (skillData.objectName);
+			}
+			var ownerCtrl = this.m_Owner.GetController () as CObjectController;
+			var targetCtrl = targets [0].GetController () as CObjectController;
+			skillCtrl.SetData (skillData);
+			skillCtrl.SetOwner (ownerCtrl);
+			skillCtrl.SetTargetEnemy (targetCtrl);
+			skillCtrl.SetActive (true);
+			skillCtrl.SetPosition (targetCtrl.GetPosition());
+			skillCtrl.SetRotation (this.m_Owner.GetPosition());
 			this.m_DelayTemps [slot] = skillDelay;
-			this.m_SkillSlotCtrls[slot].SetOwner (this.m_Owner.GetController() as CObjectController);
-			this.m_SkillSlotCtrls[slot].SetTargetEnemy (targets[0].GetController() as CObjectController);
-			this.m_SkillSlotCtrls[slot].SetActive (true);
 		}
 		
 	}

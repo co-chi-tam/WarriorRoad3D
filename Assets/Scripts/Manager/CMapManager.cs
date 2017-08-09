@@ -103,18 +103,18 @@ namespace WarriorRoad {
 
 		private IEnumerator HandleSpawnBlockGuest(CBlockController parent, CCharacterData data) {
 			if (parent.enemyPoint != null && data != null) {
-				var monsterGO = Instantiate (Resources.Load<CCharacterController>("CharacterPrefabs/" + data.objectModel));
-				yield return monsterGO != null;
-				parent.blockGuest = monsterGO;
-				monsterGO.transform.SetParent (parent.enemyPoint.transform);
-				monsterGO.transform.localPosition = Vector3.zero;
-				monsterGO.transform.localRotation = Quaternion.identity;
-				monsterGO.SetActive (true);
-				monsterGO.SetData (data);
-				monsterGO.currentBlock = parent;
-				monsterGO.targetBlock = parent;
-				monsterGO.Init ();
-				CUIGameManager.Instance.OnLoadCharacterInfo (monsterGO, true);
+				var characterGO = Instantiate (Resources.Load<CCharacterController>("CharacterPrefabs/" + data.objectModel));
+				yield return characterGO != null;
+				parent.blockGuest = characterGO;
+				characterGO.transform.SetParent (parent.enemyPoint.transform);
+				characterGO.transform.localPosition = Vector3.zero;
+				characterGO.transform.localRotation = Quaternion.identity;
+				characterGO.SetActive (true);
+				characterGO.SetData (data);
+				characterGO.currentBlock = parent;
+				characterGO.targetBlock = parent;
+				characterGO.Init ();
+				CUIGameManager.Instance.OnLoadCharacterInfo (characterGO, true);
 			}
 			yield return null;
 		}

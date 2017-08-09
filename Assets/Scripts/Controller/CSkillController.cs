@@ -64,6 +64,7 @@ namespace WarriorRoad {
 				this.m_FSMComponent.StartFirstState ();
 				this.m_EffectComponent.SetData (this.m_SkillData);
 			}
+			this.gameObject.SetActive (value);	
 		}
 
 		public override void SetData (CObjectData value)

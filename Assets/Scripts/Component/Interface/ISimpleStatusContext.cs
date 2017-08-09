@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace WarriorRoad {
 	public interface ISimpleStatusContext {
@@ -20,6 +21,12 @@ namespace WarriorRoad {
 		bool GetActive();
 
 		object GetController();
+
+		Vector3 GetPosition();
+		void SetPosition(Vector3 value);
+
+		Vector3 GetRotation();
+		void SetRotation (Vector3 value);
 
 	}
 }

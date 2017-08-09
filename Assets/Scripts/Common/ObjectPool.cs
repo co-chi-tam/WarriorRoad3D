@@ -18,14 +18,18 @@ namespace ObjectPool
 
 		public void Create(T item)
 		{
+			if (item == null) return;
 			m_ListWaiting.Push(item);
 		}
 
 		public T Get()
 		{
-			T tmp = m_ListWaiting.Pop();
-			m_ListUsing.AddFirst(tmp);
-			return tmp;
+			if (m_ListWaiting.Count > 0) {
+				T tmp = m_ListWaiting.Pop ();
+				m_ListUsing.AddFirst (tmp);
+				return tmp;
+			}
+			return default (T);
 		}
 
 		public bool Get(ref T value)
@@ -45,7 +49,9 @@ namespace ObjectPool
 			if (m_ListUsing.Contains(item)) {
 				m_ListUsing.Remove(item);
 			}
-			m_ListWaiting.Push (item);
+			if (m_ListWaiting.Contains(item) == false) {
+				m_ListWaiting.Push (item);
+			}
 		}
 
 		public void Set(int index)
