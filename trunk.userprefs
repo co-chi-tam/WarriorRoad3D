@@ -1,14 +1,8 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Manager\CGameManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Manager\CUserManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Controller\CCharacterController.cs" Line="78" Column="4" />
-      <File FileName="Assets\Scripts\Manager\CGameManager.cs" Line="70" Column="1" />
-      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="400" Column="1" />
-      <File FileName="Assets\Scripts\Common\CUtil.cs" Line="37" Column="1" />
-      <File FileName="Assets\Scripts\UI\PlayGame\CUIGameManager.cs" Line="28" Column="16" />
-      <File FileName="Assets\Scripts\UI\CharacterInfo\CUICharacterInfo.cs" Line="37" Column="95" />
-      <File FileName="Assets\Scripts\Manager\CMapManager.cs" Line="117" Column="50" />
+      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="222" Column="41" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

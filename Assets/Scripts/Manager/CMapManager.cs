@@ -6,6 +6,8 @@ using SimpleSingleton;
 namespace WarriorRoad {
 	public class CMapManager : CMonoSingleton<CMapManager> {
 
+		#region Properties
+
 		[Header ("Map size")]
 		[SerializeField]	private int m_MapSize = 5;
 
@@ -22,10 +24,14 @@ namespace WarriorRoad {
 		public System.Action<float> OnMapGenerateProcess;
 		public System.Action OnMapGenerateComplete;
 
+		#endregion
+
+		#region Main methods
+
 		public CBlockController CalculateCurrentBlock (int index) {
 			if (this.m_Blocks == null)
 				return null;
-			var fitIndex = index % this.m_Blocks.Length;
+			var fitIndex = index < 0 ? 0 : index > this.m_Blocks.Length - 1 ? 0 : index;
 			return this.m_Blocks[fitIndex];
 		}
 
@@ -75,12 +81,17 @@ namespace WarriorRoad {
 		}
 
 		public virtual void LoadMapObject(List<CCharacterData> mapObjects) {
-			for (int i = 0; i < mapObjects.Count; i++) {
+			var index = 0;
+			for (int i = 0; i < this.m_Blocks.Length; i++) {
+				if (i % 6 == 0) {
+					continue;
+				}
 				var block = this.m_Blocks [i];
-				var data = mapObjects [i];
+				var data = mapObjects [index];
 				StartCoroutine (this.HandleSpawnBlockGuest(block, data));
+				index++;
 			}
-		}
+		}	
 
 		private IEnumerator HandleSpawnBlock(int index, CBlockController block, int x, int y) {
 			var spawnedBlock = Instantiate (block);
@@ -103,7 +114,7 @@ namespace WarriorRoad {
 
 		private IEnumerator HandleSpawnBlockGuest(CBlockController parent, CCharacterData data) {
 			if (parent.enemyPoint != null && data != null) {
-				var characterGO = Instantiate (Resources.Load<CCharacterController>("CharacterPrefabs/" + data.objectModel));
+				var characterGO = Instantiate (Resources.Load<CCharacterController> ("CharacterPrefabs/" + data.objectModel));
 				yield return characterGO != null;
 				parent.blockGuest = characterGO;
 				characterGO.transform.SetParent (parent.enemyPoint.transform);
@@ -115,11 +126,15 @@ namespace WarriorRoad {
 				characterGO.targetBlock = parent;
 				characterGO.Init ();
 				CUIGameManager.Instance.OnLoadCharacterInfo (characterGO, true);
-			}
+			} 
 			yield return null;
 		}
 
-		private Quaternion GetBlockRotation(int x, int y) {
+		#endregion
+
+		#region Getter && Setter
+
+		public Quaternion GetBlockRotation(int x, int y) {
 			var eulerV3 = Vector3.zero;
 			if (x == 0 && y > 0 && y < this.m_MapSize - 1) {
 				eulerV3.y = -90f;
@@ -133,13 +148,13 @@ namespace WarriorRoad {
 			return Quaternion.Euler (eulerV3);
 		}
 
-		private Vector3 GetBlockPosition(int x, int y) {
+		public Vector3 GetBlockPosition(int x, int y) {
 			var blockX = x - ((this.m_MapSize -1) / 2f);
 			var blockY = y - ((this.m_MapSize - 1) / 2f);
 			return new Vector3 (blockX, 0, blockY);
 		}
 
-		private CBlockController GetBlockBaseIndex(int x, int y) {
+		public CBlockController GetBlockBaseIndex(int x, int y) {
 			if (this.m_Blocks == null)
 				return null;
 			if (x == 0 && y == 0) {
@@ -157,6 +172,12 @@ namespace WarriorRoad {
 			var randomIndex = Random.Range (0, this.m_NormalBlock.Length);
 			return this.m_NormalBlock[randomIndex];
 		}
+
+		public int GetBlockCount() {
+			return this.m_Blocks.Length;
+		}
+
+		#endregion
 		
 	}
 }

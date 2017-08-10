@@ -52,20 +52,15 @@ namespace WarriorRoad {
 		}
 
 		protected virtual void LateUpdate() {
+			// SEND PING
 			m_PingDelayTime -= Time.deltaTime;
 			if (m_PingDelayTime <= 0f) {
 				SendPing ();
 				m_PingDelayTime = 3f;
 			}
-
-			if (Input.GetKeyDown (KeyCode.G)) {
-				this.OnClientCompletedMap ();
-			}
-		}
-
-		protected virtual void OnGUI() {
-			if (this.m_SocketIO != null) {
-				GUILayout.Label (" ==== " + this.m_MessageReceived);
+			// TEST
+			if (Input.GetKeyDown (KeyCode.S)) {
+				CUserManager.Instance.OnClientInitSkill ();
 			}
 		}
 
@@ -233,15 +228,18 @@ namespace WarriorRoad {
 					this.OnClientReceiveMapObjects (onClientInitGameMsg.data);
 				});
 
-				this.m_SocketIO.On ("clientUpdatedMap", delegate(SocketIOEvent onClientCompletedMapMsg) {
-					Debug.LogWarning ("clientUpdatedMap " + onClientCompletedMapMsg.ToString());	
-					this.OnClientUpdatedMapObjects (onClientCompletedMapMsg.data);
-				});
-
 				this.m_SocketIO.On ("clientReceiveDice", delegate(SocketIOEvent onClientReceiveDiceMsg) {
 					Debug.LogWarning ("OnClientReceiveDice " + onClientReceiveDiceMsg.ToString());	
 					this.OnClientReceiveDice (onClientReceiveDiceMsg.data);
 				}); 
+
+				this.m_SocketIO.On ("clientUpdated", delegate(SocketIOEvent onClientUpdateMsg) {
+					Debug.LogWarning ("clientUpdated " + onClientUpdateMsg.ToString());	
+				}); 
+
+				this.m_SocketIO.On ("clientReceiveSkills", delegate(SocketIOEvent onClientRevSkills) {
+					Debug.LogError ("clientReceiveSkills " + onClientRevSkills.ToString());
+				});
 					
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
 					this.OnClientError (errorMsg.ToString ());
@@ -293,8 +291,8 @@ namespace WarriorRoad {
 			case "LoginScene":
 				this.OnClientSetupLoginScene (receiveData);
 				break;
-			case "LoadingScene":
-				this.OnClientSetupLoadingScene (receiveData);
+			case "HeroSetupScene":
+				this.OnClientSetupHeroScene (receiveData);
 				break;
 			default:
 				processTask = "LoginScene";
@@ -345,8 +343,27 @@ namespace WarriorRoad {
 
 		}
 
-		public virtual void OnClientSetupLoadingScene(JSONObject receiveData) {
-
+		public virtual void OnClientSetupHeroScene(JSONObject receiveData) {
+			// HERO DATA
+			var isHeroData = receiveData.HasField ("heroData");
+			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			if (isHeroData) {
+				var heroDataJson = receiveData.GetField ("heroData").ToString ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
+			} 
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			// SKILL DATA
+			var isSkillData = receiveData.HasField ("skillDatas");
+			if (isSkillData) {
+				var skillList = receiveData.GetField ("skillDatas").list;
+				var tmpSkillList = new List<CSkillData>();
+				for (int i = 0; i < skillList.Count; i++) {
+					var objectStr = skillList [i].ToString ();
+					var skillData = TinyJSON.JSON.Load (objectStr).Make<CSkillData> ();
+					tmpSkillList.Add (skillData);
+				}
+				CTaskUtil.Set (CTaskUtil.SKILL_DATA_LIST, tmpSkillList);
+			}
 		}
 
 		public virtual void OnClientCreateHero(string heroType, string heroName) {
@@ -388,20 +405,10 @@ namespace WarriorRoad {
 			this.m_SocketIO.Emit ("clientCompletedMap", new JSONObject());
 		}
 
-		public virtual void OnClientUpdatedMapObjects(JSONObject data) {
-			var processTask = "LoadingScene";
-			// HERO DATA
-			var isHeroData = data.HasField ("heroData");
-			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
-			if (isHeroData) {
-				var heroDataJson = data.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
-			} 
-			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
-			// COMPLETE TASK
-			CRootTask.Instance.ProcessNextTask (processTask);
-			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
-			CUICustomManager.Instance.ActiveLoading (false);
+		public virtual void OnClientEndGame() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientEndGame", new JSONObject());
 		}
 
 		public virtual void OnClientRollDice() {
@@ -413,6 +420,23 @@ namespace WarriorRoad {
 		public virtual void OnClientReceiveDice(JSONObject data) {
 			var step = int.Parse (data.GetField ("diceStep").ToString());
 			CGameManager.Instance.OnPlayerUpdateStep (step);
+		}
+
+		public virtual void OnClientUpdateHero(CCharacterData clientData) {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			if (clientData == null)
+				return;
+			var dictData = new Dictionary<string, string> ();
+			dictData ["hhealth"] = clientData.characterHealthPoint.ToString();
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_SocketIO.Emit ("clientUpdateHero", jsonSend);
+		}
+
+		public virtual void OnClientInitSkill() {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			this.m_SocketIO.Emit ("clientInitSkill", new JSONObject());
 		}
 
 		#endregion

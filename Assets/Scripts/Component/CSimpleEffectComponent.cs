@@ -28,8 +28,8 @@ namespace WarriorRoad {
 		}
 
 		public virtual void ApplyEffect() {
-			for (int i = 0; i < this.m_SkillData.skillTriggers.Length; i++) {
-				var skillTrigger = this.m_SkillData.skillTriggers [i];
+			for (int i = 0; i < this.m_SkillData.skillEffects.Length; i++) {
+				var skillTrigger = this.m_SkillData.skillEffects [i];
 				var name = skillTrigger.skillMethod;
 				var value = skillTrigger.skillValue;
 				if (this.m_SkillMethods.ContainsKey (name)) {

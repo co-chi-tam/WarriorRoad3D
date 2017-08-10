@@ -16,7 +16,7 @@ namespace WarriorRoad {
 		public CLoginTask () : base ()
 		{
 			this.taskName = "LoginScene";
-			this.nextTask = "LoadingScene";
+			this.nextTask = "HeroSetupScene";
 
 //			PlayerPrefs.DeleteAll();
 			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0001");

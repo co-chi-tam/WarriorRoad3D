@@ -15,6 +15,7 @@ namespace WarriorRoad {
 
 		public static string USER_DATA 		= "USER_DATA";
 		public static string HERO_DATA 		= "HERO_DATA";
+		public static string SKILL_DATA_LIST = "SKILL_DATA_LIST";
 		public static string HERO_TEMPLATES = "HERO_TEMPLATES";
 
 		public static Dictionary<string, string> VERIFY_HEADERS = new Dictionary<string, string> () { 
@@ -24,6 +25,7 @@ namespace WarriorRoad {
 		public static Dictionary<string, object> REFERENCES = new Dictionary<string, object> () { 
 			{ USER_DATA,		new CUserData()	},
 			{ HERO_DATA, 		new CCharacterData() },
+			{ SKILL_DATA_LIST, 	new List<CSkillData>() },
 			{ HERO_TEMPLATES, 	new Dictionary<string, CCharacterData>() }
 		};
 

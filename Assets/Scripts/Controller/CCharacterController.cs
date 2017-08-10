@@ -127,6 +127,21 @@ namespace WarriorRoad {
 		{
 			base.SetData (value);
 			this.m_CharacterData = value as CCharacterData;
+			// BASE LEVEL
+			var baseLevel = this.m_CharacterData.characterLevel - 1 < 0 
+				? 0 
+				: this.m_CharacterData.characterLevel - 1 >= this.m_CharacterData.maxLevel 
+				? this.m_CharacterData.maxLevel 
+				: this.m_CharacterData.characterLevel - 1;
+			// ATTACK POINT BASE LEVEL
+			this.m_CharacterData.characterAttackPoint += baseLevel * this.m_CharacterData.dataPerLevel.characterAttackPoint;
+			// ATTACK SPEED BASE LEVEL
+			this.m_CharacterData.characterAttackSpeed += baseLevel * this.m_CharacterData.dataPerLevel.characterAttackSpeed;
+			// DEFEND POINT BASE LEVEL
+			this.m_CharacterData.characterDefendPoint += baseLevel * this.m_CharacterData.dataPerLevel.characterDefendPoint;
+			// MAX HEALTH BASE LEVEL
+			this.m_CharacterData.characterMaxHealthPoint += baseLevel * this.m_CharacterData.dataPerLevel.characterMaxHealthPoint;
+			// FSM ACTIVE
 			this.m_FSMComponent.ActiveFSM (true);
 			// TEST
 			this.m_CharacterData.characterSkillSlots = new CSkillData[] { 
@@ -135,9 +150,11 @@ namespace WarriorRoad {
 					objectName = "Normal Attack",
 					objectAvatar = "NormalAttack-avatar",
 					objectModel = "NormalAttack-model",
+					characterClasses = new string[] { "Warrior","Archer","Wizard" },
+					levelRequire = 0,
 					skillDelay = 0.1f,
 					skillTime = 0.1f,
-					skillTriggers = new CSkillEffect[] {
+					skillEffects = new CSkillEffect[] {
 						new CSkillEffect () {
 							skillValue = 1,
 							skillMethod = "ApplyDamage"
@@ -149,9 +166,11 @@ namespace WarriorRoad {
 					objectName = "Bash",
 					objectAvatar = "BashSkill-avatar",
 					objectModel = "BashSkill-model",
+					characterClasses = new string[] { "Warrior" },
+					levelRequire = 3,
 					skillDelay = 3f,
 					skillTime = 0.1f,
-					skillTriggers = new CSkillEffect[] {
+					skillEffects = new CSkillEffect[] {
 						new CSkillEffect () {
 							skillValue = 15,
 							skillMethod = "ApplyDamage"
@@ -163,16 +182,35 @@ namespace WarriorRoad {
 					objectName = "Fire ball",
 					objectAvatar = "FireBall-avatar",
 					objectModel = "FireBall-model",
+					characterClasses = new string[] { "Wizard" },
+					levelRequire = 3,
 					skillDelay = 5f,
 					skillTime = 1f,
-					skillTriggers = new CSkillEffect[] {
+					skillEffects = new CSkillEffect[] {
 						new CSkillEffect () {
 							skillValue = 25,
 							skillMethod = "ApplyDamage"
 						}
 					}
+				},
+				new CSkillData () {
+					uID = "917e6061-e0ba-4819-b28b-34fa85788f1d",
+					objectName = "Strong Arrow",
+					objectAvatar = "StrongArrow-avatar",
+					objectModel = "StrongArrow-model",
+					characterClasses = new string[] { "Archer" },
+					levelRequire = 3,
+					skillDelay = 3f,
+					skillTime = 1f,
+					skillEffects = new CSkillEffect[] {
+						new CSkillEffect () {
+							skillValue = 15,
+							skillMethod = "ApplyDamage"
+						}
+					}
 				}
 			};
+			// SKILL SLOT
 			this.m_SkillSlotComponent.Init (this, this.m_CharacterData.characterSkillSlots);
 		}
 
@@ -234,8 +272,9 @@ namespace WarriorRoad {
 				? this.m_CharacterData.maxHealthPoint 
 				: totalHealth;
 
-			var changedHealth = totalHealth - this.m_CharacterData.characterHealthPoint;
-			this.InvokeAction ("UpdateHealth", changedHealth);
+			this.InvokeAction ("UpdateHealth", totalHealth, 
+				this.m_CharacterData.characterHealthPoint, 
+				this.m_CharacterData.characterMaxHealthPoint);
 
 			this.m_CharacterData.characterHealthPoint = totalHealth;
 		}

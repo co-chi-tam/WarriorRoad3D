@@ -6,6 +6,8 @@ namespace WarriorRoad {
 	[Serializable]
 	public class CCharacterData : CObjectData {
 
+		public string characterClass;
+
 		public int characterAttackPoint;
 		public int maxAttackPoint;
 
@@ -29,6 +31,7 @@ namespace WarriorRoad {
 
 		public CCharacterData (): base ()
 		{
+			this.characterClass = "Warrior,Archer,Wizard";
 			this.characterAttackPoint = 0;
 			this.maxAttackPoint = 500;
 			this.characterAttackSpeed = 0f;

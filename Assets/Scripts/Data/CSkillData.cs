@@ -6,26 +6,29 @@ namespace WarriorRoad {
 	[Serializable]
 	public class CSkillData : CObjectData {
 
+		public string[] characterClasses;
+		public int levelRequire;
 		public float skillDelay;		// DELAY TIME
 		public float skillTime;			// TIME AFFECT
-		public CSkillEffect[] skillTriggers;
+		public CSkillEffect[] skillEffects;
 
 		public CSkillData (): base ()
 		{
+			this.characterClasses   = new string[] {"Warrior","Archer","Wizard"};
+			this.levelRequire		= 0;
 			this.skillDelay 		= 0f;
 			this.skillTime 			= 0f;
 		}
 
 	}
 
-	[Serializable]
 	public class CSkillEffect {
-		public object skillValue;
+		public int skillValue;
 		public string skillMethod;
 
 		public CSkillEffect ()
 		{
-			this.skillValue 	= null;
+			this.skillValue 	= 0;
 			this.skillMethod 	= string.Empty;
 		}
 
