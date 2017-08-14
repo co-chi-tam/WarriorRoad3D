@@ -32,6 +32,9 @@ namespace WarriorRoad {
 		private JSONObject jsonObject;
 		private int m_MessageReceived;
 
+		// PUBLIC FIELDS
+		public static bool IsOnMatch = false;
+
 		#endregion
 
 		#region Implementation MonoBehavious
@@ -57,10 +60,6 @@ namespace WarriorRoad {
 			if (m_PingDelayTime <= 0f) {
 				SendPing ();
 				m_PingDelayTime = 3f;
-			}
-			// TEST
-			if (Input.GetKeyDown (KeyCode.S)) {
-				CUserManager.Instance.OnClientInitSkill ();
 			}
 		}
 
@@ -118,7 +117,12 @@ namespace WarriorRoad {
 		}
 
 		public virtual void Logout() {
-		
+			PlayerPrefs.SetString (CTaskUtil.USER_NAME, string.Empty);
+			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, string.Empty);
+			// COMPLETE TASK
+			CRootTask.Instance.ProcessNextTask ("LoginScene");
+			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
 		public virtual void OnClientLoginCompleted(CUserData user) {
@@ -239,6 +243,11 @@ namespace WarriorRoad {
 
 				this.m_SocketIO.On ("clientReceiveSkills", delegate(SocketIOEvent onClientRevSkills) {
 					Debug.LogError ("clientReceiveSkills " + onClientRevSkills.ToString());
+				});
+
+				this.m_SocketIO.On ("clientReceiveChat", delegate(SocketIOEvent onClientRevChat) {
+					Debug.LogWarning ("clientReceiveChat " + onClientRevChat.ToString());
+					this.OnClientReceiveChat (onClientRevChat.data);
 				});
 					
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
@@ -437,6 +446,26 @@ namespace WarriorRoad {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
 			this.m_SocketIO.Emit ("clientInitSkill", new JSONObject());
+		}
+
+		public virtual void OnClientSendChat(string chat) {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			var dictData = new Dictionary<string, string> ();
+			dictData ["chatString"] = chat.ToString();
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_SocketIO.Emit ("clientSendChat", jsonSend);
+		}
+
+		public virtual void OnClientReceiveChat(JSONObject data) {
+			var isHasChat = data.HasField ("chatStr");
+			if (isHasChat) {
+				// WARNING
+				if (CSceneManager.Instance.GetActiveSceneName () != "PlayScene")
+					return;
+				var chatStr = data.GetField ("chatStr").ToString().Replace ("\"", string.Empty);
+				CUIGameManager.Instance.ReceiveChatText (chatStr);
+			}
 		}
 
 		#endregion
