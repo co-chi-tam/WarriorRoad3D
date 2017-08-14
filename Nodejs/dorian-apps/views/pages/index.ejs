@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	var connection = new WebSocket('wss://dorian-apps.herokuapp.com/');
+	connection.onopen = function () {
+		console.log ('Open ....');
+	};
+	connection.onmessage = function (e) {
+		console.log ('Message .... ' + JSON.stringify(e));
+	};
+	connection.onclose = function(event) {
+		console.log(event);
+	};
+</script>
+  
+</head>
+
+<body>
+
+<div class="jumbotron text-center">
+  <p>jumbotron</p>
+</div>
+<div class="container">
+  <p>Container</p>
+</div>
+
+
+</body>
+</html>
