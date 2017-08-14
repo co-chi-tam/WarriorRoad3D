@@ -13,6 +13,8 @@ namespace WarriorRoad {
 		[Header("Character Info")]
 		[SerializeField]	protected CUICharacterInfo m_CharacterInfoPrefab;
 		[SerializeField]	protected GameObject m_CharacterInfoRoot;
+		[SerializeField]	protected Text m_CurrentEnergyText;
+		[SerializeField]	protected Text m_CurrentGold;
 
 		[Header("Chat panel")]
 		[SerializeField]	protected GameObject m_ChatNotice;
@@ -60,6 +62,14 @@ namespace WarriorRoad {
 			charInfo.SetupInfo (parent, isEnemy);
 			charInfo.transform.SetParent (this.m_CharacterInfoRoot.transform);
 			charInfo.gameObject.SetActive (true);
+		}
+
+		public virtual void OnUpdateCurrentEnergy (int curEnergy, int maxEnergy) {
+			this.m_CurrentEnergyText.text = curEnergy + "/" + maxEnergy;
+		}
+
+		public virtual void OnUpdateCurrentGold (int gold) {
+			this.m_CurrentGold.text = gold.ToString ();
 		}
 
 		#endregion

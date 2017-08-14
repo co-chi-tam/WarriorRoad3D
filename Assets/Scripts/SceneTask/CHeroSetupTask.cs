@@ -38,7 +38,7 @@ namespace WarriorRoad {
 		#region Main methods
 
 		protected virtual void OnHeroSetupSkillCompleted(List<CSkillData> skillDatas) {
-			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			heroData.characterSkillSlots = new CSkillData[skillDatas.Count];
 			for (int i = 0; i < skillDatas.Count; i++) {
 				heroData.characterSkillSlots [i] = skillDatas [i];

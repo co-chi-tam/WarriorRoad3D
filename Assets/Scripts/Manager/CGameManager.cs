@@ -85,7 +85,7 @@ namespace WarriorRoad {
 		}
 
 		protected virtual IEnumerator HandleSpawnCharacter() {
-			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			this.m_CharacterController = Instantiate (Resources.Load<CHeroController>("CharacterPrefabs/" + heroData.objectModel));
 			yield return this.m_CharacterController;
 			// Init Events
@@ -103,6 +103,8 @@ namespace WarriorRoad {
 			// LOADING COMPLETED
 			this.m_LoadingCompleted = true;
 			CUIGameManager.Instance.OnLoadCharacterInfo (this.m_CharacterController, false);
+			CUIGameManager.Instance.OnUpdateCurrentEnergy (heroData.currentEnergy, heroData.maxEnergy);
+			CUIGameManager.Instance.OnUpdateCurrentGold (heroData.currentGold);
 		}
 
 		public virtual void OnPlayerStartRollDice() {
@@ -122,10 +124,11 @@ namespace WarriorRoad {
 			this.m_UserManager.OnClientRollDice ();
 		}
 
-		public virtual void OnPlayerUpdateStep (int value) {
+		public virtual void OnPlayerUpdateStep (int value, int curEnergy, int maxEnergy) {
 			var currentStep = this.m_CharacterController.GetStep ();
 			var randomBlock = this.m_MapManager.CalculateCurrentBlock (currentStep + value);
 			this.m_CharacterController.targetBlock = randomBlock;
+			CUIGameManager.Instance.OnUpdateCurrentEnergy (curEnergy, maxEnergy);
 		}
 
 		#endregion

@@ -321,10 +321,10 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupCreateHeroScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 			// HEROES TEMPLATE
@@ -340,10 +340,10 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupPlayScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 		}
@@ -355,10 +355,10 @@ namespace WarriorRoad {
 		public virtual void OnClientSetupHeroScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
+			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CCharacterData> ();
+				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
 			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
 			// SKILL DATA
@@ -428,7 +428,9 @@ namespace WarriorRoad {
 
 		public virtual void OnClientReceiveDice(JSONObject data) {
 			var step = int.Parse (data.GetField ("diceStep").ToString());
-			CGameManager.Instance.OnPlayerUpdateStep (step);
+			var curEnergy = int.Parse (data.GetField ("currentEnergy").ToString());
+			var maxEnergy = int.Parse (data.GetField ("maxEnergy").ToString());
+			CGameManager.Instance.OnPlayerUpdateStep (step, curEnergy, maxEnergy);
 		}
 
 		public virtual void OnClientUpdateHero(CCharacterData clientData) {
