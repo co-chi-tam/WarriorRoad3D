@@ -6,6 +6,8 @@ using FSM;
 namespace WarriorRoad {
 	public class CCharacterController : CObjectController, ISimpleContext, ISimpleStatusContext {
 
+		#region Properties
+
 		[Header ("Control")]
 		[SerializeField]	protected Animator m_Animator;
 		[SerializeField]	protected CObjectController m_TargetEnemy;
@@ -25,6 +27,10 @@ namespace WarriorRoad {
 		protected CMapManager m_MapManager;
 		protected float m_AttackDelay = 0f;
 
+		#endregion
+
+		#region Implementation MonoBehaviour
+
 		protected override void Awake ()
 		{
 			base.Awake ();
@@ -38,6 +44,17 @@ namespace WarriorRoad {
 			this.m_MapManager = CMapManager.GetInstance ();
 		}
 
+		public override void Init ()
+		{
+			base.Init ();
+			// SKILL SLOT
+			this.m_SkillSlotComponent.Init (this, this.m_CharacterData.characterSkillSlots);
+		}
+
+		#endregion
+
+		#region Main methods
+
 		protected override void RegisterComponent ()
 		{
 			base.RegisterComponent ();
@@ -45,6 +62,8 @@ namespace WarriorRoad {
 			this.m_ListComponents.Add (this.m_EventComponent);
 			this.m_ListComponents.Add (this.m_SkillSlotComponent);
 		}
+
+		#endregion
 
 		#region FSM
 
@@ -143,75 +162,6 @@ namespace WarriorRoad {
 			this.m_CharacterData.characterMaxHealthPoint += baseLevel * this.m_CharacterData.dataPerLevel.characterMaxHealthPoint;
 			// FSM ACTIVE
 			this.m_FSMComponent.ActiveFSM (true);
-			// TEST
-			this.m_CharacterData.characterSkillSlots = new CSkillData[] { 
-				new CSkillData () { // DEFAULT SKILL
-					uID = "502ec8465441f1d108b8c963ec402b08",
-					objectName = "Normal Attack",
-					objectAvatar = "NormalAttack-avatar",
-					objectModel = "NormalAttack-model",
-					characterClasses = new string[] { "Warrior","Archer","Wizard" },
-					levelRequire = 0,
-					skillDelay = 0.1f,
-					skillTime = 0.1f,
-					skillEffects = new CSkillEffect[] {
-						new CSkillEffect () {
-							skillValue = 1,
-							skillMethod = "ApplyDamage"
-						}
-					}
-				},
-				new CSkillData () {
-					uID = "502ec8465441f1d108b8c963ec404a66",
-					objectName = "Bash",
-					objectAvatar = "BashSkill-avatar",
-					objectModel = "BashSkill-model",
-					characterClasses = new string[] { "Warrior" },
-					levelRequire = 3,
-					skillDelay = 3f,
-					skillTime = 0.1f,
-					skillEffects = new CSkillEffect[] {
-						new CSkillEffect () {
-							skillValue = 15,
-							skillMethod = "ApplyDamage"
-						}
-					}
-				},
-				new CSkillData () {
-					uID = "202ec346f441f1d1a8b8c963ec404a66",
-					objectName = "Fire ball",
-					objectAvatar = "FireBall-avatar",
-					objectModel = "FireBall-model",
-					characterClasses = new string[] { "Wizard" },
-					levelRequire = 3,
-					skillDelay = 5f,
-					skillTime = 1f,
-					skillEffects = new CSkillEffect[] {
-						new CSkillEffect () {
-							skillValue = 25,
-							skillMethod = "ApplyDamage"
-						}
-					}
-				},
-				new CSkillData () {
-					uID = "917e6061-e0ba-4819-b28b-34fa85788f1d",
-					objectName = "Strong Arrow",
-					objectAvatar = "StrongArrow-avatar",
-					objectModel = "StrongArrow-model",
-					characterClasses = new string[] { "Archer" },
-					levelRequire = 3,
-					skillDelay = 3f,
-					skillTime = 1f,
-					skillEffects = new CSkillEffect[] {
-						new CSkillEffect () {
-							skillValue = 15,
-							skillMethod = "ApplyDamage"
-						}
-					}
-				}
-			};
-			// SKILL SLOT
-			this.m_SkillSlotComponent.Init (this, this.m_CharacterData.characterSkillSlots);
 		}
 
 		public override CObjectData GetData ()

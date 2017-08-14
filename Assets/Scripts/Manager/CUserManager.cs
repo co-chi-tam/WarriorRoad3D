@@ -249,6 +249,11 @@ namespace WarriorRoad {
 					Debug.LogWarning ("clientReceiveChat " + onClientRevChat.ToString());
 					this.OnClientReceiveChat (onClientRevChat.data);
 				});
+
+				this.m_SocketIO.On ("clientCompletedSetupSkill", delegate(SocketIOEvent onClientSetupSkill) {
+					Debug.LogWarning ("clientCompletedSetupSkill " + onClientSetupSkill.ToString());
+					this.OnClientCompleteSetupSkills (onClientSetupSkill.data);
+				});
 					
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
 					this.OnClientError (errorMsg.ToString ());
@@ -469,6 +474,29 @@ namespace WarriorRoad {
 				CUIGameManager.Instance.ReceiveChatText (chatStr);
 			}
 		}
+
+		public virtual void OnClientSetupSkills (CSkillData[] skills) {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			var dictData = new Dictionary<string, string> ();
+			var setupSkills = "";
+			for (int i = 0; i < skills.Length; i++) {
+				var skillData = skills [i];
+				setupSkills += skillData.objectName + (i < skills.Length - 1 ? "," : "");
+			}
+			dictData ["skills"] = setupSkills;
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_SocketIO.Emit ("clientSetupSkills", jsonSend);
+		}
+
+		public virtual void OnClientCompleteSetupSkills (JSONObject data) {
+			var currentTask = CRootTask.Instance.GetCurrentTask ();
+			if (currentTask.taskName == "HeroSetupScene") {
+				currentTask.OnTaskCompleted ();
+			} else {
+				Debug.LogError ("ERROR TASK: NOT CORRECT TASK.");
+			}
+		} 
 
 		#endregion
 		

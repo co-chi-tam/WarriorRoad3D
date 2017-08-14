@@ -91,8 +91,8 @@ namespace WarriorRoad {
 			// Init Events
 			this.m_CharacterController.AddAction ("StartIdleState", this.OnPlayerStartRollDice);
 			// INIT DATA
-			this.m_CharacterController.SetActive (true);
 			this.m_CharacterController.SetData (heroData);
+			this.m_CharacterController.SetActive (true);
 			this.m_CharacterController.Init ();
 			// SET CURRENT BLOCK
 			var currentBlock = this.m_MapManager.CalculateCurrentBlock (this.m_CharacterController.GetStep());

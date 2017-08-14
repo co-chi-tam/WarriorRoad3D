@@ -173,7 +173,9 @@ db.clSkills.insertMany([{
         }
     ]
     }]);
-db.clSkills.find({$and: [{characterClasses: {$regex: /w/i}},{levelRequire: {$lte: 3}}]});
+db.clSkills.find({$and: [{characterClasses: {$regex: /w/i}},{levelRequire: {$lte: 3}}]});
+db.clSkills.find({objectName: { $in: ['Normal Attack', 'Fire ball'] }});
+
 db.clSkills.remove({});
 
 db.createCollection('clMonsters');
@@ -280,18 +282,28 @@ db.clMaps.remove({});
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
 db.clMonsters.find({objectName: /i/i}});
-db.clMonsters.remove({});
+db.clMonsters.remove({});
 
 db.clUsers.aggregate([{$match: {uName: {$in: ['user0001', 'user0005']}}}, {$sample: {size: 5}}])
 db.clHeroes.find({characterLevel: { $gte:1, $lt: 4 }})
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }}}, {$sample: {size: 5}}])
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: '91c7e267-4767-482f-9e16-8af0ba056ca0s'}}}, {$sample: {size: 5}}])
 
-db.clHeroes.find({characterClass: 'Wizard'});
-db.clHeroes.updateMany({}, {$set: {
-    currentGold: 500,
-    maxGold: 999999999,
-    currentEnergy: 30,
-    maxEnergy: 30,
-    lastUpdateEnergy: new Date()}});
+db.clHeroes.find({});
+db.clHeroes.updateMany({}, {$set: {characterSkillSlots: [{
+    'uID': '502ec8465441f1d108b8c963ec402b08',
+    'objectName': 'Normal Attack',
+    'objectAvatar': 'NormalAttack-avatar',
+    'objectModel': 'NormalAttack-model',
+    'characterClasses': ['Warrior','Archer','Wizard'],
+    'levelRequire' : 0,
+    'skillDelay': 0.1,
+    'skillTime': 0.1,
+    'skillEffects': [
+        {
+            'skillValue': 1,
+            'skillMethod': 'ApplyDamage'
+        }
+    ]
+    }]}});
 

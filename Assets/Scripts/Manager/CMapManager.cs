@@ -120,8 +120,8 @@ namespace WarriorRoad {
 				characterGO.transform.SetParent (parent.enemyPoint.transform);
 				characterGO.transform.localPosition = Vector3.zero;
 				characterGO.transform.localRotation = Quaternion.identity;
-				characterGO.SetActive (true);
 				characterGO.SetData (data);
+				characterGO.SetActive (true);
 				characterGO.currentBlock = parent;
 				characterGO.targetBlock = parent;
 				characterGO.Init ();

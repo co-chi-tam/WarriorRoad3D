@@ -43,7 +43,7 @@ namespace WarriorRoad {
 			for (int i = 0; i < skillDatas.Count; i++) {
 				heroData.characterSkillSlots [i] = skillDatas [i];
 			}
-			this.OnTaskCompleted ();
+			CUserManager.Instance.OnClientSetupSkills (heroData.characterSkillSlots);
 		}
 
 		#endregion

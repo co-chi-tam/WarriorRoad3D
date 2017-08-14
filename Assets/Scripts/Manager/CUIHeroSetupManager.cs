@@ -8,6 +8,8 @@ using SimpleSingleton;
 namespace WarriorRoad {
 	public class CUIHeroSetupManager : CMonoSingleton<CUIHeroSetupManager> {
 
+		#region Properties
+
 		[Header ("Skill Info")]
 		[SerializeField]	protected CUISkillItemInfo m_SkillInfoPrefab;
 		[SerializeField]	protected GameObject m_SkillInfoRoot;
@@ -16,10 +18,18 @@ namespace WarriorRoad {
 
 		public Action<List<CSkillData>> OnHeroSetupSubmit;
 
+		#endregion
+
+		#region Implementation MonoBehaviour
+
 		protected override void Awake() {
 			base.Awake ();
 			this.m_SkillSelected 	= new List<CSkillData> ();
 		}
+
+		#endregion
+
+		#region Main methods
 
 		public virtual void OnSetupHeroSkill(string defaultItem, int maxSelectItem, List<CSkillData> skillList, Action<List<CSkillData>> onSelectSkills) {
 			for (int i = 0; i < skillList.Count; i++) {
@@ -59,6 +69,8 @@ namespace WarriorRoad {
 				this.OnHeroSetupSubmit (this.m_SkillSelected);
 			}
 		}
+
+		#endregion
 
 	}
 }
