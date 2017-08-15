@@ -13,17 +13,18 @@ var mapModel = function (database) {
 	var collectionName = 'clMaps';
 	// USER MODEL
 	var simpleModel = new simpleData(collectionName, database);
+	this.mapPathTemplate = ['ForestBlock', 'LavaBlock'];
 	// MAP
-	var newMap = function (ownerId, objs) {
+	var newMap = function (ownerId, path, objs) {
 		return {
 			uID: uuid.v4().toString(),
 			uOwner: ownerId,
 			createdTime: new Date(),
 			completed: false,
+			mapPath: path,
 			mapObjects: objs
 		};
 	}
-	
 	// FIND MAP
 	this.findMap = function(ownerId) {
 		return new Promise(function (resolve, reject) {
@@ -38,15 +39,14 @@ var mapModel = function (database) {
 			});
 		});
 	};
-	
 	// INSERT MAP
-	this.createMap = function(ownerId, mapObjects) {
+	this.createMap = function(ownerId, mapPath, mapObjects) {
 		return new Promise (function (resolve, reject) {
-			var createdMap = new newMap(ownerId, mapObjects);
+			var createdMap = new newMap(ownerId, mapPath, mapObjects);
 			simpleModel.createData (createdMap)
 			// CREATED 
 			.then ((mapDocs) => {
-				resolve (createdMap.mapObjects);
+				resolve (createdMap);
 			})
 			// ERROR CREATE
 			.catch ((errDoc) => {
@@ -54,11 +54,10 @@ var mapModel = function (database) {
 			});
 		});
 	}
-	
 	// UPDATE MAP
-	this.updateMap = function(ownerId, mapObjects) {
+	this.updateMap = function(ownerId, mapPath, mapObjects) {
 		return new Promise (function (resolve, reject) {
-			var createdMap = new newMap(ownerId, mapObjects);
+			var createdMap = new newMap(ownerId, mapPath, mapObjects);
 			simpleModel.updateData ({'uOwner': ownerId}, createdMap)
 			// UPDATE
 			.then ((completeUpdate) => {

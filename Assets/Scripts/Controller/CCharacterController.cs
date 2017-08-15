@@ -91,6 +91,10 @@ namespace WarriorRoad {
 		#region Control
 
 		public virtual void StartIdle() {
+			if (this.HaveEnemy() == false) {
+				this.InvokeAction ("StartIdleState");
+			}
+			this.SetAnimation ("AnimParam", 0);
 		}
 
 		public virtual void UpdateAction(float dt) {

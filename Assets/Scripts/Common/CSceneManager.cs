@@ -63,7 +63,7 @@ public class CSceneManager: CMonoSingleton<CSceneManager> {
 	/// <summary>
 	/// Repairs the texture.
 	/// </summary>
-	private void RepairTexture(float alpha) {
+	protected virtual void RepairTexture(float alpha) {
 		m_LoadingScreenTexture = new Texture2D (1, 1);
 		m_ScreenLoadingColor.a = alpha;
 		m_LoadingScreenTexture.SetPixels (new Color[] { m_ScreenLoadingColor });
@@ -73,7 +73,7 @@ public class CSceneManager: CMonoSingleton<CSceneManager> {
 	/// <summary>
 	/// Paints the alpha texture.
 	/// </summary>
-	private void PaintAlphaTexture(float alpha) {
+	protected virtual void PaintAlphaTexture(float alpha) {
 		var currentColor = m_LoadingScreenTexture.GetPixels () [0];
 		currentColor.a = alpha;
 		m_LoadingScreenTexture.SetPixel (0, 0, currentColor);
@@ -83,7 +83,7 @@ public class CSceneManager: CMonoSingleton<CSceneManager> {
 	/// <summary>
 	/// Fade out screen.
 	/// </summary>
-	private void OnFadeOutScreen() {
+	protected virtual void OnFadeOutScreen() {
 		PaintAlphaTexture (1f);
 		m_IsFadeOut = true;
 		m_NeedDraw = true;
@@ -92,7 +92,7 @@ public class CSceneManager: CMonoSingleton<CSceneManager> {
 	/// <summary>
 	/// Fade in screen.
 	/// </summary>
-	private void OnFadeInScreen() {
+	protected virtual void OnFadeInScreen() {
 		PaintAlphaTexture (0f);
 		m_IsFadeOut = false;
 		m_NeedDraw = true;

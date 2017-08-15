@@ -16,12 +16,16 @@ namespace WarriorRoad {
 		[SerializeField]	protected Text m_CurrentEnergyText;
 		[SerializeField]	protected Text m_CurrentGold;
 
+		[Header ("Animator")]
+		[SerializeField]	protected Animator m_Animator;
+
 		[Header("Chat panel")]
 		[SerializeField]	protected GameObject m_ChatNotice;
 		[SerializeField]	protected Text m_NoticeText;
 		[SerializeField]	protected CChatItem[] m_ChatItems;
 
 		protected string m_CurrentChat = string.Empty;
+		protected CUICharacterInfo m_CurrentCharacterInfo;
 		protected List<string> m_CurrentChatList;
 
 		#endregion
@@ -46,11 +50,12 @@ namespace WarriorRoad {
 		#region Roll dice
 	
 		public virtual void OnStartRoll() {
-			// TODO
+			this.m_Animator.SetBool ("IsActiveDice", true);
 		}
 
 		public virtual void OnRollPressed() {
 			CGameManager.Instance.OnPlayerRollDice ();
+			this.m_Animator.SetBool ("IsActiveDice", false);
 		}
 
 		#endregion
@@ -58,10 +63,10 @@ namespace WarriorRoad {
 		#region Character Info
 
 		public virtual void OnLoadCharacterInfo(CCharacterController parent, bool isEnemy) {
-			var charInfo = GameObject.Instantiate (this.m_CharacterInfoPrefab);
-			charInfo.SetupInfo (parent, isEnemy);
-			charInfo.transform.SetParent (this.m_CharacterInfoRoot.transform);
-			charInfo.gameObject.SetActive (true);
+			this.m_CurrentCharacterInfo = GameObject.Instantiate (this.m_CharacterInfoPrefab);
+			this.m_CurrentCharacterInfo.SetupInfo (parent, isEnemy);
+			this.m_CurrentCharacterInfo.transform.SetParent (this.m_CharacterInfoRoot.transform);
+			this.m_CurrentCharacterInfo.gameObject.SetActive (true);
 		}
 
 		public virtual void OnUpdateCurrentEnergy (int curEnergy, int maxEnergy) {

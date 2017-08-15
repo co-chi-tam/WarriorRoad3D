@@ -18,7 +18,8 @@ namespace WarriorRoad {
 		{
 			base.Init ();
 			this.m_Owner = owner;
-			this.m_SkillSlot = slots;
+			this.m_SkillSlot = new CSkillData[slots.Length];
+			Array.Copy (slots, this.m_SkillSlot, slots.Length);
 			this.m_DefaultNormalAttack = defaultSkill;
 			this.m_DelayTemps = new float[slots.Length];
 			this.m_DelayTemps [defaultSkill] = 0.1f;
@@ -50,8 +51,12 @@ namespace WarriorRoad {
 			var skillDelay = skillData.skillDelay;
 			var skillCtrl = CObjectPoolManager.Get<CSkillController> (skillData.objectName);
 			while (skillCtrl == null) {
-				skillCtrl = GameObject.Instantiate (Resources.Load <CSkillController> ("ObjectPrefabs/" + skillData.objectModel));
-				CObjectPoolManager.Set <CSkillController> (skillData.objectName, skillCtrl);
+				try {
+					skillCtrl = GameObject.Instantiate (Resources.Load <CSkillController> ("ObjectPrefabs/" + skillData.objectModel));
+					CObjectPoolManager.Set <CSkillController> (skillData.objectName, skillCtrl);
+				} catch (Exception ex) {
+					throw new Exception (ex.Message);
+				}
 				yield return skillCtrl != null;
 				skillCtrl = CObjectPoolManager.Get<CSkillController> (skillData.objectName);
 			}

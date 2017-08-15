@@ -29,8 +29,9 @@ namespace WarriorRoad {
 
 		// PRIVATE FIELDS
 		private float m_PingDelayTime = 3f;
-		private JSONObject jsonObject;
+		private JSONObject jsonPingObject;
 		private int m_MessageReceived;
+		private List<CCharacterData> m_MapObjects;
 
 		// PUBLIC FIELDS
 		public static bool IsOnMatch = false;
@@ -51,7 +52,7 @@ namespace WarriorRoad {
 		protected virtual void Start() {
 			var msgDict = new Dictionary<string, string> ();
 			msgDict.Add ("msg", "This is message ping.");
-			jsonObject = JSONObject.Create (msgDict);
+			jsonPingObject = JSONObject.Create (msgDict);
 		}
 
 		protected virtual void LateUpdate() {
@@ -256,7 +257,12 @@ namespace WarriorRoad {
 				});
 					
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
-					this.OnClientError (errorMsg.ToString ());
+					var errorData = errorMsg.data.ToString();
+					if (string.IsNullOrEmpty (errorData) == false) {
+						this.OnClientError (errorMsg.ToString ());
+					} else {
+						this.OnClientError ("ERROR: NOT DEFINE.");
+					}
 				});
 			});
 		}
@@ -283,7 +289,7 @@ namespace WarriorRoad {
 		private void SendPing() {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
-			this.m_SocketIO.Emit ("clientSendPing", jsonObject);
+			this.m_SocketIO.Emit ("clientSendPing", jsonPingObject);
 		}
 
 		public virtual void OnClientInitAccount() {
@@ -400,17 +406,24 @@ namespace WarriorRoad {
 
 		public virtual void OnClientReceiveMapObjects(JSONObject data) {
 			var mapList = data.GetField ("mapBlocks").list;
-			var mapBlocks = new List<CCharacterData> ();
+			this.m_MapObjects = new List<CCharacterData> ();
 			for (int i = 0; i < mapList.Count; i++) {
 				var objectStr = mapList [i].ToString ();
 				if (objectStr.Equals ("null") == false) {
 					var objectData = TinyJSON.JSON.Load (objectStr).Make<CCharacterData> ();
-					mapBlocks.Add (objectData);
+					this.m_MapObjects.Add (objectData);
 				} else {
-					mapBlocks.Add (null);
+					this.m_MapObjects.Add (null);
 				}
 			}
-			CMapManager.Instance.LoadMapObject (mapBlocks);
+			var mapPath = data.GetField ("mapPath").ToString ().Replace ("\"", string.Empty);
+			CMapManager.Instance.GenerateRoadMap (mapPath, 7);
+			CMapManager.Instance.OnMapGenerateComplete -= OnLoadBlockMapCompleted;
+			CMapManager.Instance.OnMapGenerateComplete += OnLoadBlockMapCompleted;
+		}
+
+		private void OnLoadBlockMapCompleted() {
+			CMapManager.Instance.LoadMapObject (this.m_MapObjects);
 		}
 
 		public virtual void OnClientCompletedMap() {

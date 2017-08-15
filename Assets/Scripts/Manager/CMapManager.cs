@@ -12,11 +12,12 @@ namespace WarriorRoad {
 		[SerializeField]	private int m_MapSize = 5;
 
 		[Header ("Map block")]
-		[SerializeField]	private CBlockController[] m_NormalBlock;
-		[SerializeField]	private CBlockController m_LeftTopBlock;
-		[SerializeField]	private CBlockController m_RightTopBlock;
-		[SerializeField]	private CBlockController m_LeftBottomBlock;
-		[SerializeField]	private CBlockController m_RightBottomBlock;
+		[SerializeField]	private string m_BlockPath = "ForestBlock";
+		[SerializeField]	private string[] m_NormalBlock;
+		[SerializeField]	private string m_LeftTopBlock;
+		[SerializeField]	private string m_RightTopBlock;
+		[SerializeField]	private string m_LeftBottomBlock;
+		[SerializeField]	private string m_RightBottomBlock;
 
 		[Header ("Map Control")]
 		[SerializeField]	private CBlockController[] m_Blocks;
@@ -35,8 +36,9 @@ namespace WarriorRoad {
 			return this.m_Blocks[fitIndex];
 		}
 
-		public virtual void GenerateRoadMap(int mapSize = 5) {
+		public virtual void GenerateRoadMap(string blockPath, int mapSize = 5) {
 			this.m_MapSize = mapSize;
+			this.m_BlockPath = blockPath;
 			this.m_Blocks = new CBlockController[(this.m_MapSize - 1) * 4];
 			var blockX = 0;
 			var blockY = 0;
@@ -93,8 +95,10 @@ namespace WarriorRoad {
 			}
 		}	
 
-		private IEnumerator HandleSpawnBlock(int index, CBlockController block, int x, int y) {
-			var spawnedBlock = Instantiate (block);
+		private IEnumerator HandleSpawnBlock(int index, string block, int x, int y) {
+			var path = string.Format ("{0}/{1}/{2}", "Prefabs", this.m_BlockPath, block);
+			var blockPrefab = Resources.Load <CBlockController> (path);
+			var spawnedBlock = Instantiate (blockPrefab);
 			spawnedBlock.name = string.Format ("Block {0}-{1}", x, y);
 			yield return spawnedBlock != null;
 			spawnedBlock.transform.SetParent (this.transform);
@@ -154,7 +158,7 @@ namespace WarriorRoad {
 			return new Vector3 (blockX, 0, blockY);
 		}
 
-		public CBlockController GetBlockBaseIndex(int x, int y) {
+		public string GetBlockBaseIndex(int x, int y) {
 			if (this.m_Blocks == null)
 				return null;
 			if (x == 0 && y == 0) {

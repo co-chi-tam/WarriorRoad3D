@@ -81,6 +81,7 @@ exports.clientInitMap = function (sender) {
 		map.findMap(userTmpDatabase.userId)
 		// FOUND MAP 
 		.then((foundMap) => {
+			clientData.mapPath = foundMap.mapPath;
 			clientData.mapBlocks = foundMap.mapObjects;
 			socket.sendMessage (sender, clientEvent, clientData);
 		})
@@ -92,9 +93,11 @@ exports.clientInitMap = function (sender) {
 			charLevel + 4)
 			// GENERATE MAP
 			.then ((mapBlocks) => {
-				map.createMap (userTmpDatabase.userId, mapBlocks)
+				var mapPath = map.mapPathTemplate[(charLevel - 1) % 2];
+				map.createMap (userTmpDatabase.userId, mapPath, mapBlocks)
 				// CREATED MAP
 				.then((created) => {
+					clientData.mapPath = mapPath;
 					clientData.mapBlocks = mapBlocks;
 					socket.sendMessage (sender, clientEvent, clientData);
 				})
@@ -133,8 +136,7 @@ exports.clientCompletedMap = function (sender) {
 	.then ((foundHero) => {
 		var charLevel = parseInt (foundHero.characterLevel);
 		// LEVEL UP
-		// var charLevelUp = charLevel + 1;
-		var charLevelUp = charLevel;
+		var charLevelUp = charLevel + 1;
 		// GENERATE MAP
 		self.generateMap (charLevelUp, 
 		foundHero.uID, 
@@ -142,16 +144,15 @@ exports.clientCompletedMap = function (sender) {
 		charLevelUp + 4)
 		// GENERATE MAP
 		.then ((mapBlocks) => {
-			map.updateMap (userTmpDatabase.userId, mapBlocks)
+			var mapPath = map.mapPathTemplate[(charLevel - 1) % 2];
+			map.updateMap (userTmpDatabase.userId, mapPath, mapBlocks)
 			// UPDATE MAP
 			.then((updated) => {
-				var currentEnergy = foundHero.maxEnergy;
-				var currentGold = foundHero.currentGold + 500;
+				var currentGold = foundHero.currentGold + 200;
 				hero.updateHero (userTmpDatabase.userId, { 
 					characterStep: 0, 
 					characterLevel: charLevelUp, 
 					characterHealthPoint: foundHero.characterMaxHealthPoint, 
-					currentEnergy: currentEnergy, 
 					lastUpdateEnergy: new Date(), 
 					currentGold: currentGold })
 				// UPDATE COMPLETED
@@ -225,7 +226,8 @@ exports.clientEndGame = function (sender) {
 		charLevel + 4)
 		// GENERATE MAP
 		.then ((mapBlocks) => {
-			map.updateMap (userTmpDatabase.userId, mapBlocks)
+			var mapPath = map.mapPathTemplate[(charLevel - 1) % 2];
+			map.updateMap (userTmpDatabase.userId, mapPath, mapBlocks)
 			// UPDATE MAP
 			.then((updated) => {
 				hero.updateHero (userTmpDatabase.userId, { characterStep: 0, characterHealthPoint: foundHero.characterMaxHealthPoint })
@@ -292,8 +294,16 @@ exports.clientRollDice = function (sender) {
 	.then ((foundHero) => {
 		var currentEnergy = foundHero.currentEnergy;
 		var maxEnergy = foundHero.maxEnergy;
+		var currentGold = foundHero.currentGold;
+		var goldPerStep = foundHero.goldPerStep * foundHero.characterLevel * randomStep;
+		var totalGold = currentGold + goldPerStep;
+		totalGold = totalGold >= foundHero.maxGold ? foundHero.maxGold : totalGold;
 		if (currentEnergy > 0) {
-			hero.modifyHero (userTmpDatabase.userId, {$inc:{characterStep: randomStep}, $set: {currentEnergy: currentEnergy - 1, lastUpdateEnergy: new Date(),}})
+			hero.modifyHero (userTmpDatabase.userId, 
+			{$inc:{characterStep: randomStep}, 
+			$set: {currentEnergy: currentEnergy - 1, 
+					lastUpdateEnergy: new Date(),
+					currentGold: totalGold}})
 			// UPDATE COMPLETED
 			.then ((updated) => {
 				clientEvent = 'clientReceiveDice';
@@ -362,7 +372,6 @@ exports.generateMap = function (levelMap, exceptID, min, max, size) {
 		// FOUND MONSTER
 		.then ((foundMonster) => {
 			// var levelInt = parseInt (levelMap);
-			// var mapBlockCount = (levelInt + 3) * 4;
 			var mapBlockCount = 20;
 			var mapBlocks = [];
 			var fitSize = size > mapBlockCount ? mapBlockCount : size;

@@ -71,6 +71,7 @@ namespace WarriorRoad {
 			if (direction.sqrMagnitude < 0.01f) {
 				this.currentBlock = nextBlockCtrl;
 				this.SetStep (nextBlockIndex);
+				this.InvokeAction ("MovedBlockState");
 			} else {
 				var movePos = (direction.normalized * 1.5f * dt) + this.GetPosition();
 				this.SetPosition (movePos);

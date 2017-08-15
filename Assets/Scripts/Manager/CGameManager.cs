@@ -24,6 +24,8 @@ namespace WarriorRoad {
 		protected int m_LevelPerBlock = 7;
 		protected FSMManager m_FSMManager;
 
+		public Action OnEventLoadingCompleted;
+
 		#endregion
 
 		#region Implementation MonoBehaviour
@@ -59,7 +61,6 @@ namespace WarriorRoad {
 			this.m_MapManager = CMapManager.GetInstance ();
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
 			this.m_MapManager.OnMapGenerateComplete += this.SpawnCharacter;
-			this.m_MapManager.GenerateRoadMap (this.m_LevelPerBlock);
 
 			this.m_UserManager = CUserManager.GetInstance();
 		}
@@ -90,6 +91,7 @@ namespace WarriorRoad {
 			yield return this.m_CharacterController;
 			// Init Events
 			this.m_CharacterController.AddAction ("StartIdleState", this.OnPlayerStartRollDice);
+			this.m_CharacterController.AddAction ("MovedBlockState", this.OnPlayerMovedToBlock);
 			// INIT DATA
 			this.m_CharacterController.SetData (heroData);
 			this.m_CharacterController.SetActive (true);
@@ -102,6 +104,9 @@ namespace WarriorRoad {
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
 			// LOADING COMPLETED
 			this.m_LoadingCompleted = true;
+			if (this.OnEventLoadingCompleted != null) {
+				this.OnEventLoadingCompleted ();
+			}
 			CUIGameManager.Instance.OnLoadCharacterInfo (this.m_CharacterController, false);
 			CUIGameManager.Instance.OnUpdateCurrentEnergy (heroData.currentEnergy, heroData.maxEnergy);
 			CUIGameManager.Instance.OnUpdateCurrentGold (heroData.currentGold);
@@ -113,6 +118,18 @@ namespace WarriorRoad {
 			if (this.m_CharacterController.GetActive ()) {
 				this.m_UserManager.OnClientUpdateHero (this.m_CharacterController.GetData () as CCharacterData);
 			}
+		}
+
+		public virtual void OnPlayerMovedToBlock() {
+			// DATA
+			var heroData = this.m_CharacterController.GetData () as CHeroData;
+			// GOLD PER STEP
+			var goldPerStep = heroData.goldPerStep * heroData.characterLevel;
+			// TOTAL GOLD
+			var totalGold = heroData.currentGold + goldPerStep;
+			// UPDATE
+			heroData.currentGold = totalGold >= heroData.maxGold ? heroData.maxGold : totalGold;
+			CUIGameManager.Instance.OnUpdateCurrentGold (heroData.currentGold);
 		}
 
 		public virtual void OnPlayerRollDice() {

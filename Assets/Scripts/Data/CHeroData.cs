@@ -8,6 +8,7 @@ namespace WarriorRoad {
 
 		public int currentGold;
 		public int maxGold;
+		public int goldPerStep;
 		public int currentEnergy;
 		public int maxEnergy;
 
@@ -15,6 +16,7 @@ namespace WarriorRoad {
 		{
 			this.currentGold	= 0;
 			this.maxGold 		= 999999999;
+			this.goldPerStep	= 50;
 			this.currentEnergy 	= 0;
 			this.maxEnergy 		= 30;
 		}

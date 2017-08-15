@@ -26,8 +26,19 @@ namespace WarriorRoad {
 		public override void StartTask ()
 		{
 			base.StartTask ();
+			this.m_IsLoadingTask = false;
 			this.m_GameManager = CGameManager.GetInstance ();
+			this.m_GameManager.OnEventLoadingCompleted -= this.OnLoadTaskCompleted;
+			this.m_GameManager.OnEventLoadingCompleted += this.OnLoadTaskCompleted;
 			this.m_GameManager.OnStartGame ();
+		}
+
+		#endregion
+
+		#region Main methods
+
+		protected virtual void OnLoadTaskCompleted() {
+			this.m_IsLoadingTask = true;
 		}
 
 		#endregion

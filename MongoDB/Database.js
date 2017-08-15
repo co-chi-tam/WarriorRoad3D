@@ -31,11 +31,12 @@ db.clHeroes.insertMany([{
     'maxDefendPoint': 500,
     'characterHealthPoint': 100,
     'characterMaxHealthPoint': 100,
-    'maxHealthPoint': 9999,
-    'currentGold': 500,
+    'maxHealthPoint': 9999,
+    'currentGold': 500,
     'maxGold': 999999999,
-    'currentEnergy': 30,
-    'maxEnergy': 30,
+    'goldPerStep': 25,
+    'currentEnergy': 30,
+    'maxEnergy': 30,
     'lastUpdateEnergy': new Date(),
     'characterSkillSlots': [],
     'uOwner': '',
@@ -61,11 +62,12 @@ db.clHeroes.insertMany([{
     'maxDefendPoint': 500,
     'characterHealthPoint': 80,
     'characterMaxHealthPoint': 80,
-    'maxHealthPoint': 9999,
-    'currentGold': 500,
+    'maxHealthPoint': 9999,
+    'currentGold': 500,
     'maxGold': 999999999,
-    'currentEnergy': 30,
-    'maxEnergy': 30,
+    'goldPerStep': 25,
+    'currentEnergy': 30,
+    'maxEnergy': 30,
     'lastUpdateEnergy': new Date(),
     'characterSkillSlots': [],
     'uOwner': '',
@@ -91,11 +93,12 @@ db.clHeroes.insertMany([{
     'maxDefendPoint': 500,
     'characterHealthPoint': 90,
     'characterMaxHealthPoint': 90,
-    'maxHealthPoint': 9999,
-    'currentGold': 500,
+    'maxHealthPoint': 9999,
+    'currentGold': 500,
     'maxGold': 999999999,
-    'currentEnergy': 30,
-    'maxEnergy': 30,
+    'goldPerStep': 25,
+    'currentEnergy': 30,
+    'maxEnergy': 30,
     'lastUpdateEnergy': new Date(),
     'characterSkillSlots': [],
     'uOwner': '',
@@ -120,7 +123,7 @@ db.clSkills.insertMany([{
     'characterClasses': ['Warrior','Archer','Wizard'],
     'levelRequire' : 0,
     'skillDelay': 0.1,
-    'skillTime': 0.1,
+    'skillTime': 0.5,
     'skillEffects': [
         {
             'skillValue': 1,
@@ -134,8 +137,8 @@ db.clSkills.insertMany([{
     'objectModel': 'Bash-model',
     'characterClasses': ['Warrior'],
     'levelRequire' : 0,
-    'skillDelay': 5,
-    'skillTime': 0.1,
+    'skillDelay': 1,
+    'skillTime': 1,
     'skillEffects': [
         {
             'skillValue': 20,
@@ -149,8 +152,8 @@ db.clSkills.insertMany([{
     'objectModel': 'FireBall-model',
     'characterClasses': ['Wizard'],
     'levelRequire' : 0,
-    'skillDelay': 10,
-    'skillTime': 0.1,
+    'skillDelay': 1,
+    'skillTime': 1,
     'skillEffects': [
         {
             'skillValue': 25,
@@ -164,8 +167,8 @@ db.clSkills.insertMany([{
     'objectModel': 'StrongArrow-model',
     'characterClasses': ['Archer'],
     'levelRequire' : 0,
-    'skillDelay': 3,
-    'skillTime': 0.1,
+    'skillDelay': 1,
+    'skillTime': 1,
     'skillEffects': [
         {
             'skillValue': 15,
@@ -173,9 +176,8 @@ db.clSkills.insertMany([{
         }
     ]
     }]);
-db.clSkills.find({$and: [{characterClasses: {$regex: /w/i}},{levelRequire: {$lte: 3}}]});
-db.clSkills.find({objectName: { $in: ['Normal Attack', 'Fire ball'] }});
-
+db.clSkills.find({$and: [{characterClasses: {$regex: /w/i}},{levelRequire: {$lte: 3}}]});
+db.clSkills.find({objectName: { $in: ['Normal Attack', 'Fire ball'] }});
 db.clSkills.remove({});
 
 db.createCollection('clMonsters');
@@ -273,37 +275,26 @@ db.clMonsters.insertMany([{
             'characterMaxHealthPoint': 5
         }
     }]);
-    
+  
 db.createCollection("clMaps");
 db.clMaps.createIndex({'uID': 1}, {unique: true});
-db.clMaps.find({});
+db.clMaps.find({});
 db.clMaps.remove({});
     
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
 db.clMonsters.find({objectName: /i/i}});
-db.clMonsters.remove({});
 
 db.clUsers.aggregate([{$match: {uName: {$in: ['user0001', 'user0005']}}}, {$sample: {size: 5}}])
 db.clHeroes.find({characterLevel: { $gte:1, $lt: 4 }})
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }}}, {$sample: {size: 5}}])
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: '91c7e267-4767-482f-9e16-8af0ba056ca0s'}}}, {$sample: {size: 5}}])
 
-db.clHeroes.find({});
-db.clHeroes.updateMany({}, {$set: {characterSkillSlots: [{
-    'uID': '502ec8465441f1d108b8c963ec402b08',
-    'objectName': 'Normal Attack',
-    'objectAvatar': 'NormalAttack-avatar',
-    'objectModel': 'NormalAttack-model',
-    'characterClasses': ['Warrior','Archer','Wizard'],
-    'levelRequire' : 0,
-    'skillDelay': 0.1,
-    'skillTime': 0.1,
-    'skillEffects': [
-        {
-            'skillValue': 1,
-            'skillMethod': 'ApplyDamage'
-        }
-    ]
-    }]}});
+db.clHeroes.find({objectName: 'Playera8b7b'});
+
+db.clSkills.find({});
+db.clHeroes.updateMany({}, {$set: {goldPerStep: 25}});
+
+
+
 
