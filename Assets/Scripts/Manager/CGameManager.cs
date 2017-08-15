@@ -148,6 +148,12 @@ namespace WarriorRoad {
 			CUIGameManager.Instance.OnUpdateCurrentEnergy (curEnergy, maxEnergy);
 		}
 
+		public virtual void OnPlayerBackTask() {
+			// WARNING
+			CUserManager.Instance.OnClientInitAccount ();
+			CUICustomManager.Instance.ActiveLoading (true);
+		}
+
 		#endregion
 
 		#region IGameSimpleContext implementation

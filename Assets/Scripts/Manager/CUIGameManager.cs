@@ -47,6 +47,14 @@ namespace WarriorRoad {
 
 		#endregion
 
+		#region Main methods
+
+		public virtual void OnBackTaskPressed () {
+			CGameManager.Instance.OnPlayerBackTask ();
+		}
+
+		#endregion
+
 		#region Roll dice
 	
 		public virtual void OnStartRoll() {

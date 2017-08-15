@@ -197,6 +197,12 @@ namespace WarriorRoad {
 			Debug.LogError (error);
 		}
 
+		public virtual void OnClientWarning (string warning) {
+			// Start message UI.
+			CUICustomManager.Instance.ActiveMessage (true, warning);
+			Debug.LogWarning (warning);
+		}
+
 		#endregion
 
 		#region Connect server
@@ -264,6 +270,15 @@ namespace WarriorRoad {
 						this.OnClientError ("ERROR: NOT DEFINE.");
 					}
 				});
+
+				this.m_SocketIO.On ("warning", delegate(SocketIOEvent warningMsg) {
+					var warningData = warningMsg.data.ToString();
+					if (string.IsNullOrEmpty (warningData) == false) {
+						this.OnClientWarning (warningMsg.ToString ());
+					} else {
+						this.OnClientWarning ("WARNING: NOT DEFINE.");
+					}
+				});
 			});
 		}
 
@@ -311,8 +326,8 @@ namespace WarriorRoad {
 			case "LoginScene":
 				this.OnClientSetupLoginScene (receiveData);
 				break;
-			case "HeroSetupScene":
-				this.OnClientSetupHeroScene (receiveData);
+			case "LobbyScene":
+				this.OnClientSetupLobbyScene (receiveData);
 				break;
 			default:
 				processTask = "LoginScene";
@@ -363,7 +378,7 @@ namespace WarriorRoad {
 
 		}
 
-		public virtual void OnClientSetupHeroScene(JSONObject receiveData) {
+		public virtual void OnClientSetupLobbyScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
 			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
@@ -504,7 +519,7 @@ namespace WarriorRoad {
 
 		public virtual void OnClientCompleteSetupSkills (JSONObject data) {
 			var currentTask = CRootTask.Instance.GetCurrentTask ();
-			if (currentTask.taskName == "HeroSetupScene") {
+			if (currentTask.taskName == "LobbyScene") {
 				currentTask.OnTaskCompleted ();
 			} else {
 				Debug.LogError ("ERROR TASK: NOT CORRECT TASK.");

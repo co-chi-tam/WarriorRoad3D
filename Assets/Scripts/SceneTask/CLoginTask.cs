@@ -16,11 +16,11 @@ namespace WarriorRoad {
 		public CLoginTask () : base ()
 		{
 			this.taskName = "LoginScene";
-			this.nextTask = "HeroSetupScene";
+			this.nextTask = "LobbyScene";
 
 #if UNITY_EDITOR 
 //			PlayerPrefs.DeleteAll();
-			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0001");
+			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0002");
 			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
 #endif
 		}
