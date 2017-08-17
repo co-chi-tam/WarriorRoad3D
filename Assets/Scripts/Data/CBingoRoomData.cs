@@ -22,6 +22,7 @@ namespace WarriorRoad {
 		public string roomName;
 		public int maxPlayer;
 		public CBingoRoomMemberData[] playerInRoom;
+		public string eventResponseCode;
 
 		public CBingoRoomData ()
 		{
@@ -29,6 +30,7 @@ namespace WarriorRoad {
 			this.roomName 		= string.Empty;
 			this.maxPlayer 		= 4;
 			this.playerInRoom 	= new CBingoRoomMemberData[0];
+			this.eventResponseCode = "9a05";
 		}
 		
 	}

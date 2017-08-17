@@ -18,6 +18,8 @@ namespace WarriorRoad {
 		// CURRENT USER
 		[Header ("USER DATA")]
 		public CUserData currentUser;
+		[Header ("HERO DATA")]
+		public CHeroData currentHero;
 
 		// EVENT
 		public Action<CUserData> OnEventLoginCompleted;
@@ -32,9 +34,7 @@ namespace WarriorRoad {
 		private JSONObject jsonPingObject;
 		private int m_MessageReceived;
 		private List<CCharacterData> m_MapObjects;
-
-		// PUBLIC FIELDS
-		public static bool IsOnMatch = false;
+		protected CBingoRoomData m_CurrentBingoRoomData;
 
 		#endregion
 
@@ -63,11 +63,6 @@ namespace WarriorRoad {
 			if (m_PingDelayTime <= 0f) {
 				SendPing ();
 				m_PingDelayTime = 3f;
-			}
-
-			// TEST
-			if (Input.GetKeyDown (KeyCode.L)) {
-				this.OnClientRequestLeaveBingoRoom ();
 			}
 		}
 
@@ -407,12 +402,12 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupCreateHeroScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			this.currentHero = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+				this.currentHero = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
-			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, this.currentHero);
 			// HEROES TEMPLATE
 			var isHeroTemplate = receiveData.HasField ("heroesTemplate");
 			Dictionary<string, CCharacterData> heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
@@ -426,12 +421,12 @@ namespace WarriorRoad {
 		protected virtual void OnClientSetupPlayScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			CCharacterData heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			this.currentHero = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+				this.currentHero = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
-			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, this.currentHero);
 		}
 
 		protected virtual void OnClientSetupLoginScene(JSONObject receiveData) {
@@ -441,12 +436,12 @@ namespace WarriorRoad {
 		public virtual void OnClientSetupLobbyScene(JSONObject receiveData) {
 			// HERO DATA
 			var isHeroData = receiveData.HasField ("heroData");
-			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			this.currentHero = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			if (isHeroData) {
 				var heroDataJson = receiveData.GetField ("heroData").ToString ();
-				heroData = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
+				this.currentHero = TinyJSON.JSON.Load (heroDataJson).Make <CHeroData> ();
 			} 
-			CTaskUtil.Set (CTaskUtil.HERO_DATA, heroData);
+			CTaskUtil.Set (CTaskUtil.HERO_DATA, this.currentHero);
 			// SKILL DATA
 			var isSkillData = receiveData.HasField ("skillDatas");
 			if (isSkillData) {
@@ -601,8 +596,10 @@ namespace WarriorRoad {
 				// WARNING
 				if (CSceneManager.Instance.GetActiveSceneName () != "PlayScene")
 					return;
+				var chatOwner = data.GetField ("chatOwner").ToString().Replace ("\"", string.Empty);
 				var chatStr = data.GetField ("chatStr").ToString().Replace ("\"", string.Empty);
-				CUIGameManager.Instance.ReceiveChatText (chatStr);
+				var chat = chatOwner + ": " + chatStr; 
+				CUIGameManager.Instance.ReceiveChatText (chat, chatOwner == this.currentHero.objectName);
 			}
 		}
 
@@ -649,14 +646,33 @@ namespace WarriorRoad {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
 			this.m_SocketIO.Emit ("onClientRequestLeaveBingoRoom", new JSONObject());
+			if (this.m_CurrentBingoRoomData != null) {
+				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
+				this.m_SocketIO.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
+			}
+			this.m_CurrentBingoRoomData = null;
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
 		public virtual void OnClientInitBingoRoom(JSONObject data) {
 			Debug.LogWarning (data.ToString ());
-			CUICustomManager.Instance.ActiveLoading (false);
+			var isRoomData = data.HasField ("roomData");
+			if (isRoomData) {
+				var objStr = data.GetField ("roomData").ToString ();
+				this.m_CurrentBingoRoomData = TinyJSON.JSON.Load (objStr).Make<CBingoRoomData> ();
+				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
+				// REGISTER EVENT
+				this.m_SocketIO.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
+				this.m_SocketIO.On (roomResponseCode, OnClientReceiveBingoResponseCode);
+				CTaskUtil.Set (CTaskUtil.BINGO_ROOM_RESPONSE_CODE, roomResponseCode);
+				CUICustomManager.Instance.ActiveLoading (false);
+			}
 		}
 
+		protected virtual void OnClientReceiveBingoResponseCode(SocketIOEvent obj) {
+			Debug.LogError (obj.data.ToString ());
+		}
+			
 		#endregion
 		
 	}

@@ -89,13 +89,13 @@ namespace WarriorRoad {
 
 		#region Chat
 
-		public virtual void ReceiveChatText (string text) {
+		public virtual void ReceiveChatText (string text, bool IsMine) {
 			this.m_CurrentChatList.Add (text);
 			var min = this.m_CurrentChatList.Count - 20 < 0 ? 0 : this.m_CurrentChatList.Count - 20;
 			var max = this.m_CurrentChatList.Count;
 			for (int i = 0; i < this.m_ChatItems.Length; i++) {
 				var index = i + min;
-				this.m_ChatItems [i].SetChatText (this.m_CurrentChatList[index]);
+				this.m_ChatItems [i].SetChatText (this.m_CurrentChatList[index], IsMine);
 				this.m_ChatItems [i].gameObject.SetActive (true);
 			}
 			// NOTICE SHOW

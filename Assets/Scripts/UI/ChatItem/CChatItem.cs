@@ -7,8 +7,9 @@ namespace WarriorRoad {
 
 		public Text chatText;
 
-		public virtual void SetChatText(string text) {
+		public virtual void SetChatText(string text, bool isMine) {
 			this.chatText.text = text;
+			this.chatText.alignment = isMine ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft;
 		}
 		
 	}

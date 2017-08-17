@@ -18,6 +18,8 @@ namespace WarriorRoad {
 		public static string SKILL_DATA_LIST = "SKILL_DATA_LIST";
 		public static string HERO_TEMPLATES = "HERO_TEMPLATES";
 
+		public static string BINGO_ROOM_RESPONSE_CODE = "BINGO_ROOM_RESPONSE_CODE";
+
 		public static Dictionary<string, string> VERIFY_HEADERS = new Dictionary<string, string> () { 
 			{"verify", "THIS IS VERIFY HEADERS."}
 		};
@@ -26,7 +28,8 @@ namespace WarriorRoad {
 			{ USER_DATA,		new CUserData()	},
 			{ HERO_DATA, 		new CCharacterData() },
 			{ SKILL_DATA_LIST, 	new List<CSkillData>() },
-			{ HERO_TEMPLATES, 	new Dictionary<string, CCharacterData>() }
+			{ HERO_TEMPLATES, 	new Dictionary<string, CCharacterData>() },
+			{ BINGO_ROOM_RESPONSE_CODE, string.Empty }
 		};
 
 		public static object Get(string name) {
