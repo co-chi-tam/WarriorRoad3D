@@ -26,7 +26,7 @@ namespace WarriorRoad {
 
 		protected string m_CurrentChat = string.Empty;
 		protected CUICharacterInfo m_CurrentCharacterInfo;
-		protected List<string> m_CurrentChatList;
+		protected List<CChatData> m_CurrentChatList;
 
 		#endregion
 
@@ -35,7 +35,7 @@ namespace WarriorRoad {
 		protected override void Awake ()
 		{
 			base.Awake ();
-			this.m_CurrentChatList = new List<string> ();
+			this.m_CurrentChatList = new List<CChatData> ();
 		}
 
 		protected virtual void Start() {
@@ -89,13 +89,15 @@ namespace WarriorRoad {
 
 		#region Chat
 
-		public virtual void ReceiveChatText (string text, bool IsMine) {
-			this.m_CurrentChatList.Add (text);
+		public virtual void ReceiveChatText (CChatData chat) {
+			this.m_CurrentChatList.Add (chat);
 			var min = this.m_CurrentChatList.Count - 20 < 0 ? 0 : this.m_CurrentChatList.Count - 20;
 			var max = this.m_CurrentChatList.Count;
 			for (int i = 0; i < this.m_ChatItems.Length; i++) {
 				var index = i + min;
-				this.m_ChatItems [i].SetChatText (this.m_CurrentChatList[index], IsMine);
+				var chatStr = this.m_CurrentChatList[index].chatStr;
+				var isMine = this.m_CurrentChatList [index].isMine;
+				this.m_ChatItems [i].SetChatText (chatStr, isMine);
 				this.m_ChatItems [i].gameObject.SetActive (true);
 			}
 			// NOTICE SHOW

@@ -64,6 +64,12 @@ namespace WarriorRoad {
 				SendPing ();
 				m_PingDelayTime = 3f;
 			}
+
+			if (Input.GetKeyDown (KeyCode.A)) {
+				var dict = new Dictionary<string, string> ();
+				dict ["DATA"] = "DATA AAAAAAAAAAAAA";
+				this.OnClientSendDataBingoRoom ("onBingoRoomPlayerReady", JSONObject.Create (dict));
+			}
 		}
 
 		protected virtual void OnApplicationQuit() {
@@ -247,8 +253,8 @@ namespace WarriorRoad {
 				});
 				// PING
 				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
-					this.m_MessageReceived += 1;
-					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());	
+					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
+					this.m_MessageReceived += 1;	
 				});
 				// TASK MANAGER
 				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
@@ -289,9 +295,14 @@ namespace WarriorRoad {
 					this.OnClientReceiveBingoRoomList (onClientReveiceRooms.data);
 				});
 
-				this.m_SocketIO.On ("clientInitBingoRoom", delegate(SocketIOEvent onClientInitRoom) {
-					Debug.LogWarning ("clientInitBingoRoom " + onClientInitRoom.ToString());
-					this.OnClientInitBingoRoom (onClientInitRoom.data);
+				this.m_SocketIO.On ("clientInitBingoRoom", delegate(SocketIOEvent onClientInitBingoRoom) {
+					Debug.LogWarning ("clientInitBingoRoom " + onClientInitBingoRoom.ToString());
+					this.OnClientInitBingoRoom (onClientInitBingoRoom.data);
+				});
+
+				this.m_SocketIO.On ("onClientBingoRoomReceiveBoard", delegate(SocketIOEvent onClientBingoBoard) {
+					Debug.LogWarning ("onClientBingoRoomReceiveBoard " + onClientBingoBoard.ToString());
+					this.OnClientBingoRoomReceiveBoard (onClientBingoBoard.data);
 				});
 
 				// ERROR
@@ -599,7 +610,12 @@ namespace WarriorRoad {
 				var chatOwner = data.GetField ("chatOwner").ToString().Replace ("\"", string.Empty);
 				var chatStr = data.GetField ("chatStr").ToString().Replace ("\"", string.Empty);
 				var chat = chatOwner + ": " + chatStr; 
-				CUIGameManager.Instance.ReceiveChatText (chat, chatOwner == this.currentHero.objectName);
+				var chatData = new CChatData () { 
+					chatOwner = chatOwner, 
+					chatStr = chat, 
+					isMine = chatOwner == this.currentHero.objectName
+				};
+				CUIGameManager.Instance.ReceiveChatText (chatData);
 			}
 		}
 
@@ -655,7 +671,6 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientInitBingoRoom(JSONObject data) {
-			Debug.LogWarning (data.ToString ());
 			var isRoomData = data.HasField ("roomData");
 			if (isRoomData) {
 				var objStr = data.GetField ("roomData").ToString ();
@@ -664,13 +679,47 @@ namespace WarriorRoad {
 				// REGISTER EVENT
 				this.m_SocketIO.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
 				this.m_SocketIO.On (roomResponseCode, OnClientReceiveBingoResponseCode);
+				// COMPLETE TASK
+				CRootTask.Instance.ProcessNextTask ("MiniGameBingoScene");
+				CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+
 				CTaskUtil.Set (CTaskUtil.BINGO_ROOM_RESPONSE_CODE, roomResponseCode);
 				CUICustomManager.Instance.ActiveLoading (false);
 			}
 		}
 
 		protected virtual void OnClientReceiveBingoResponseCode(SocketIOEvent obj) {
-			Debug.LogError (obj.data.ToString ());
+			Debug.LogWarning (obj.ToString ());
+		}
+
+		public virtual void OnClientSendDataBingoRoom(string eventName, JSONObject eventData) {
+			if (this.m_SocketIO.IsConnected == false)
+				return;
+			var dictData = new Dictionary<string, string> ();
+			dictData ["eventName"] = eventName;
+			dictData ["eventData"] = eventData.ToString().Replace ("\"", "'");
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_SocketIO.Emit ("onClientSendDataBingoRoom", jsonSend);
+		}
+
+		public virtual void OnBingoRoomPlayerReady () {
+			var dict = new Dictionary<string, string> ();
+			dict ["IsReady"] = "YEAH";
+			this.OnClientSendDataBingoRoom ("onBingoRoomPlayerReady", JSONObject.Create (dict));
+			CUICustomManager.Instance.ActiveLoading (true);
+		}
+
+		public virtual void OnClientBingoRoomReceiveBoard (JSONObject data) {
+			var isBingoBoard = data.HasField ("bingoBoard");
+			if (isBingoBoard) {
+				var boardList = data.GetField ("bingoBoard").list;
+				var boardStr = new string [boardList.Count];
+				for (int i = 0; i < boardList.Count; i++) {
+					boardStr [i] = boardList [i].ToString();
+				}
+				CUIMiniGameBingoManager.Instance.LoadBingoBoard (boardStr);
+				CUICustomManager.Instance.ActiveLoading (false);
+			}
 		}
 			
 		#endregion
