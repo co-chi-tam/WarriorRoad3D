@@ -631,6 +631,8 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientReceiveBingoRoomList(JSONObject data) {
+			if (CSceneManager.Instance.GetActiveSceneName () != "LobbyScene")
+				return;
 			var roomList = data.GetField ("roomListData").list;
 			var roomListData = new List<CBingoRoomData> ();
 			for (int i = 0; i < roomList.Count; i++) {
