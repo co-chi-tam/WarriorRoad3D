@@ -20,8 +20,8 @@ namespace WarriorRoad {
 		[SerializeField]	protected Text m_NoticeText;
 		[SerializeField]	protected CChatItem[] m_ChatItems;
 
-		[Header ("Mini game Bingo")]
-		[SerializeField] 	protected CUIBingoRoom[] m_BingoRooms;
+		[Header ("Mini game Fighting")]
+		[SerializeField] 	protected CUIFightingRoom[] m_FightingRooms;
 
 		protected string m_CurrentChat = string.Empty;
 		protected List<CChatData> m_CurrentChatList;
@@ -93,23 +93,23 @@ namespace WarriorRoad {
 			this.m_LobbyTask.OnHeroAlreadySetupSkill (this.m_SkillSelected);
 		}
 
-		public virtual void OnBingoButtonPressed() {
-			this.m_LobbyTask.OnClientGetBingoRoomList ();
+		public virtual void OnFightingButtonPressed() {
+			this.m_LobbyTask.OnClientGetFightingRoomList ();
 		}
 
-		public virtual void OnBingoLeaveRoomPressed () {
-			this.m_LobbyTask.OnClientRequestLeaveBingoRoom ();
+		public virtual void OnFightingLeaveRoomPressed () {
+			this.m_LobbyTask.OnClientRequestLeaveFightingRoom ();
 		}
 
-		public virtual void SetUpBingoRoom (List<CBingoRoomData> listRoom, Action<int, CBingoRoomData> roomSelected) {
-			for (int i = 0; i < this.m_BingoRooms.Length; i++) {
-				var roomData = this.m_BingoRooms[i].roomData;
+		public virtual void SetUpFightingRoom (List<CRoomData> listRoom, Action<int, CRoomData> roomSelected) {
+			for (int i = 0; i < this.m_FightingRooms.Length; i++) {
+				var roomData = this.m_FightingRooms[i].roomData;
 				if (listRoom [i] == null) {
 					// TODO
 				} else {
 					roomData = listRoom [i];
 				}
-				this.m_BingoRooms [i].SetupRoom (i, roomData, ((index) => {
+				this.m_FightingRooms [i].SetupRoom (i, roomData, ((index) => {
 					if (roomSelected != null) {
 						roomSelected (index, roomData);
 					}

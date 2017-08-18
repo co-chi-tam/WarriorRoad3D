@@ -10,7 +10,7 @@ namespace WarriorRoad {
 		#region Properties
 
 		protected CUILobbyManager m_LobbyManager;
-		protected CBingoRoomData m_CurrentBingoRoomData;
+		protected CRoomData m_CurrentFightingRoomData;
 
 		#endregion
 
@@ -34,9 +34,9 @@ namespace WarriorRoad {
 			this.m_ClientEvents.Add ("clientCompletedSetupSkill", 	this.OnClientCompleteSetupSkills);
 			// CHAT
 			this.m_ClientEvents.Add ("clientReceiveChat", 			this.OnClientReceiveChat);
-			// BINGO
-			this.m_ClientEvents.Add ("clientReceiveBingoRoomList",  this.OnClientReceiveBingoRoomList);
-			this.m_ClientEvents.Add ("clientInitBingoRoom", 		this.OnClientInitBingoRoom);
+			// Fighting
+			this.m_ClientEvents.Add ("clientReceiveFightingRoomList",  this.OnClientReceiveFightingRoomList);
+			this.m_ClientEvents.Add ("clientInitFightingRoom", 		this.OnClientInitFightingRoom);
 		}
 
 		public override void StartTask ()
@@ -126,78 +126,78 @@ namespace WarriorRoad {
 
 		#endregion 
 
-		#region Bingo
+		#region Fighting
 
-		public virtual void OnClientGetBingoRoomList() {
+		public virtual void OnClientGetFightingRoomList() {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
-			this.m_UserManager.Emit ("clientGetBingoRoomList", new JSONObject());
+			this.m_UserManager.Emit ("clientGetFightingRoomList", new JSONObject());
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
-		public virtual void OnClientReceiveBingoRoomList(SocketIOEvent obj) {
+		public virtual void OnClientReceiveFightingRoomList(SocketIOEvent obj) {
 			if (CSceneManager.Instance.GetActiveSceneName () != this.taskName)
 				return;
-			Debug.LogWarning ("clientReceiveBingoRoomList " + obj.ToString());
+			Debug.LogWarning ("clientReceiveFightingRoomList " + obj.ToString());
 			var roomList = obj.data.GetField ("roomListData").list;
-			var roomListData = new List<CBingoRoomData> ();
+			var roomListData = new List<CRoomData> ();
 			for (int i = 0; i < roomList.Count; i++) {
 				var objectStr = roomList [i].ToString ();
 				if (objectStr.Equals ("null") == false) {
-					var objectData = TinyJSON.JSON.Load (objectStr).Make<CBingoRoomData> ();
+					var objectData = TinyJSON.JSON.Load (objectStr).Make<CRoomData> ();
 					roomListData.Add (objectData);
 				} else {
 					roomListData.Add (null);
 				}
 			}
-			CUILobbyManager.Instance.SetUpBingoRoom (roomListData, (index, room) => {
-				this.OnClientRequestJoinBingoRoom (index);
+			CUILobbyManager.Instance.SetUpFightingRoom (roomListData, (index, room) => {
+				this.OnClientRequestJoinFightingRoom (index);
 			});
 			CUICustomManager.Instance.ActiveLoading (false);
 		}
 
-		public virtual void OnClientRequestJoinBingoRoom(int roomIndex) {
+		public virtual void OnClientRequestJoinFightingRoom(int roomIndex) {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
 			var dictData = new Dictionary<string, string> ();
 			dictData ["roomIndex"] = roomIndex.ToString ();
 			var jsonSend = JSONObject.Create (dictData);
-			this.m_UserManager.Emit ("clientRequestJoinBingoRoom", jsonSend);
+			this.m_UserManager.Emit ("clientRequestJoinFightingRoom", jsonSend);
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
-		public virtual void OnClientRequestLeaveBingoRoom () {
+		public virtual void OnClientRequestLeaveFightingRoom () {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
-			this.m_UserManager.Emit ("clientRequestLeaveBingoRoom", new JSONObject());
-			if (this.m_CurrentBingoRoomData != null) {
-				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
-				this.m_UserManager.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
+			this.m_UserManager.Emit ("clientRequestLeaveFightingRoom", new JSONObject());
+			if (this.m_CurrentFightingRoomData != null) {
+				var roomResponseCode = this.m_CurrentFightingRoomData.eventResponseCode;
+				this.m_UserManager.Off (roomResponseCode, OnClientReceiveFightingResponseCode);
 			}
-			this.m_CurrentBingoRoomData = null;
+			this.m_CurrentFightingRoomData = null;
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
-		public virtual void OnClientInitBingoRoom(SocketIOEvent obj) {
-			Debug.LogWarning ("clientInitBingoRoom " + obj.ToString());
+		public virtual void OnClientInitFightingRoom(SocketIOEvent obj) {
+			Debug.LogWarning ("clientInitFightingRoom " + obj.ToString());
 			var isRoomData = obj.data.HasField ("roomData");
 			if (isRoomData) {
 				var objStr = obj.data.GetField ("roomData").ToString ();
-				this.m_CurrentBingoRoomData = TinyJSON.JSON.Load (objStr).Make<CBingoRoomData> ();
-				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
-				CTaskUtil.Set (CTaskUtil.BINGO_ROOM, this.m_CurrentBingoRoomData);
+				this.m_CurrentFightingRoomData = TinyJSON.JSON.Load (objStr).Make<CRoomData> ();
+				var roomResponseCode = this.m_CurrentFightingRoomData.eventResponseCode;
+				CTaskUtil.Set (CTaskUtil.FIGHTING_ROOM, this.m_CurrentFightingRoomData);
 				// REGISTER EVENT
-				this.m_UserManager.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
-				this.m_UserManager.On (roomResponseCode, OnClientReceiveBingoResponseCode);
+				this.m_UserManager.Off (roomResponseCode, OnClientReceiveFightingResponseCode);
+				this.m_UserManager.On (roomResponseCode, OnClientReceiveFightingResponseCode);
 				// COMPLETE TASK
-				this.m_NextTask = "MiniGameBingoScene";
+				this.m_NextTask = "MiniGameFightingScene";
 				this.OnTaskCompleted();
-				CTaskUtil.Set (CTaskUtil.BINGO_ROOM_RESPONSE_CODE, roomResponseCode);
+				CTaskUtil.Set (CTaskUtil.FIGHTING_ROOM_RESPONSE_CODE, roomResponseCode);
 				CUICustomManager.Instance.ActiveLoading (false);
 			}
 		}
 
-		protected virtual void OnClientReceiveBingoResponseCode(SocketIOEvent obj) {
+		protected virtual void OnClientReceiveFightingResponseCode(SocketIOEvent obj) {
 			Debug.LogWarning (obj.ToString ());
 		}
 

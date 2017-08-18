@@ -78,8 +78,7 @@ exports.clientSetupSkills = function (sender, data) {
 	var clientEvent = 'clientCompletedSetupSkill';
 	var clientData = {};
 	if (data.skills) {
-		var skills = data.skills.split(",");
-		console.log (skills[0] + " / " + skills[1]);
+		var skills = data.skills.split(',');
 		skill.findSkillWithNames (skills)
 		// FOUND
 		.then ((foundSkills) => {
@@ -87,6 +86,7 @@ exports.clientSetupSkills = function (sender, data) {
 			hero.updateHero (userTmpDatabase.userId, { characterSkillSlots: foundSkills })
 			// UPDATED
 			.then ((updatedHero) => {
+				clientData.skills = skills;
 				socket.sendMessage (sender, clientEvent, clientData);
 			})
 			// ERROR

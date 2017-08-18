@@ -189,7 +189,7 @@ var heroModel = function(database) {
 			currentEnergy: tmpHero.currentEnergy,
 			maxEnergy: tmpHero.maxEnergy,
 			lastUpdateEnergy: new Date(),
-			characterSkillSlots: [],
+			characterSkillSlots: tmpHero.characterSkillSlots,
 			uOwner: ownerId,
 			characterLevel: 1,
 			characterStep: 0,

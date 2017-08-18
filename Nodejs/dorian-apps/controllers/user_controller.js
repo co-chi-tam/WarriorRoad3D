@@ -9,6 +9,7 @@ const _ = require ('underscore');
 
 require('../Utils/Log')();
 require('../models/resultResponse')();
+require ('../models/syncWorkerModel')();
 
 var self = this;
 var user;
@@ -133,7 +134,7 @@ exports.clientInitAccount = function (sender, data, clients) {
 	// FOUND HERO
 	.then ((foundHero) => {
 		// SEND CLIENT HERO DATA.
-		clientData.taskChange = 'HeroSetupScene';
+		clientData.taskChange = 'LobbyScene';
 		var characterClass = foundHero.characterClass;
 		var characterLevel = foundHero.characterLevel;
 		var currentTime = new Date();
@@ -179,6 +180,32 @@ exports.clientInitAccount = function (sender, data, clients) {
 		socket.sendMessage (sender, clientEvent, clientData);
 	});
 };
+
+exports.clientLeaveGame = function (sender, data, server) {
+	var userTmpDatabase = sender.userTmpDatabase;
+	hero.findHero(userTmpDatabase.userId)
+	// FOUND HERO
+	.then ((player) => {
+		// SYNC WORKER ROOM INFO
+		server.sendTo (sendSyncData ('onServerPlayerLeaveBingoRoom', {
+			playerRequest: {
+				userId: userTmpDatabase.userId,
+				playerId: player.uID,
+				objectName: player.objectName,
+				objectModel: player.objectModel,
+				objectAvatar: player.objectAvatar,
+				currentGold: player.currentGold
+			}
+		}));
+	})
+	// ERROR FIND
+	.catch ((errorFind) => {
+		// SEND CLIENT ERROR
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
+		socket.sendMessage (sender, clientEvent, clientData);
+	});	
+}
 
 // CLOSE IMMEDIATELY CONNECT
 exports.closeConnect = function(sender, data) {

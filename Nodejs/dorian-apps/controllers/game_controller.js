@@ -12,6 +12,7 @@ const _ = require ('underscore');
 
 require('../Utils/Log')();
 require('../models/resultResponse')();
+require('../models/broadcastModel')();
 
 var self = this;
 var user;
@@ -160,12 +161,11 @@ exports.clientCompletedMap = function (sender) {
 					foundHero.characterStep = 0;
 					foundHero.characterLevel = charLevelUp;
 					foundHero.characterHealthPoint = foundHero.characterMaxHealthPoint;
-					foundHero.currentEnergy = currentEnergy;
 					foundHero.currentGold = currentGold;
 					skill.findSkills (foundHero.characterClass, foundHero.characterLevel)
 					// FOUND
 					.then((skills) => {
-						clientData.taskChange   = 'HeroSetupScene';
+						clientData.taskChange   = 'LobbyScene';
 						clientData.heroData 	= foundHero;
 						clientData.skillDatas 	= skills;
 						socket.sendMessage (sender, clientEvent, clientData);
@@ -238,7 +238,7 @@ exports.clientEndGame = function (sender) {
 					skill.findSkills (foundHero.characterClass, foundHero.characterLevel)
 					// FOUND
 					.then((skills) => {
-						clientData.taskChange   = 'HeroSetupScene';
+						clientData.taskChange   = 'LobbyScene';
 						clientData.heroData 	= foundHero;
 						clientData.skillDatas 	= skills;
 						socket.sendMessage (sender, clientEvent, clientData);
@@ -323,8 +323,8 @@ exports.clientRollDice = function (sender) {
 			});
 		} else {
 			// SEND CLIENT ERROR
-			clientEvent = 'error';
-			clientData = { 'error': 'Not enough energy. Plz try later.' };
+			clientEvent = 'warning';
+			clientData = { 'warning': 'Not enough energy. Plz try later.' };
 			socket.sendMessage (sender, clientEvent, clientData);
 		}
 	})
@@ -347,8 +347,9 @@ exports.clientSendChat = function(sender, data, server) {
 		hero.findHero(userTmpDatabase.userId)
 		// FOUND HERO
 		.then ((foundHero) => {
-			clientData.chatStr = foundHero.objectName + ": " + chatStr;
-			server.broadcast (clientEvent, clientData);
+			clientData.chatOwner = foundHero.objectName;
+			clientData.chatStr = chatStr;
+			server.sendTo (sendBroadcastData (clientEvent, clientData));
 		})
 		// ERROR FIND
 		.catch ((errorFind) => {

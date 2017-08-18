@@ -114,7 +114,7 @@ exports.clientCreateHero = function (sender, data) {
 			// SEND CLIENT HERO DATA.
 			var clientEvent = 'clientChangeTask';
 			var clientData = {};
-			clientData.taskChange = 'HeroSetupScene';
+			clientData.taskChange = 'LobbyScene';
 			var characterClass = createdHero.characterClass;
 			var characterLevel = createdHero.characterLevel;
 			skill.findSkills (characterClass, characterLevel)

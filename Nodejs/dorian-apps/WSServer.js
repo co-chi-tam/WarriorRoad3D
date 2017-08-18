@@ -9,6 +9,7 @@ const EEnginePacketType = require('./EEnginePacketType');
 const ESocketPacketType = require('./ESocketPacketType');
 const SocketModel = require('./models/socketModel');
 const user = require('./controllers/user_controller');
+const _ = require ('underscore');
 
 var wsServer = function (server, database, broadcastEvent) {
 	// INIT USER
@@ -38,16 +39,16 @@ var wsServer = function (server, database, broadcastEvent) {
 	});
 	// HANDLE CONNECTION
 	wsSV.on('connection', function (wsClient, request) {
-		print ('New client connection.');
+		print ('New client connected.');
 		// SEND WELCOME MESSAGE
 		socket.sendMessage (wsClient, 'clientInit', {'msgText': 'This is welcome message.'});
 		// CLOSE EVENT
 		wsClient.on('close', function(message) {
 			self.removeClient(wsClient);
-			print ('Client disconnected. ' + clientConnected.length);
+			print ('Client disconnected.');
 		});
 		// ADD NEW CLIENT
-		wsRouter(wsClient, self, request, database);
+		wsRouter.initRouter(wsClient, self, request, database);
 		self.addClient(wsClient);
 		print ('New client added. Total connect: ' + clientConnected.length);
 	});
@@ -67,17 +68,37 @@ var wsServer = function (server, database, broadcastEvent) {
 			clientConnected.splice (clientConnected.indexOf(client), 1);
 		}
 	}
-	// BROADCAST ALL CLIENT
-	this.broadcast = function (clientEvent, clientData) {
+	// SEND TO MASTER
+	this.sendTo = function (data) {
 		if (broadcastEvent) {
-			broadcastEvent ({ eventName: clientEvent, data: clientData });
+			broadcastEvent (data);
 		}
 	}
 	// RECEVEIVE BROADCAST
-	this.receiveBroadCast = function (clientEvent, clientData) {
+	this.receiveBroadCast = function (broadcastData) {
+		var clientEvent = broadcastData.eventName;
+		var clientData 	= broadcastData.eventData;
 		clientConnected.forEach(function (item) {
 			socket.sendMessage (item, clientEvent, clientData);
 		});
+	}
+	// SERVER BROADCAST
+	this.syncWorkerData = function (data) {
+		var syncEvent 	= data.syncEvent;
+		var syncData 	= data.syncData;
+		wsRouter.serverEmitEvent(syncEvent, syncData, self);
+	}
+	// SERVER RECEIVE PRIVATE SYNC DATA
+	this.receivePrivate = function (privateData) {
+		var id 			= privateData.privateId; 
+		var clientEvent = privateData.eventName;
+		var clientData 	= privateData.eventData;
+		var socketPrivate = _.find (clientConnected, function(item) {
+			return item.userTmpDatabase.userId == id;
+		});
+		if (typeof socketPrivate !== 'undefined') {
+			socket.sendMessage (socketPrivate, clientEvent, clientData);
+		}
 	}
 }
 
