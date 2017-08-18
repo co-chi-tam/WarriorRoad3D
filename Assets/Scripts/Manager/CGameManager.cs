@@ -19,10 +19,10 @@ namespace WarriorRoad {
 		[SerializeField]	protected string m_FSMState;
 
 		protected CMapManager m_MapManager;
-		protected CUserManager m_UserManager;
 		protected bool m_LoadingCompleted;
 		protected int m_LevelPerBlock = 7;
 		protected FSMManager m_FSMManager;
+		protected CPlayTask m_PlayTask;
 
 		public Action OnEventLoadingCompleted;
 
@@ -44,6 +44,10 @@ namespace WarriorRoad {
 			this.m_FSMManager.RegisterCondition ("IsRoundCompleted", 	this.IsRoundCompleted);
 		}
 
+		protected virtual void Start() {
+			this.m_PlayTask = CRootTask.Instance.GetCurrentTask () as CPlayTask;
+		}
+
 		protected virtual void Update() {
 			this.m_FSMManager.UpdateState (Time.deltaTime);
 			this.m_FSMState = this.m_FSMManager.currentStateName;
@@ -57,12 +61,9 @@ namespace WarriorRoad {
 		#region Main methods
 
 		public virtual void OnStartGame() {
-			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CCharacterData;
 			this.m_MapManager = CMapManager.GetInstance ();
 			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
 			this.m_MapManager.OnMapGenerateComplete += this.SpawnCharacter;
-
-			this.m_UserManager = CUserManager.GetInstance();
 		}
 
 		public virtual void OnUpdateGame() {
@@ -70,15 +71,15 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnCompleteGame() {
-			this.m_UserManager.OnClientCompletedMap ();
+			this.m_PlayTask.OnClientCompletedMap ();
 		}
 
 		public virtual void OnEndGame() {
-			this.m_UserManager.OnClientEndGame ();
+			this.m_PlayTask.OnClientEndGame ();
 		}
 
 		public virtual void OnLoadingCompleted() {
-			this.m_UserManager.OnClientInitMap ();
+			this.m_PlayTask.OnClientInitMap ();
 		}
 
 		public virtual void SpawnCharacter() {
@@ -116,7 +117,7 @@ namespace WarriorRoad {
 			Debug.LogWarning ("OnPlayerStartRollDice ");
 			CUIGameManager.Instance.OnStartRoll ();
 			if (this.m_CharacterController.GetActive ()) {
-				this.m_UserManager.OnClientUpdateHero (this.m_CharacterController.GetData () as CCharacterData);
+				this.m_PlayTask.OnClientUpdateHero (this.m_CharacterController.GetData () as CCharacterData);
 			}
 		}
 
@@ -138,7 +139,7 @@ namespace WarriorRoad {
 			if (this.IsRoundCompleted () == true)
 				return;
 			Debug.LogWarning ("OnPlayerRollDice ");
-			this.m_UserManager.OnClientRollDice ();
+			this.m_PlayTask.OnClientRollDice ();
 		}
 
 		public virtual void OnPlayerUpdateStep (int value, int curEnergy, int maxEnergy) {

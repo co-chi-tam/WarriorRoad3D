@@ -11,6 +11,12 @@ namespace WarriorRoad {
 		[Header ("BINGO ITEMS")]
 		[SerializeField]	protected CUIBingoItem[] m_BingoItems;
 
+		protected CMiniGameBingoTask m_MiniGameBingoTask;
+
+		protected virtual void Start() {
+			this.m_MiniGameBingoTask = CRootTask.Instance.GetCurrentTask () as CMiniGameBingoTask;
+		}
+
 		public virtual void LoadBingoBoard(string[] board) {
 			for (int i = 0; i < this.m_BingoItems.Length; i++) {
 				var number = board [i];
@@ -21,7 +27,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnReadyPressed() {
-			CUserManager.Instance.OnBingoRoomPlayerReady ();
+			this.m_MiniGameBingoTask.OnBingoRoomPlayerReady ();
 		}
 
 		public void onBingoPressed() {
@@ -30,7 +36,7 @@ namespace WarriorRoad {
 
 		public void OnBackPressed () {
 			// WARNING
-			CUserManager.Instance.OnClientRequestLeaveBingoRoom ();
+			this.m_MiniGameBingoTask.OnClientRequestLeaveBingoRoom ();
 			CUserManager.Instance.OnClientInitAccount ();
 			CUICustomManager.Instance.ActiveLoading (true);
 		}

@@ -27,14 +27,11 @@ namespace WarriorRoad {
 		public Action OnEventConectServerCompleted;
 		public Action<JSONObject> OnEventReceiveMessage;
 		public Action<string> OnEventClientError;
-		public Action OnEventInitUserCompleted;
 
 		// PRIVATE FIELDS
 		private float m_PingDelayTime = 3f;
 		private JSONObject jsonPingObject;
 		private int m_MessageReceived;
-		private List<CCharacterData> m_MapObjects;
-		protected CBingoRoomData m_CurrentBingoRoomData;
 
 		#endregion
 
@@ -63,12 +60,6 @@ namespace WarriorRoad {
 			if (m_PingDelayTime <= 0f) {
 				SendPing ();
 				m_PingDelayTime = 3f;
-			}
-
-			if (Input.GetKeyDown (KeyCode.A)) {
-				var dict = new Dictionary<string, string> ();
-				dict ["DATA"] = "DATA AAAAAAAAAAAAA";
-				this.OnClientSendDataBingoRoom ("onBingoRoomPlayerReady", JSONObject.Create (dict));
 			}
 		}
 
@@ -233,6 +224,42 @@ namespace WarriorRoad {
 
 		#endregion
 
+		#region Socket
+
+		public virtual void On (string name, Action<SocketIOEvent> obj) {
+			if (this.m_SocketIO.IsConnected == null) {
+				return;
+			}
+			this.m_SocketIO.On (name, obj);
+		} 
+
+		public virtual void Off (string name, Action<SocketIOEvent> obj) {
+			if (this.m_SocketIO.IsConnected == null) {
+				return;
+			}
+			this.m_SocketIO.Off (name, obj);
+		}
+
+		public virtual void Emit (string name, JSONObject data) {
+			if (this.m_SocketIO.IsConnected == null) {
+				return;
+			}
+			this.m_SocketIO.Emit (name, data);
+		}
+
+		public virtual void ClearAll () {
+			this.m_SocketIO.ClearAll ();
+		}
+
+		public virtual bool IsConnected() {
+			if (this.m_SocketIO == null) {
+				return false;
+			}
+			return this.m_SocketIO.IsConnected;
+		}
+
+		#endregion
+
 		#region Connect server
 
 		public virtual void OnClientConnectServer() {
@@ -246,11 +273,6 @@ namespace WarriorRoad {
 				this.m_SocketIO.On ("message", delegate(SocketIOEvent mes) {
 					this.OnClientReceiveMessage (mes.data);
 				});
-				// INIT CLIENT
-				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onClientInitMsg) {
-					Debug.LogWarning ("clientInit " + onClientInitMsg.ToString());
-					this.OnClientInitAccount ();
-				});
 				// PING
 				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
 					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
@@ -261,50 +283,6 @@ namespace WarriorRoad {
 					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());
 					this.OnClientChangeSceneTask (onClientChangeTaskMsg.data);
 				});
-				// MAP
-				this.m_SocketIO.On ("clientInitMap", delegate(SocketIOEvent onClientInitGameMsg) {
-					Debug.LogWarning ("clientInitMap " + onClientInitGameMsg.ToString());	
-					this.OnClientReceiveMapObjects (onClientInitGameMsg.data);
-				});
-				// DICE
-				this.m_SocketIO.On ("clientReceiveDice", delegate(SocketIOEvent onClientReceiveDiceMsg) {
-					Debug.LogWarning ("OnClientReceiveDice " + onClientReceiveDiceMsg.ToString());	
-					this.OnClientReceiveDice (onClientReceiveDiceMsg.data);
-				}); 
-				// UPDATE CLIENT
-				this.m_SocketIO.On ("clientUpdated", delegate(SocketIOEvent onClientUpdateMsg) {
-					Debug.LogWarning ("clientUpdated " + onClientUpdateMsg.ToString());	
-				}); 
-				// SKILL
-				this.m_SocketIO.On ("clientReceiveSkills", delegate(SocketIOEvent onClientRevSkills) {
-					Debug.LogError ("clientReceiveSkills " + onClientRevSkills.ToString());
-				});
-
-				this.m_SocketIO.On ("clientCompletedSetupSkill", delegate(SocketIOEvent onClientSetupSkill) {
-					Debug.LogWarning ("clientCompletedSetupSkill " + onClientSetupSkill.ToString());
-					this.OnClientCompleteSetupSkills (onClientSetupSkill.data);
-				});
-				// CHAT
-				this.m_SocketIO.On ("clientReceiveChat", delegate(SocketIOEvent onClientRevChat) {
-					Debug.LogWarning ("clientReceiveChat " + onClientRevChat.ToString());
-					this.OnClientReceiveChat (onClientRevChat.data);
-				});
-				// BINGO
-				this.m_SocketIO.On ("clientReceiveBingoRoomList", delegate(SocketIOEvent onClientReveiceRooms) {
-					Debug.LogWarning ("clientReceiveBingoRoomList " + onClientReveiceRooms.ToString());
-					this.OnClientReceiveBingoRoomList (onClientReveiceRooms.data);
-				});
-
-				this.m_SocketIO.On ("clientInitBingoRoom", delegate(SocketIOEvent onClientInitBingoRoom) {
-					Debug.LogWarning ("clientInitBingoRoom " + onClientInitBingoRoom.ToString());
-					this.OnClientInitBingoRoom (onClientInitBingoRoom.data);
-				});
-
-				this.m_SocketIO.On ("onClientBingoRoomReceiveBoard", delegate(SocketIOEvent onClientBingoBoard) {
-					Debug.LogWarning ("onClientBingoRoomReceiveBoard " + onClientBingoBoard.ToString());
-					this.OnClientBingoRoomReceiveBoard (onClientBingoBoard.data);
-				});
-
 				// ERROR
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
 					var errorData = errorMsg.data.ToString();
@@ -400,10 +378,6 @@ namespace WarriorRoad {
 				this.OnClientSetupLoginScene (receiveData);
 				break;
 			}
-			// TRIGGER EVENT
-			if (this.OnEventInitUserCompleted != null) {
-				this.OnEventInitUserCompleted ();
-			}
 			// COMPLETE TASK
 			CRootTask.Instance.ProcessNextTask (processTask);
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
@@ -469,262 +443,5 @@ namespace WarriorRoad {
 
 		#endregion
 
-		#region Hero
-
-		public virtual void OnClientCreateHero(string heroType, string heroName) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			var heroSubmitData = new Dictionary<string, string> ();
-			heroSubmitData.Add ("htype", heroType);
-			heroSubmitData.Add ("hname", heroName);
-			heroSubmitData.Add ("uname", this.currentUser.userName);
-			heroSubmitData.Add ("token", this.currentUser.token);
-			var jsonCreateHero = JSONObject.Create (heroSubmitData);
-			this.m_SocketIO.Emit ("clientCreateHero", jsonCreateHero);
-		}
-
-		public virtual void OnClientUpdateHero(CCharacterData clientData) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			if (clientData == null)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			dictData ["hhealth"] = clientData.characterHealthPoint.ToString();
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_SocketIO.Emit ("clientUpdateHero", jsonSend);
-		}
-
-		#endregion
-
-		#region Skill
-
-		public virtual void OnClientInitSkill() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("clientInitSkill", new JSONObject());
-		}
-
-		public virtual void OnClientSetupSkills (CSkillData[] skills) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			var setupSkills = "";
-			for (int i = 0; i < skills.Length; i++) {
-				var skillData = skills [i];
-				setupSkills += skillData.objectName + (i < skills.Length - 1 ? "," : "");
-			}
-			dictData ["skills"] = setupSkills;
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_SocketIO.Emit ("clientSetupSkills", jsonSend);
-		}
-
-		public virtual void OnClientCompleteSetupSkills (JSONObject data) {
-			var currentTask = CRootTask.Instance.GetCurrentTask ();
-			if (currentTask.taskName == "LobbyScene") {
-				currentTask.OnTaskCompleted ();
-			} else {
-				Debug.LogError ("ERROR TASK: NOT CORRECT TASK.");
-			}
-		}
-
-		#endregion
-
-		#region Map
-
-		public virtual void OnClientInitMap() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("clientInitMap", new JSONObject());
-		}
-
-		public virtual void OnClientReceiveMapObjects(JSONObject data) {
-			var mapList = data.GetField ("mapBlocks").list;
-			this.m_MapObjects = new List<CCharacterData> ();
-			for (int i = 0; i < mapList.Count; i++) {
-				var objectStr = mapList [i].ToString ();
-				if (objectStr.Equals ("null") == false) {
-					var objectData = TinyJSON.JSON.Load (objectStr).Make<CCharacterData> ();
-					this.m_MapObjects.Add (objectData);
-				} else {
-					this.m_MapObjects.Add (null);
-				}
-			}
-			var mapPath = data.GetField ("mapPath").ToString ().Replace ("\"", string.Empty);
-			CMapManager.Instance.GenerateRoadMap (mapPath, 7);
-			CMapManager.Instance.OnMapGenerateComplete -= OnLoadBlockMapCompleted;
-			CMapManager.Instance.OnMapGenerateComplete += OnLoadBlockMapCompleted;
-		}
-
-		private void OnLoadBlockMapCompleted() {
-			CMapManager.Instance.LoadMapObject (this.m_MapObjects);
-		}
-
-		public virtual void OnClientCompletedMap() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("clientCompletedMap", new JSONObject());
-		}
-
-		public virtual void OnClientEndGame() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("clientEndGame", new JSONObject());
-		}
-
-		#endregion
-
-		#region Dice
-
-		public virtual void OnClientRollDice() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("clientRollDice", new JSONObject());
-		}
-
-		public virtual void OnClientReceiveDice(JSONObject data) {
-			var step = int.Parse (data.GetField ("diceStep").ToString());
-			var curEnergy = int.Parse (data.GetField ("currentEnergy").ToString());
-			var maxEnergy = int.Parse (data.GetField ("maxEnergy").ToString());
-			CGameManager.Instance.OnPlayerUpdateStep (step, curEnergy, maxEnergy);
-		}
-
-		#endregion
-
-		#region Chat
-
-		public virtual void OnClientSendChat(string chat) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			dictData ["chatString"] = chat.ToString();
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_SocketIO.Emit ("clientSendChat", jsonSend);
-		}
-
-		public virtual void OnClientReceiveChat(JSONObject data) {
-			var isHasChat = data.HasField ("chatStr");
-			if (isHasChat) {
-				// WARNING
-				if (CSceneManager.Instance.GetActiveSceneName () != "PlayScene")
-					return;
-				var chatOwner = data.GetField ("chatOwner").ToString().Replace ("\"", string.Empty);
-				var chatStr = data.GetField ("chatStr").ToString().Replace ("\"", string.Empty);
-				var chat = chatOwner + ": " + chatStr; 
-				var chatData = new CChatData () { 
-					chatOwner = chatOwner, 
-					chatStr = chat, 
-					isMine = chatOwner == this.currentHero.objectName
-				};
-				CUIGameManager.Instance.ReceiveChatText (chatData);
-			}
-		}
-
-		#endregion 
-
-		#region Bingo
-
-		public virtual void OnClientGetBingoRoomList() {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("onClientGetBingoRoomList", new JSONObject());
-			CUICustomManager.Instance.ActiveLoading (true);
-		}
-
-		public virtual void OnClientReceiveBingoRoomList(JSONObject data) {
-			if (CSceneManager.Instance.GetActiveSceneName () != "LobbyScene")
-				return;
-			var roomList = data.GetField ("roomListData").list;
-			var roomListData = new List<CBingoRoomData> ();
-			for (int i = 0; i < roomList.Count; i++) {
-				var objectStr = roomList [i].ToString ();
-				if (objectStr.Equals ("null") == false) {
-					var objectData = TinyJSON.JSON.Load (objectStr).Make<CBingoRoomData> ();
-					roomListData.Add (objectData);
-				} else {
-					roomListData.Add (null);
-				}
-			}
-			CUILobbyManager.Instance.SetUpBingoRoom (roomListData, (index, room) => {
-				this.OnClientRequestJoinBingoRoom (index);
-			});
-			CUICustomManager.Instance.ActiveLoading (false);
-		}
-
-		public virtual void OnClientRequestJoinBingoRoom(int roomIndex) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			dictData ["roomIndex"] = roomIndex.ToString ();
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_SocketIO.Emit ("onClientRequestJoinBingoRoom", jsonSend);
-			CUICustomManager.Instance.ActiveLoading (true);
-		}
-
-		public virtual void OnClientRequestLeaveBingoRoom () {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			this.m_SocketIO.Emit ("onClientRequestLeaveBingoRoom", new JSONObject());
-			if (this.m_CurrentBingoRoomData != null) {
-				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
-				this.m_SocketIO.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
-			}
-			this.m_CurrentBingoRoomData = null;
-			CUICustomManager.Instance.ActiveLoading (true);
-		}
-
-		public virtual void OnClientInitBingoRoom(JSONObject data) {
-			var isRoomData = data.HasField ("roomData");
-			if (isRoomData) {
-				var objStr = data.GetField ("roomData").ToString ();
-				this.m_CurrentBingoRoomData = TinyJSON.JSON.Load (objStr).Make<CBingoRoomData> ();
-				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
-				// REGISTER EVENT
-				this.m_SocketIO.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
-				this.m_SocketIO.On (roomResponseCode, OnClientReceiveBingoResponseCode);
-				// COMPLETE TASK
-				CRootTask.Instance.ProcessNextTask ("MiniGameBingoScene");
-				CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
-
-				CTaskUtil.Set (CTaskUtil.BINGO_ROOM_RESPONSE_CODE, roomResponseCode);
-				CUICustomManager.Instance.ActiveLoading (false);
-			}
-		}
-
-		protected virtual void OnClientReceiveBingoResponseCode(SocketIOEvent obj) {
-			Debug.LogWarning (obj.ToString ());
-		}
-
-		public virtual void OnClientSendDataBingoRoom(string eventName, JSONObject eventData) {
-			if (this.m_SocketIO.IsConnected == false)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			dictData ["eventName"] = eventName;
-			dictData ["eventData"] = eventData.ToString().Replace ("\"", "'");
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_SocketIO.Emit ("onClientSendDataBingoRoom", jsonSend);
-		}
-
-		public virtual void OnBingoRoomPlayerReady () {
-			var dict = new Dictionary<string, string> ();
-			dict ["IsReady"] = "YEAH";
-			this.OnClientSendDataBingoRoom ("onBingoRoomPlayerReady", JSONObject.Create (dict));
-			CUICustomManager.Instance.ActiveLoading (true);
-		}
-
-		public virtual void OnClientBingoRoomReceiveBoard (JSONObject data) {
-			var isBingoBoard = data.HasField ("bingoBoard");
-			if (isBingoBoard) {
-				var boardList = data.GetField ("bingoBoard").list;
-				var boardStr = new string [boardList.Count];
-				for (int i = 0; i < boardList.Count; i++) {
-					boardStr [i] = boardList [i].ToString();
-				}
-				CUIMiniGameBingoManager.Instance.LoadBingoBoard (boardStr);
-				CUICustomManager.Instance.ActiveLoading (false);
-			}
-		}
-			
-		#endregion
-		
 	}
 }

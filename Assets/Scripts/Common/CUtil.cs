@@ -33,8 +33,6 @@ public static class CUtil {
 	// Verify a hash against a string.
 	static bool VerifyMd5Hash(this string input, string hash)
 	{
-		// Create Hash
-		MD5 md5Hash = MD5.Create ();
 		// Hash the input.
 		string hashOfInput = input.GetMd5Hash();
 

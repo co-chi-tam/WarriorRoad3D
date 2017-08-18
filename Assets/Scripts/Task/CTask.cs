@@ -16,11 +16,16 @@ namespace WarriorRoad {
 			get { return this.m_NextTask; }
 			set { this.m_NextTask = value; }
 		}
+		public bool IsStartedTask {
+			get { return this.m_IsStartedTask; }
+			set { this.m_IsStartedTask = value; }
+		}
 
 		public Action OnCompleteTask;
 
 		protected bool m_IsLoadingTask = true;
 		protected bool m_IsCompleteTask = false;
+		protected bool m_IsStartedTask = false;
 
 		protected string m_TaskName;
 		protected string m_NextTask;
@@ -40,7 +45,7 @@ namespace WarriorRoad {
 		#region Implementation Task
 
 		public virtual void StartTask() {
-			
+			this.m_IsStartedTask = true;
 		}
 
 		public virtual void UpdateTask(float dt) {
@@ -48,6 +53,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void EndTask() {
+			this.m_IsStartedTask = true;
 			this.OnCompleteTask = null;
 			this.m_IsCompleteTask = false;
 		}

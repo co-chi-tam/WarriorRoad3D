@@ -15,12 +15,20 @@ namespace WarriorRoad {
 		[SerializeField]	protected GameObject m_SkillInfoRoot;
 		[SerializeField]	protected List<CSkillData> m_SkillSelected;
 
+		[Header("Chat panel")]
+		[SerializeField]	protected GameObject m_ChatNotice;
+		[SerializeField]	protected Text m_NoticeText;
+		[SerializeField]	protected CChatItem[] m_ChatItems;
+
 		[Header ("Mini game Bingo")]
 		[SerializeField] 	protected CUIBingoRoom[] m_BingoRooms;
 
 		public Action<List<CSkillData>> OnHeroSetupSubmit;
 
+		protected string m_CurrentChat = string.Empty;
+		protected List<CChatData> m_CurrentChatList;
 		protected Sprite[] m_AvatarSprites;
+		protected CLobbyTask m_LobbyTask;
 
 		#endregion
 
@@ -30,6 +38,14 @@ namespace WarriorRoad {
 			base.Awake ();
 			this.m_SkillSelected 	= new List<CSkillData> ();
 			this.m_AvatarSprites 	= Resources.LoadAll <Sprite> ("Avatar");
+			this.m_CurrentChatList 	= new List<CChatData> ();
+		}
+
+		protected virtual void Start() {
+			this.m_LobbyTask = CRootTask.Instance.GetCurrentTask () as CLobbyTask;
+			for (int i = 0; i < this.m_ChatItems.Length; i++) {
+				this.m_ChatItems [i].gameObject.SetActive (false);
+			}
 		}
 
 		#endregion
@@ -82,11 +98,11 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnBingoButtonPressed() {
-			CUserManager.Instance.OnClientGetBingoRoomList ();
+			this.m_LobbyTask.OnClientGetBingoRoomList ();
 		}
 
 		public virtual void OnBingoLeaveRoomPressed () {
-			CUserManager.Instance.OnClientRequestLeaveBingoRoom ();
+			this.m_LobbyTask.OnClientRequestLeaveBingoRoom ();
 		}
 
 		public virtual void SetUpBingoRoom (List<CBingoRoomData> listRoom, Action<int, CBingoRoomData> roomSelected) {
@@ -103,6 +119,38 @@ namespace WarriorRoad {
 					}
 				}));
 			}
+		}
+
+		#endregion
+
+		#region Chat
+
+		public virtual void ReceiveChatText (CChatData chat) {
+			this.m_CurrentChatList.Add (chat);
+			var min = this.m_CurrentChatList.Count - 20 < 0 ? 0 : this.m_CurrentChatList.Count - 20;
+			var max = this.m_CurrentChatList.Count;
+			for (int i = 0; i < this.m_ChatItems.Length; i++) {
+				var index = i + min;
+				var chatStr = this.m_CurrentChatList[index].chatStr;
+				var isMine = this.m_CurrentChatList [index].isMine;
+				this.m_ChatItems [i].SetChatText (chatStr, isMine);
+				this.m_ChatItems [i].gameObject.SetActive (true);
+			}
+			// NOTICE SHOW
+			this.m_ChatNotice.gameObject.SetActive (true);
+			this.m_NoticeText.text = this.m_CurrentChatList.Count.ToString();
+		}
+
+		public virtual void ChatText (InputField input) {
+			this.m_CurrentChat = input.text;
+			input.text = string.Empty;
+		}
+
+		public virtual void SubmitChat() {
+			if (string.IsNullOrEmpty (this.m_CurrentChat) == false) {
+				this.m_LobbyTask.OnClientSendChat (this.m_CurrentChat);
+			}
+			this.m_CurrentChat = string.Empty;
 		}
 
 		#endregion

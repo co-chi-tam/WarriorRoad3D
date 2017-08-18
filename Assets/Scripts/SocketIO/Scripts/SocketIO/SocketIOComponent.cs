@@ -319,6 +319,9 @@ namespace SocketIO
 			try {
 				ws.Send(encoder.Encode(packet));
 			} catch(SocketIOException ex) {
+#if UNITY_EDITOR
+				Debug.LogError (ex.Message);
+#endif
 #if SOCKET_IO_DEBUG
 				debugMethod.Invoke(ex.ToString());
 #endif
@@ -405,14 +408,16 @@ namespace SocketIO
 
 		private void EmitEvent(SocketIOEvent ev)
 		{
-			if (!handlers.ContainsKey(ev.name)) { return; }
-			foreach (Action<SocketIOEvent> handler in this.handlers[ev.name]) {
-				try{
-					handler(ev);
+			if (!this.handlers.ContainsKey(ev.name)) { return; }
+			foreach (var handler in this.handlers[ev.name]) {
+				try {
+					if (handler != null) {
+						handler(ev);
+					}
 				} catch(Exception ex){
-					#if SOCKET_IO_DEBUG
+#if SOCKET_IO_DEBUG
 					debugMethod.Invoke(ex.ToString());
-					#endif
+#endif
 				}
 			}
 		}
@@ -427,6 +432,15 @@ namespace SocketIO
 				ack.Invoke(packet.json);
 				return;
 			}
+		}
+
+		/// <summary>
+		/// Clears all events.
+		/// </summary>
+		public void ClearAll () {
+			if (handlers == null)
+				return;
+			handlers.Clear ();
 		}
 
 		#endregion

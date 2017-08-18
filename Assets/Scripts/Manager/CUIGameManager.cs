@@ -19,14 +19,7 @@ namespace WarriorRoad {
 		[Header ("Animator")]
 		[SerializeField]	protected Animator m_Animator;
 
-		[Header("Chat panel")]
-		[SerializeField]	protected GameObject m_ChatNotice;
-		[SerializeField]	protected Text m_NoticeText;
-		[SerializeField]	protected CChatItem[] m_ChatItems;
-
-		protected string m_CurrentChat = string.Empty;
 		protected CUICharacterInfo m_CurrentCharacterInfo;
-		protected List<CChatData> m_CurrentChatList;
 
 		#endregion
 
@@ -35,14 +28,10 @@ namespace WarriorRoad {
 		protected override void Awake ()
 		{
 			base.Awake ();
-			this.m_CurrentChatList = new List<CChatData> ();
 		}
 
 		protected virtual void Start() {
 			this.m_CharacterInfoPrefab.gameObject.SetActive (false);
-			for (int i = 0; i < this.m_ChatItems.Length; i++) {
-				this.m_ChatItems [i].gameObject.SetActive (false);
-			}
 		}
 
 		#endregion
@@ -83,38 +72,6 @@ namespace WarriorRoad {
 
 		public virtual void OnUpdateCurrentGold (int gold) {
 			this.m_CurrentGold.text = gold.ToString ();
-		}
-
-		#endregion
-
-		#region Chat
-
-		public virtual void ReceiveChatText (CChatData chat) {
-			this.m_CurrentChatList.Add (chat);
-			var min = this.m_CurrentChatList.Count - 20 < 0 ? 0 : this.m_CurrentChatList.Count - 20;
-			var max = this.m_CurrentChatList.Count;
-			for (int i = 0; i < this.m_ChatItems.Length; i++) {
-				var index = i + min;
-				var chatStr = this.m_CurrentChatList[index].chatStr;
-				var isMine = this.m_CurrentChatList [index].isMine;
-				this.m_ChatItems [i].SetChatText (chatStr, isMine);
-				this.m_ChatItems [i].gameObject.SetActive (true);
-			}
-			// NOTICE SHOW
-			this.m_ChatNotice.gameObject.SetActive (true);
-			this.m_NoticeText.text = this.m_CurrentChatList.Count.ToString();
-		}
-
-		public virtual void ChatText (InputField input) {
-			this.m_CurrentChat = input.text;
-			input.text = string.Empty;
-		}
-
-		public virtual void SubmitChat() {
-			if (string.IsNullOrEmpty (this.m_CurrentChat) == false) {
-				CUserManager.Instance.OnClientSendChat (this.m_CurrentChat);
-			}
-			this.m_CurrentChat = string.Empty;
 		}
 
 		#endregion

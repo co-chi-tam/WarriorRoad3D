@@ -98,7 +98,7 @@ namespace WarriorRoad {
 			this.m_EffectComponent.SetOwner (this.m_Owner);
 		}
 
-		public virtual CObjectController GetOwner() {
+		public override CObjectController GetOwner() {
 			return this.m_Owner.GetController() as CObjectController;
 		}
 

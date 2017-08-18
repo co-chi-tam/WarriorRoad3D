@@ -5,12 +5,11 @@ using System.Linq;
 using UnityEngine;
 
 namespace WarriorRoad {
-	public class CCreateHeroTask : CSimpleTask {
+	public class CCreateHeroTask : CSimpleClientTask {
 
 		#region Properties
 
 		protected CUICreateHeroManager m_CreateHeroManager;
-		protected CUserManager m_UserManager;
 
 		#endregion
 
@@ -26,6 +25,10 @@ namespace WarriorRoad {
 
 		#region Implementation Task
 
+		protected override void RegisterEvents() {
+			base.RegisterEvents ();
+		}
+
 		public override void StartTask ()
 		{
 			base.StartTask ();
@@ -33,14 +36,29 @@ namespace WarriorRoad {
 			this.m_CreateHeroManager.OnEventSubmitHero -= this.OnClientSelectedHero;
 			this.m_CreateHeroManager.OnEventSubmitHero += this.OnClientSelectedHero;
 			this.m_CreateHeroManager.SetupHeroItem ();
-
-			this.m_UserManager = CUserManager.GetInstance ();
 		}
 
 		public virtual void OnClientSelectedHero(int index, string name) {
 			var heroesTemplate = CTaskUtil.Get (CTaskUtil.HERO_TEMPLATES) as Dictionary<string, CCharacterData>;
 			var heroType = heroesTemplate.Keys.ToList () [index];
-			this.m_UserManager.OnClientCreateHero (heroType, name);
+			this.OnClientCreateHero (heroType, name);
+		}
+
+		#endregion
+
+		#region Hero
+
+		public virtual void OnClientCreateHero(string heroType, string heroName) {
+			if (this.m_UserManager.IsConnected() == false)
+				return;
+			var heroSubmitData = new Dictionary<string, string> ();
+			var currentUser = CUserManager.Instance.currentUser;
+			heroSubmitData.Add ("htype", heroType);
+			heroSubmitData.Add ("hname", heroName);
+			heroSubmitData.Add ("uname", currentUser.userName);
+			heroSubmitData.Add ("token", currentUser.token);
+			var jsonCreateHero = JSONObject.Create (heroSubmitData);
+			this.m_UserManager.Emit ("clientCreateHero", jsonCreateHero);
 		}
 
 		#endregion

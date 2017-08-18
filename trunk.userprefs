@@ -1,12 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Controller\CObjectController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Manager\CUserManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Manager\CUILobbyManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UI\MiniGameBingo\CUIBingoRoom.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SocketIO\Scripts\SocketIO\SocketIOComponent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Controller\CObjectController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Manager\CUIMiniGameBingoManager.cs" Line="18" Column="6" />
+      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="634" Column="67" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

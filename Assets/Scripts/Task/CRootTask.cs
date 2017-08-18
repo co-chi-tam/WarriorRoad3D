@@ -45,7 +45,7 @@ namespace WarriorRoad {
 
 		protected virtual void Update ()
 		{
-			if (this.m_CurrentTask != null) {
+			if (this.m_CurrentTask != null && this.m_CurrentTask.IsStartedTask) {
 				this.m_CurrentTask.UpdateTask (Time.deltaTime);
 			}
 		}
