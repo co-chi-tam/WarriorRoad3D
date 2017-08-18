@@ -102,7 +102,6 @@ namespace WarriorRoad {
 			this.m_CharacterController.currentBlock = currentBlock;
 			this.m_CharacterController.targetBlock = currentBlock;
 			this.m_CharacterController.SetPosition (currentBlock.GetMovePointPosition());
-			this.m_MapManager.OnMapGenerateComplete -= this.SpawnCharacter;
 			// LOADING COMPLETED
 			this.m_LoadingCompleted = true;
 			if (this.OnEventLoadingCompleted != null) {

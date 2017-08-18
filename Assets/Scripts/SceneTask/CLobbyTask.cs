@@ -20,24 +20,20 @@ namespace WarriorRoad {
 		{
 			this.taskName = "LobbyScene";
 			this.nextTask = "PlayScene";
+			// ON CLIENT RECEIVE SKILLS
+			this.RegisterEvent ("clientReceiveSkills", 		this.OnClientReceiveSkills);
+			// ON CLIENT SET UP SKILL COMPLETED
+			this.RegisterEvent ("clientCompletedSetupSkill", 	this.OnClientCompleteSetupSkills);
+			// CHAT
+			this.RegisterEvent ("clientReceiveChat", 			this.OnClientReceiveChat);
+			// Fighting
+			this.RegisterEvent ("clientReceiveFightingRoomList",  	this.OnClientReceiveFightingRoomList);
+			this.RegisterEvent ("clientInitFightingRoom", 			this.OnClientInitFightingRoom);
 		}
 
 		#endregion
 
 		#region Implementation Task
-
-		protected override void RegisterEvents() {
-			base.RegisterEvents ();
-			// ON CLIENT RECEIVE SKILLS
-			this.m_ClientEvents.Add ("clientReceiveSkills", 		this.OnClientReceiveSkills);
-			// ON CLIENT SET UP SKILL COMPLETED
-			this.m_ClientEvents.Add ("clientCompletedSetupSkill", 	this.OnClientCompleteSetupSkills);
-			// CHAT
-			this.m_ClientEvents.Add ("clientReceiveChat", 			this.OnClientReceiveChat);
-			// Fighting
-			this.m_ClientEvents.Add ("clientReceiveFightingRoomList",  this.OnClientReceiveFightingRoomList);
-			this.m_ClientEvents.Add ("clientInitFightingRoom", 		this.OnClientInitFightingRoom);
-		}
 
 		public override void StartTask ()
 		{

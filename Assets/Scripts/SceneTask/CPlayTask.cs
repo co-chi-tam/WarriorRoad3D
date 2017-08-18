@@ -19,22 +19,17 @@ namespace WarriorRoad {
 		{
 			this.taskName = "PlayScene";
 			this.nextTask = "LoginScene";
+			// MAP
+			this.RegisterEvent  ("clientInitMap", 		this.OnClientReceiveMapObjects);
+			// DICE
+			this.RegisterEvent ("clientReceiveDice", 	this.OnClientReceiveDice); 
+			// UPDATE CLIENT
+			this.RegisterEvent ("clientUpdated", 		this.OnClientUpdate);
 		}
 
 		#endregion
 
 		#region Implementation Task
-
-		protected override void RegisterEvents ()
-		{
-			base.RegisterEvents ();
-			// MAP
-			this.m_ClientEvents.Add  ("clientInitMap", 		this.OnClientReceiveMapObjects);
-			// DICE
-			this.m_ClientEvents.Add ("clientReceiveDice", 	this.OnClientReceiveDice); 
-			// UPDATE CLIENT
-			this.m_ClientEvents.Add ("clientUpdated", 		this.OnClientUpdate);
-		}
 
 		public override void StartTask ()
 		{
@@ -129,6 +124,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientReceiveDice(SocketIOEvent obj) {
+			Debug.LogWarning ("OnClientReceiveDice " + obj.ToString ());
 			var step 		= int.Parse (obj.data.GetField ("diceStep").ToString());
 			var curEnergy 	= int.Parse (obj.data.GetField ("currentEnergy").ToString());
 			var maxEnergy 	= int.Parse (obj.data.GetField ("maxEnergy").ToString());

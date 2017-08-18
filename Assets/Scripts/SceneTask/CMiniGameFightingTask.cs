@@ -21,19 +21,15 @@ namespace WarriorRoad {
 		{
 			this.taskName = "MiniGameFightingScene";
 			this.nextTask = "LobbyScene";
+			// RECEIVE ROOM COMMAND 
+			this.RegisterEvent ("clientReceiveLeaveFightingRoom",		this.OnClientReceiveLeaveFightingRoom);
+			// RECEIVE ROOM READY MESSAGE 
+			this.RegisterEvent ("clientFightingRoomReceiveMessage",	this.OnClientFightingRoomReceiveMessage);
 		}
 
 		#endregion
 
 		#region Implementation Task
-
-		protected override void RegisterEvents() {
-			base.RegisterEvents ();
-			// RECEIVE ROOM COMMAND 
-			this.m_ClientEvents.Add ("clientReceiveLeaveFightingRoom",		this.OnClientReceiveLeaveFightingRoom);
-			// RECEIVE ROOM READY MESSAGE 
-			this.m_ClientEvents.Add ("clientFightingRoomReceiveMessage",	this.OnClientFightingRoomReceiveMessage);
-		}
 
 		public override void StartTask ()
 		{

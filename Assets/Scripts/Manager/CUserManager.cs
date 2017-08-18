@@ -278,6 +278,11 @@ namespace WarriorRoad {
 					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
 					this.m_MessageReceived += 1;	
 				});
+				// PING
+				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onInitMsg) {
+					Debug.LogWarning ("clientInit " + onInitMsg.ToString());
+					this.OnClientInitAccount ();
+				});
 				// TASK MANAGER
 				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
 					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());

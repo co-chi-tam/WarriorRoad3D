@@ -25,10 +25,6 @@ namespace WarriorRoad {
 
 		#region Implementation Task
 
-		protected override void RegisterEvents() {
-			base.RegisterEvents ();
-		}
-
 		public override void StartTask ()
 		{
 			base.StartTask ();
