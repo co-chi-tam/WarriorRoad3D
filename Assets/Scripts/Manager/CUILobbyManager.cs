@@ -23,8 +23,6 @@ namespace WarriorRoad {
 		[Header ("Mini game Bingo")]
 		[SerializeField] 	protected CUIBingoRoom[] m_BingoRooms;
 
-		public Action<List<CSkillData>> OnHeroSetupSubmit;
-
 		protected string m_CurrentChat = string.Empty;
 		protected List<CChatData> m_CurrentChatList;
 		protected Sprite[] m_AvatarSprites;
@@ -92,9 +90,7 @@ namespace WarriorRoad {
 
 
 		public virtual void OnSubmitPressed() {
-			if (this.OnHeroSetupSubmit != null) {
-				this.OnHeroSetupSubmit (this.m_SkillSelected);
-			}
+			this.m_LobbyTask.OnHeroAlreadySetupSkill (this.m_SkillSelected);
 		}
 
 		public virtual void OnBingoButtonPressed() {

@@ -53,9 +53,9 @@ namespace WarriorRoad {
 		}
 
 		public virtual void EndTask() {
-			this.m_IsStartedTask = true;
-			this.OnCompleteTask = null;
+			this.m_IsStartedTask = false;
 			this.m_IsCompleteTask = false;
+			this.OnCompleteTask = null;
 		}
 
 		public virtual void Transmission() {

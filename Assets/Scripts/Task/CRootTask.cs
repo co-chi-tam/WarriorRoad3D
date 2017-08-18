@@ -10,10 +10,10 @@ namespace WarriorRoad {
 		#region Properties
 
 		[SerializeField]	private string m_CurrentTaskName;	
+		[SerializeField]	private string m_PreviousTaskName;
 
 		private CTask m_CurrentTask;
 		private CMapTask m_MapTask;
-		private string m_PreviousTask;
 
 		private string m_NextTaskInProcess = string.Empty;
 
@@ -35,7 +35,7 @@ namespace WarriorRoad {
 		{
 			// First load
 			this.m_CurrentTask.Transmission ();
-			this.m_PreviousTask = this.m_CurrentTask.GetTaskName();
+			this.m_PreviousTaskName = this.m_CurrentTask.GetTaskName();
 			this.SetupTask();
 			// Other load
 			CSceneManager.Instance.activeSceneChanged += (Scene oldScene, Scene currentScene) => {
@@ -84,7 +84,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void PreviousTask() {
-			this.TransmissionTask (this.m_PreviousTask);
+			this.TransmissionTask (this.m_PreviousTaskName);
 		}
 
 		public virtual void ProcessNextTask(string name) {
@@ -99,7 +99,7 @@ namespace WarriorRoad {
 		}
 
 		private void TransmissionTask(string taskName) {
-			this.m_PreviousTask = this.m_CurrentTask.GetTaskName();
+			this.m_PreviousTaskName = this.m_CurrentTask.GetTaskName();
 			this.m_CurrentTask.EndTask ();
 			this.m_CurrentTask = this.m_MapTask.GetTask (taskName);
 			if (this.m_CurrentTask != null) {

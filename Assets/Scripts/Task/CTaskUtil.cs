@@ -32,8 +32,8 @@ namespace WarriorRoad {
 			{ SKILL_DATA_LIST, 	new List<CSkillData>() },
 			{ HERO_TEMPLATES, 	new Dictionary<string, CCharacterData>() },
 			{ BINGO_ROOM_RESPONSE_CODE, string.Empty },
-			{ BINGO_BOARD, 		new string[25] },
-			{ BINGO_ROOM, 		new CBingoRoomData () }
+			{ BINGO_ROOM, 		new CBingoRoomData () },
+			{ BINGO_BOARD, 		new CBingoBoardData () }
 		};
 
 		public static object Get(string name) {

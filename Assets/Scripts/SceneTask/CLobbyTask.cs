@@ -45,15 +45,11 @@ namespace WarriorRoad {
 			var skillList = CTaskUtil.Get (CTaskUtil.SKILL_DATA_LIST) as List<CSkillData>;
 			this.m_LobbyManager = CUILobbyManager.GetInstance ();
 			this.m_LobbyManager.OnSetupHeroSkill ("Normal Attack", 3, skillList, null);
-			this.m_LobbyManager.OnHeroSetupSubmit -= OnHeroAlreadySetupSkill;
-			this.m_LobbyManager.OnHeroSetupSubmit += OnHeroAlreadySetupSkill;
 		}
 
 		public override void EndTask ()
 		{
 			base.EndTask ();
-			var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
-			this.m_UserManager.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
 		}
 
 		#endregion
@@ -70,8 +66,8 @@ namespace WarriorRoad {
 			Debug.LogWarning ("OnClientReceiveSkills " + obj.ToString ());
 		}
 
-		protected virtual void OnHeroAlreadySetupSkill(List<CSkillData> skillDatas) {
-			if (this.m_UserManager.IsConnected() == null)
+		public virtual void OnHeroAlreadySetupSkill(List<CSkillData> skillDatas) {
+			if (this.m_UserManager.IsConnected() == false)
 				return;
 			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			heroData.characterSkillSlots = new CSkillData[skillDatas.Count];
@@ -90,6 +86,9 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientCompleteSetupSkills (SocketIOEvent obj) {
+			Debug.LogWarning (obj.ToString());
+			// COMPLETE TASK
+			this.m_NextTask = "PlayScene";
 			this.OnTaskCompleted ();
 		}
 
@@ -98,7 +97,7 @@ namespace WarriorRoad {
 		#region Chat
 
 		public virtual void OnClientSendChat(string chat) {
-			if (this.m_UserManager.IsConnected() == null)
+			if (this.m_UserManager.IsConnected() == false)
 				return;
 			var dictData = new Dictionary<string, string> ();
 			dictData ["chatString"] = chat.ToString();
@@ -130,9 +129,9 @@ namespace WarriorRoad {
 		#region Bingo
 
 		public virtual void OnClientGetBingoRoomList() {
-			if (this.m_UserManager.IsConnected() == null)
+			if (this.m_UserManager.IsConnected() == false)
 				return;
-			this.m_UserManager.Emit ("onClientGetBingoRoomList", new JSONObject());
+			this.m_UserManager.Emit ("clientGetBingoRoomList", new JSONObject());
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
@@ -158,19 +157,19 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientRequestJoinBingoRoom(int roomIndex) {
-			if (this.m_UserManager.IsConnected() == null)
+			if (this.m_UserManager.IsConnected() == false)
 				return;
 			var dictData = new Dictionary<string, string> ();
 			dictData ["roomIndex"] = roomIndex.ToString ();
 			var jsonSend = JSONObject.Create (dictData);
-			this.m_UserManager.Emit ("onClientRequestJoinBingoRoom", jsonSend);
+			this.m_UserManager.Emit ("clientRequestJoinBingoRoom", jsonSend);
 			CUICustomManager.Instance.ActiveLoading (true);
 		}
 
 		public virtual void OnClientRequestLeaveBingoRoom () {
-			if (this.m_UserManager.IsConnected() == null)
+			if (this.m_UserManager.IsConnected() == false)
 				return;
-			this.m_UserManager.Emit ("onClientRequestLeaveBingoRoom", new JSONObject());
+			this.m_UserManager.Emit ("clientRequestLeaveBingoRoom", new JSONObject());
 			if (this.m_CurrentBingoRoomData != null) {
 				var roomResponseCode = this.m_CurrentBingoRoomData.eventResponseCode;
 				this.m_UserManager.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
@@ -191,9 +190,8 @@ namespace WarriorRoad {
 				this.m_UserManager.Off (roomResponseCode, OnClientReceiveBingoResponseCode);
 				this.m_UserManager.On (roomResponseCode, OnClientReceiveBingoResponseCode);
 				// COMPLETE TASK
-				CRootTask.Instance.ProcessNextTask ("MiniGameBingoScene");
-				CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
-
+				this.m_NextTask = "MiniGameBingoScene";
+				this.OnTaskCompleted();
 				CTaskUtil.Set (CTaskUtil.BINGO_ROOM_RESPONSE_CODE, roomResponseCode);
 				CUICustomManager.Instance.ActiveLoading (false);
 			}

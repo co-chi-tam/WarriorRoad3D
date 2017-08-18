@@ -49,11 +49,6 @@ namespace WarriorRoad {
 			}
 		}
 
-		public override void EndTask ()
-		{
-			base.EndTask ();
-		}
-
 		#endregion
 
 	}
