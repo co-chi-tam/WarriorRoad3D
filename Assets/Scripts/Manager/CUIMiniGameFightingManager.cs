@@ -14,13 +14,8 @@ namespace WarriorRoad {
 			this.m_MiniGameFightingTask = CRootTask.Instance.GetCurrentTask () as CMiniGameFightingTask;
 		}
 
-		public virtual void OnReadyPressed() {
-			this.m_MiniGameFightingTask.OnFightingRoomPlayerReady ();
-		}
-
-		public void OnBackPressed () {
+		public virtual void OnBackTaskPressed() {
 			// WARNING
-			this.m_MiniGameFightingTask.OnClientRequestLeaveFightingRoom ();
 			CUserManager.Instance.OnClientInitAccount ();
 			CUICustomManager.Instance.ActiveLoading (true);
 		}

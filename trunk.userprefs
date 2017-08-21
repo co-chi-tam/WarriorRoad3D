@@ -2,8 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Manager\CUserManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Manager\CUIMiniGameBingoManager.cs" Line="18" Column="6" />
-      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="634" Column="67" />
+      <File FileName="Assets\Scripts\Manager\CUserManager.cs" Line="40" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

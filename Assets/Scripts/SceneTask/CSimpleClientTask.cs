@@ -28,6 +28,13 @@ namespace WarriorRoad {
 			this.m_UserManager.On (name, evnt);
 		}
 
+		public override void StartTask ()
+		{
+			base.StartTask ();
+			// RESET RANDOM SEED.
+			UnityEngine.Random.InitState ((int) DateTime.Now.Ticks);
+		}
+
 		#endregion
 
 	}

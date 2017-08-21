@@ -20,8 +20,9 @@ namespace WarriorRoad {
 		[SerializeField]	protected Text m_NoticeText;
 		[SerializeField]	protected CChatItem[] m_ChatItems;
 
-		[Header ("Mini game Fighting")]
-		[SerializeField] 	protected CUIFightingRoom[] m_FightingRooms;
+		[Header ("Queue Fighting")]
+		[SerializeField] 	protected Button m_StartQueueButton;
+		[SerializeField]	protected Button m_EndQueueButton;
 
 		protected string m_CurrentChat = string.Empty;
 		protected List<CChatData> m_CurrentChatList;
@@ -93,28 +94,12 @@ namespace WarriorRoad {
 			this.m_LobbyTask.OnHeroAlreadySetupSkill (this.m_SkillSelected);
 		}
 
-		public virtual void OnFightingButtonPressed() {
-			this.m_LobbyTask.OnClientGetFightingRoomList ();
+		public virtual void OnStartQueuePressed() {
+			this.m_LobbyTask.OnClientRequestJoinPlayerQueue ();
 		}
 
-		public virtual void OnFightingLeaveRoomPressed () {
-			this.m_LobbyTask.OnClientRequestLeaveFightingRoom ();
-		}
-
-		public virtual void SetUpFightingRoom (List<CRoomData> listRoom, Action<int, CRoomData> roomSelected) {
-			for (int i = 0; i < this.m_FightingRooms.Length; i++) {
-				var roomData = this.m_FightingRooms[i].roomData;
-				if (listRoom [i] == null) {
-					// TODO
-				} else {
-					roomData = listRoom [i];
-				}
-				this.m_FightingRooms [i].SetupRoom (i, roomData, ((index) => {
-					if (roomSelected != null) {
-						roomSelected (index, roomData);
-					}
-				}));
-			}
+		public virtual void OnEndQueuePressed() {
+			this.m_LobbyTask.OnClientRequestLeavePlayerQueue ();
 		}
 
 		#endregion

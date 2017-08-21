@@ -10,7 +10,7 @@ namespace WarriorRoad {
 		#region Properties
 
 		protected CUILobbyManager m_LobbyManager;
-		protected CRoomData m_CurrentFightingRoomData;
+		protected CMiniFightingData m_CurrentFightingRoomData;
 
 		#endregion
 
@@ -21,14 +21,15 @@ namespace WarriorRoad {
 			this.taskName = "LobbyScene";
 			this.nextTask = "PlayScene";
 			// ON CLIENT RECEIVE SKILLS
-			this.RegisterEvent ("clientReceiveSkills", 		this.OnClientReceiveSkills);
+			this.RegisterEvent ("clientReceiveSkills", 				this.OnClientReceiveSkills);
 			// ON CLIENT SET UP SKILL COMPLETED
-			this.RegisterEvent ("clientCompletedSetupSkill", 	this.OnClientCompleteSetupSkills);
+			this.RegisterEvent ("clientCompletedSetupSkill", 		this.OnClientCompleteSetupSkills);
 			// CHAT
-			this.RegisterEvent ("clientReceiveChat", 			this.OnClientReceiveChat);
+			this.RegisterEvent ("clientReceiveChat", 				this.OnClientReceiveChat);
 			// Fighting
-			this.RegisterEvent ("clientReceiveFightingRoomList",  	this.OnClientReceiveFightingRoomList);
-			this.RegisterEvent ("clientInitFightingRoom", 			this.OnClientInitFightingRoom);
+			this.RegisterEvent ("clientWaitPlayerQueue",  			this.OnClientWaitPlayerQueue);
+			this.RegisterEvent ("clientReceiveResultPlayerQueue",  	this.OnClientReceiveResultPlayerQueue);
+			this.RegisterEvent ("clientCancelPlayerQueue",  		this.OnClientCancelPlayerQueue);
 		}
 
 		#endregion
@@ -124,81 +125,49 @@ namespace WarriorRoad {
 
 		#region Fighting
 
-		public virtual void OnClientGetFightingRoomList() {
-			if (this.m_UserManager.IsConnected() == false)
-				return;
-			this.m_UserManager.Emit ("clientGetFightingRoomList", new JSONObject());
-			CUICustomManager.Instance.ActiveLoading (true);
-		}
-
-		public virtual void OnClientReceiveFightingRoomList(SocketIOEvent obj) {
-			if (CSceneManager.Instance.GetActiveSceneName () != this.taskName)
-				return;
-			Debug.LogWarning ("clientReceiveFightingRoomList " + obj.ToString());
-			var roomList = obj.data.GetField ("roomListData").list;
-			var roomListData = new List<CRoomData> ();
-			for (int i = 0; i < roomList.Count; i++) {
-				var objectStr = roomList [i].ToString ();
-				if (objectStr.Equals ("null") == false) {
-					var objectData = TinyJSON.JSON.Load (objectStr).Make<CRoomData> ();
-					roomListData.Add (objectData);
-				} else {
-					roomListData.Add (null);
-				}
-			}
-			CUILobbyManager.Instance.SetUpFightingRoom (roomListData, (index, room) => {
-				this.OnClientRequestJoinFightingRoom (index);
-			});
-			CUICustomManager.Instance.ActiveLoading (false);
-		}
-
-		public virtual void OnClientRequestJoinFightingRoom(int roomIndex) {
+		public virtual void OnClientRequestJoinPlayerQueue() {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
 			var dictData = new Dictionary<string, string> ();
-			dictData ["roomIndex"] = roomIndex.ToString ();
+			dictData ["requestJoinQueue"] = "true";
 			var jsonSend = JSONObject.Create (dictData);
-			this.m_UserManager.Emit ("clientRequestJoinFightingRoom", jsonSend);
-			CUICustomManager.Instance.ActiveLoading (true);
+			this.m_UserManager.Emit ("clientRequestJoinPlayerQueue", jsonSend);
 		}
 
-		public virtual void OnClientRequestLeaveFightingRoom () {
+		public virtual void OnClientRequestLeavePlayerQueue() {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
-			this.m_UserManager.Emit ("clientRequestLeaveFightingRoom", new JSONObject());
-			if (this.m_CurrentFightingRoomData != null) {
-				var roomResponseCode = this.m_CurrentFightingRoomData.eventResponseCode;
-				this.m_UserManager.Off (roomResponseCode, OnClientReceiveFightingResponseCode);
-			}
-			this.m_CurrentFightingRoomData = null;
-			CUICustomManager.Instance.ActiveLoading (true);
+			var dictData = new Dictionary<string, string> ();
+			dictData ["requestJoinQueue"] = "false";
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_UserManager.Emit ("clientRequestLeavePlayerQueue", jsonSend);
 		}
 
-		public virtual void OnClientInitFightingRoom(SocketIOEvent obj) {
-			Debug.LogWarning ("clientInitFightingRoom " + obj.ToString());
-			var isRoomData = obj.data.HasField ("roomData");
-			if (isRoomData) {
-				var objStr = obj.data.GetField ("roomData").ToString ();
-				this.m_CurrentFightingRoomData = TinyJSON.JSON.Load (objStr).Make<CRoomData> ();
-				var roomResponseCode = this.m_CurrentFightingRoomData.eventResponseCode;
-				CTaskUtil.Set (CTaskUtil.FIGHTING_ROOM, this.m_CurrentFightingRoomData);
-				// REGISTER EVENT
-				this.m_UserManager.Off (roomResponseCode, OnClientReceiveFightingResponseCode);
-				this.m_UserManager.On (roomResponseCode, OnClientReceiveFightingResponseCode);
-				// COMPLETE TASK
-				this.m_NextTask = "MiniGameFightingScene";
-				this.OnTaskCompleted();
-				CTaskUtil.Set (CTaskUtil.FIGHTING_ROOM_RESPONSE_CODE, roomResponseCode);
-				CUICustomManager.Instance.ActiveLoading (false);
-			}
-		}
-
-		protected virtual void OnClientReceiveFightingResponseCode(SocketIOEvent obj) {
+		public virtual void OnClientWaitPlayerQueue(SocketIOEvent obj) {
 			Debug.LogWarning (obj.ToString ());
 		}
 
-		#endregion
+		public virtual void OnClientCancelPlayerQueue (SocketIOEvent obj) {
+			Debug.LogWarning (obj.ToString ());
+		}
 
+		public virtual void OnClientReceiveResultPlayerQueue(SocketIOEvent obj) {
+			Debug.LogWarning (obj.ToString ());
+			var responseData 	= obj.data;
+			var playerDataStr 	= obj.data.GetField ("playerData").ToString();
+			var enemyDataStr 	= obj.data.GetField ("enemyData").ToString();
+			var randomSeedStr 	= obj.data.GetField ("randomSeed").ToString();
+			var miniFightingData = new CMiniFightingData ();
+			miniFightingData.playerData = TinyJSON.JSON.Load (playerDataStr).Make<CHeroData> ();
+			miniFightingData.enemyData 	= TinyJSON.JSON.Load (enemyDataStr).Make<CHeroData> ();
+			miniFightingData.randomSeed = int.Parse (randomSeedStr);
+			CTaskUtil.Set (CTaskUtil.MINI_FIGHTING_DATA, 	miniFightingData);
+			// COMPLETE TASK
+			this.m_NextTask = "MiniGameFightingScene";
+			this.OnTaskCompleted ();
+		}
+
+		#endregion
 
 	}
 }
