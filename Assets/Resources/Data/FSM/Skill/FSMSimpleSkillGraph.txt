@@ -4,7 +4,7 @@
 		"state_name": "SkillIdleState",
 		"states": [
 		{
-			"condition_name": "HaveEnemy",
+			"condition_name": "HaveEnemy&&IsActive",
 			"state_name": "SkillActiveState",
 			"states": [{
 				"condition_name": "IsActionCompleted",
@@ -12,7 +12,7 @@
 				"states": []
 			}]
 		},{
-			"condition_name": "!HaveEnemy",
+			"condition_name": "!HaveEnemy||!IsActive",
 			"state_name": "SkillInactiveState",
 			"states": []
 		}]

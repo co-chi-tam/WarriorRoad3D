@@ -53,6 +53,11 @@ namespace WarriorRoad {
 			return this.m_SkillTime <= 0f;
 		}
 
+		public override bool IsActive ()
+		{
+			return base.IsActive () && this.m_Owner.GetActive ();
+		}
+
 		#endregion
 
 		public override void SetActive (bool value)
