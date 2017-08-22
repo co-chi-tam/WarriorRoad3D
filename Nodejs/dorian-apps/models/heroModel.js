@@ -283,11 +283,11 @@ var heroModel = function(database) {
 		});
 	};
 	
-	// GET HERO BY LEVEL
-	this.findHeroBaseLevel = function(exceptID, minLevel, maxLevel, size) {
+	// FIND HERO BY CONDITION
+	this.findHeroBaseCondition = function (condition, size) {
 		return new Promise(function (resolve, reject) {
-			if (exceptID && minLevel && maxLevel && size) {
-				simpleModel.aggregate({characterLevel: { $gte: minLevel, $lt: maxLevel }, uID: { $ne: exceptID }}, size)
+			if (condition && size) {
+				simpleModel.aggregate(condition, size)
 				// FOUND DATA
 				.then ((foundData) => {
 					var resHero = [];
@@ -306,6 +306,10 @@ var heroModel = function(database) {
 		});
 	};
 	
+	// GET HERO BY LEVEL
+	this.findHeroBaseLevel = function(exceptID, minLevel, maxLevel, size) {
+		return self.findHeroBaseCondition ({characterLevel: { $gte: minLevel, $lt: maxLevel }, uID: { $ne: exceptID }}, size);
+	};
 	// UPDATE HERO
 	this.updateHero = function (ownerId, query) {
 		return new Promise(function (resolve, reject) {

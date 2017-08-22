@@ -158,12 +158,17 @@ namespace WarriorRoad {
 		#region Fighting
 
 		public virtual void OnClientRequestJoinPlayerQueue() {
-			if (this.m_UserManager.IsConnected() == false)
-				return;
-			var dictData = new Dictionary<string, string> ();
-			dictData ["requestJoinQueue"] = "true";
-			var jsonSend = JSONObject.Create (dictData);
-			this.m_UserManager.Emit ("clientRequestJoinPlayerQueue", jsonSend);
+			CUICustom.ActiveMessage (true, "JOIN QUEUE", "Do you want join queue ?\nCost 1 energy", () => {
+				if (this.m_UserManager.IsConnected() == false)
+					return;
+				var dictData = new Dictionary<string, string> ();
+				dictData ["requestJoinQueue"] = "true";
+				var jsonSend = JSONObject.Create (dictData);
+				this.m_UserManager.Emit ("clientRequestJoinPlayerQueue", jsonSend);
+				CUICustom.CloseMessage();
+			}, () => {
+				CUICustom.CloseMessage();
+			});
 		}
 
 		public virtual void OnClientRequestLeavePlayerQueue() {

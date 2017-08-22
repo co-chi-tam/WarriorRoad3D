@@ -128,11 +128,11 @@ exports.clientSendPing = function(sender){
 // INIT ACCOUNT
 exports.clientInitAccount = function (sender, data, clients) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var clientEvent = 'clientChangeTask';
-	var clientData = {};
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((foundHero) => {
+		var clientEvent = 'clientChangeTask';
+		var clientData = {};
 		// SEND CLIENT HERO DATA.
 		clientData.taskChange = 'LobbyScene';
 		var characterClass = foundHero.characterClass;
@@ -159,22 +159,24 @@ exports.clientInitAccount = function (sender, data, clients) {
 			// ERROR
 			.catch ((error) => {
 				// SEND CLIENT ERROR
-				clientEvent = 'error';
-				clientData = { 'error': error };
+				var clientEvent = 'error';
+				var clientData = { 'error': error };
 				socket.sendMessage (sender, clientEvent, clientData);
 			});
 		})
 		// ERROR ENERGY
 		.catch ((error) => {
 			// SEND CLIENT ERROR
-			clientEvent = 'error';
-			clientData = { 'error': error };
+			var clientEvent = 'error';
+			var clientData = { 'error': error };
 			socket.sendMessage (sender, clientEvent, clientData);
 		});
 	})
 	// ERROR FIND
 	.catch ((errorFind) => {
 		// SEND CLIENT CREATE HERO SCENE.
+		var clientEvent = 'clientChangeTask';
+		var clientData = {};
 		clientData.taskChange = 'CreateHeroScene';
 		clientData.heroesTemplate = hero.heroesTemplate;
 		socket.sendMessage (sender, clientEvent, clientData);
@@ -187,7 +189,7 @@ exports.clientLeaveGame = function (sender, data, server) {
 	// FOUND HERO
 	.then ((player) => {
 		// SYNC WORKER ROOM INFO
-		server.sendTo (sendSyncData ('onServerPlayerLeaveBingoRoom', {
+		server.sendTo (sendSyncData ('serverPlayerLeavePlayerQueue', {
 			playerRequest: {
 				userId: userTmpDatabase.userId,
 				playerId: player.uID,

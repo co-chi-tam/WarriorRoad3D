@@ -174,6 +174,46 @@ exports.clientUpdateHero = function(sender, data) {
 	}
 }
 
+// CLIENT UPDATE ENERGY
+exports.clientRequestEnergy = function (sender) {
+	var userTmpDatabase = sender.userTmpDatabase;
+	hero.findHero(userTmpDatabase.userId)
+	// FOUND HERO
+	.then ((foundHero) => {
+		// SEND CLIENT HERO DATA.
+		var currentTime = new Date();
+		var lastTime = new Date (Date.parse (foundHero.lastUpdateEnergy.toISOString()));
+		var lostTime = currentTime.getTime() - lastTime.getTime();
+		var timerPerEnergy = 10 * 60000; // 10 Minute
+		var totalEnergy = Math.floor((lostTime / timerPerEnergy));
+		var currentEnergy = foundHero.currentEnergy + totalEnergy;
+		currentEnergy = currentEnergy > foundHero.maxEnergy ? foundHero.maxEnergy : currentEnergy;
+		var updateTime = totalEnergy >= 1 ? currentTime : lastTime;
+		hero.updateHero (userTmpDatabase.userId, {currentEnergy: currentEnergy, lastUpdateEnergy: updateTime})
+		// UPDATE ENERGY
+		.then ((updated) => {
+			// SEND CLIENT ERROR
+			var clientEvent = 'clientUpdateEnergy';
+			var clientData = { 'energy': { current: currentEnergy, max: foundHero.maxEnergy } };
+			socket.sendMessage (sender, clientEvent, clientData);
+		})
+		// ERROR ENERGY
+		.catch ((error) => {
+			// SEND CLIENT ERROR
+			var clientEvent = 'error';
+			var clientData = { 'error': error };
+			socket.sendMessage (sender, clientEvent, clientData);
+		});
+	})
+	// ERROR FIND
+	.catch ((errorFind) => {
+		// SEND CLIENT ERROR
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
+		socket.sendMessage (sender, clientEvent, clientData);
+	});
+}
+
 
 
 

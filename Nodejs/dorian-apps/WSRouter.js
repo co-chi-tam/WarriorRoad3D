@@ -18,18 +18,18 @@ var hero 		= require('./controllers/hero_controller');
 var monster 	= require('./controllers/monster_controller');
 var game 		= require('./controllers/game_controller');
 var skill 		= require('./controllers/skill_controller');
-var miniFighting	= require('./controllers/mini_game_fighting_controller');
+var playerQueue = require('./controllers/player_queue_controller');
 
 exports.initRouter = function (wsClient, wsServer, request, database) {
 	// INIT
 	var userName 	= request.headers['username'];
 	var token 		= request.headers['token'];
-	user.init		(database);
-	hero.init		(database);
-	monster.init	(database);
-	game.init		(database);
-	skill.init		(database);
-	miniFighting.init	(database);
+	user.init			(database);
+	hero.init			(database);
+	monster.init		(database);
+	game.init			(database);
+	skill.init			(database);
+	playerQueue.init 	(database);
 	// MESSAGE MIDDLEWARE
 	wsClient.on('message', function(message) {
 		var decode = Decode (message);
@@ -66,6 +66,7 @@ wsEventRouter.on ('clientLeaveGame',	user.clientLeaveGame);
 // HERO
 wsEventRouter.on ('clientCreateHero', 	hero.clientCreateHero);
 wsEventRouter.on ('clientUpdateHero', 	hero.clientUpdateHero);
+wsEventRouter.on ('clientRequestEnergy', hero.clientRequestEnergy);
 // GAME
 wsEventRouter.on ('clientInitMap', 		game.clientInitMap);
 wsEventRouter.on ('clientCompletedMap', game.clientCompletedMap);
@@ -76,15 +77,13 @@ wsEventRouter.on ('clientSendChat',     game.clientSendChat);
 wsEventRouter.on ('clientInitSkill', 	skill.clientInitSkill);
 wsEventRouter.on ('clientSetupSkills', 	skill.clientSetupSkills);
 // ROOM
-wsEventRouter.on ('clientGetFightingRoomList',			miniFighting.clientGetFightingRoomList);
-wsEventRouter.on ('clientRequestJoinFightingRoom',		miniFighting.clientRequestJoinFightingRoom);
-wsEventRouter.on ('clientRequestLeaveFightingRoom',		miniFighting.clientRequestLeaveFightingRoom);
-wsEventRouter.on ('clientSendDataFightingRoom',			miniFighting.clientSendDataFightingRoom);
+wsEventRouter.on ('clientRequestJoinPlayerQueue',	playerQueue.clientRequestJoinPlayerQueue);
+wsEventRouter.on ('clientRequestLeavePlayerQueue',	playerQueue.clientRequestLeavePlayerQueue);
+
 // ============= SERVER EVENTS ============= 
 // ROOM
-wsEventRouter.on ('serverPlayerJoinedFightingRoom', 	miniFighting.serverPlayerJoinedFightingRoom);
-wsEventRouter.on ('serverPlayerLeaveFightingRoom', 		miniFighting.serverPlayerLeaveFightingRoom);
-wsEventRouter.on ('serverReceiveDataFightingRoom', 		miniFighting.serverReceiveDataFightingRoom);
+wsEventRouter.on ('serverPlayerJoinedPlayerQueue', 	playerQueue.serverPlayerJoinedPlayerQueue);
+wsEventRouter.on ('serverPlayerLeavePlayerQueue',	playerQueue.serverPlayerLeavePlayerQueue);
 
 
 

@@ -94,7 +94,7 @@ exports.clientInitMap = function (sender) {
 			charLevel + 4)
 			// GENERATE MAP
 			.then ((mapBlocks) => {
-				var mapPath = map.mapPathTemplate[(charLevel - 1) % 2];
+				var mapPath = map.mapPathTemplate[(charLevel - 1) % map.mapPathTemplate.length];
 				map.createMap (userTmpDatabase.userId, mapPath, mapBlocks)
 				// CREATED MAP
 				.then((created) => {

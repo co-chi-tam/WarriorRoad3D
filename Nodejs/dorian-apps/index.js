@@ -6,16 +6,20 @@ const wsServer = require('./WSServer');
 
 const mongodb = require('mongodb');
 const mongoClient = mongodb.MongoClient;
-const GameModel = require('./models/gameModel');
 
 require('./Utils/Log')();
 
+// DATABASE USER NAME
 var dbUser = 'cochitam1990';
+// DATABASE PASSWORD
 var dbPassword = 'Pro12%40833';
+// DATABASE NAME
 var dbName = 'heroku_clpx7q07';
+// CONNECTION STRING
 var connectionString = "mongodb://" + dbUser + ":" + dbPassword + "@ds011933.mlab.com:11933/" + dbName;
+// LIST WORKER
 var workers = [];
-
+// MASTER
 if (cluster.isMaster) {
 	print('Cluster working ...');
 	// FORK
@@ -23,13 +27,11 @@ if (cluster.isMaster) {
 		// NEW WORKER
 		var currentWorker = cluster.fork();
 		currentWorker.on ('message', function(msg) {
-			if (msg.wMsg) {
-				workers.forEach (function (item) {
-					item.send (msg.wMsg);
-				});
-			} 
+			workers.forEach (function (item) {
+				item.send (msg);
+			});
 		});
-		if (!workers.includes(currentWorker)) {
+		if (workers.indexOf(currentWorker) === -1) {
 			workers.push (currentWorker);
 		}
 	}
@@ -48,16 +50,15 @@ if (cluster.isMaster) {
 		// NEW WORKER
 		var currentWorker = cluster.fork();
 		currentWorker.on ('message', function(msg) {
-			if (msg.wMsg) {
-				workers.forEach (function (item) {
-					item.send (msg.wMsg);
-				});
-			} 
+			workers.forEach (function (item) {
+				item.send (msg);
+			});
 		});
-		if (!workers.includes(currentWorker)) {
+		if (workers.indexOf(currentWorker) === -1) {
 			workers.push (currentWorker);
 		}
 	});
+// WORKER
 } else {
 	mongoClient.connect(connectionString, function(err, database) {
 		if (err) {
@@ -67,11 +68,18 @@ if (cluster.isMaster) {
 			var databaseGame = database.db(dbName);
 			var app = new appServer(databaseGame);
 			var ws = new wsServer(app.server, databaseGame, function (workerMsg) {
-				process.send ({wMsg : workerMsg});
+				process.send (workerMsg);
 			});
 			process.on('message', function(msg) {
-				if (msg.eventName && msg.data) {
-					ws.receiveBroadCast (msg.eventName, msg.data);
+				// BROADCAST
+				if (msg.broadcastData) {
+					ws.receiveBroadCast (msg.broadcastData);
+				// WORKER SYNC
+				} else if (msg.workerSync) {
+					ws.syncWorkerData (msg.workerSync);
+				// PRIVATE SOCKET
+				} else if (msg.privateData) {
+					ws.receivePrivate (msg.privateData);
 				}
 			});
 		}

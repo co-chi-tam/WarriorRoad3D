@@ -219,19 +219,19 @@ namespace WarriorRoad {
 				this.OnEventClientError (error);
 			}
 			// Start message UI.
-			CUICustomManager.Instance.ActiveMessage (true, error);
+			CUICustomManager.Instance.ActiveNotice (true, error);
 			Debug.LogError (error);
 		}
 
 		public virtual void OnClientWarning (string warning) {
 			// Start message UI.
-			CUICustomManager.Instance.ActiveMessage (true, warning);
+			CUICustomManager.Instance.ActiveNotice (true, warning);
 			Debug.LogWarning (warning);
 		}
 
 		public virtual void OnClientNotice (string notice) {
 			// Start message UI.
-			CUICustomManager.Instance.ActiveMessage (true, notice);
+			CUICustomManager.Instance.ActiveNotice (true, notice);
 			Debug.Log (notice);
 		}
 
@@ -365,7 +365,7 @@ namespace WarriorRoad {
 		public virtual void OnClientConnectServerFailed (string error) {
 			this.OnClientError (error);
 			// Start message UI.
-			CUICustomManager.Instance.ActiveMessage (true, error);
+			CUICustomManager.Instance.ActiveNotice (true, error);
 			Debug.LogError (error);
 		}
 

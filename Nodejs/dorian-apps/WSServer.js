@@ -7,6 +7,7 @@ const wsRouter = require ('./WSRouter');
 const WSPacket = require ('./WSPacket');
 const EEnginePacketType = require('./EEnginePacketType');
 const ESocketPacketType = require('./ESocketPacketType');
+const EUserAction = require('./models/userAction');
 const SocketModel = require('./models/socketModel');
 const user = require('./controllers/user_controller');
 const _ = require ('underscore');
@@ -40,6 +41,7 @@ var wsServer = function (server, database, broadcastEvent) {
 	// HANDLE CONNECTION
 	wsSV.on('connection', function (wsClient, request) {
 		print ('New client connected.');
+		wsClient.userAction = EUserAction.UNKNOWN;
 		// SEND WELCOME MESSAGE
 		socket.sendMessage (wsClient, 'clientInit', {'msgText': 'This is welcome message.'});
 		// CLOSE EVENT
@@ -59,12 +61,16 @@ var wsServer = function (server, database, broadcastEvent) {
 	// ADD CLIENT
 	this.addClient = function(client) {
 		if (!clientConnected.includes(client)) {
+			client.userTmpDatabase = {};
+			client.userAction = EUserAction.CONNECTED;
 			clientConnected.push (client);
 		}
 	};
 	// REMOVE CLIENT
 	this.removeClient = function(client) {
 		if (clientConnected.indexOf(client) !== -1) {
+			client.userTmpDatabase = {};
+			client.userAction = EUserAction.DISCONNECTED;
 			clientConnected.splice (clientConnected.indexOf(client), 1);
 		}
 	}
@@ -100,6 +106,27 @@ var wsServer = function (server, database, broadcastEvent) {
 			socket.sendMessage (socketPrivate, clientEvent, clientData);
 		}
 	}
+	// SERVER SET PRIVATE DATA
+	this.setPrivateUserAction = function (privateId, userAction) {
+		var id 			= privateId; 
+		var socketPrivate = _.find (clientConnected, function(item) {
+			return item.userTmpDatabase.userId == id;
+		});
+		if (typeof socketPrivate !== 'undefined') {
+			socketPrivate.userAction = userAction;
+		}
+	}
+	// SERVER FIND SOCKET
+	this.findSocket = function (condition) {
+		var result = _.find(clientConnected, function(item) {
+			if (condition) {
+				return condition (item);
+			} else {
+				return false;
+			}
+		});
+		return result;
+	} 
 }
 
 module.exports = wsServer;
