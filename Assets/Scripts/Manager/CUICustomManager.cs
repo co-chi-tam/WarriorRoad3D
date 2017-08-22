@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using SimpleSingleton;
 
 namespace WarriorRoad {
+	
 	public class CUICustomManager : CMonoSingleton<CUICustomManager> {
 
 		#region Fields

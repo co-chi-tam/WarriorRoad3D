@@ -165,10 +165,7 @@ namespace WarriorRoad {
 				dictData ["requestJoinQueue"] = "true";
 				var jsonSend = JSONObject.Create (dictData);
 				this.m_UserManager.Emit ("clientRequestJoinPlayerQueue", jsonSend);
-				CUICustom.CloseMessage();
-			}, () => {
-				CUICustom.CloseMessage();
-			});
+			}, null);
 		}
 
 		public virtual void OnClientRequestLeavePlayerQueue() {

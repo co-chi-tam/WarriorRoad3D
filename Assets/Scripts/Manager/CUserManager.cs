@@ -35,6 +35,7 @@ namespace WarriorRoad {
 		protected int m_MessageReceived;
 		// INITED
 		protected bool m_Inited = false;
+		protected bool m_LogedIn = false;
 
 		#endregion
 
@@ -71,19 +72,19 @@ namespace WarriorRoad {
 		}
 
 		protected virtual void OnApplicationFocus (bool value) {
-//#if !UNITY_EDITOR
-//			if (value == false) {
-//				this.OnClientLeaveGame ();
-//			}
-//#endif
+#if !UNITY_EDITOR
+			if (value == false) {
+				this.OnClientInitAccount ();
+			}
+#endif
 		}
 
 		protected virtual void OnApplicationPause (bool value) {
-//#if !UNITY_EDITOR
-//			if (value) {
-//				this.OnClientLeaveGame ();
-//			}
-//#endif
+#if !UNITY_EDITOR
+			if (value) {
+				this.OnClientInitAccount ();
+			}
+#endif
 		}
 
 		#endregion
@@ -151,6 +152,7 @@ namespace WarriorRoad {
 		}
 
 		public virtual void OnClientLoginCompleted(CUserData user) {
+			Debug.LogWarning ("OnClientLoginCompleted USER " + user.userName + " PASSWORD " + user.userPassword);
 			if (this.OnEventLoginCompleted != null) {
 				this.OnEventLoginCompleted (user);
 			}
@@ -158,6 +160,8 @@ namespace WarriorRoad {
 			this.OnClientConnectServer ();
 			// SAVE USER DATA
 			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
+			// LOGGED IN
+			this.m_LogedIn = true;
 		}
 
 		#endregion
@@ -212,7 +216,13 @@ namespace WarriorRoad {
 			this.OnClientConnectServer ();
 			// SAVE USER DATA
 			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
+			// LOGGED IN
+			this.m_LogedIn = true;
 		}
+
+		#endregion
+
+		#region Notice
 
 		public virtual void OnClientError (string error) {
 			if (this.OnEventClientError != null) {
@@ -240,21 +250,21 @@ namespace WarriorRoad {
 		#region Socket
 
 		public virtual void On (string name, Action<SocketIOEvent> obj) {
-			if (this.m_SocketIO.IsConnected == null) {
+			if (this.m_SocketIO == null) {
 				return;
 			}
 			this.m_SocketIO.On (name, obj);
 		} 
 
 		public virtual void Off (string name, Action<SocketIOEvent> obj) {
-			if (this.m_SocketIO.IsConnected == null) {
+			if (this.m_SocketIO == null) {
 				return;
 			}
 			this.m_SocketIO.Off (name, obj);
 		}
 
 		public virtual void Emit (string name, JSONObject data) {
-			if (this.m_SocketIO.IsConnected == null) {
+			if (this.m_SocketIO == null) {
 				return;
 			}
 			this.m_SocketIO.Emit (name, data);
@@ -281,8 +291,9 @@ namespace WarriorRoad {
 			this.m_SocketIO.AddHeader ("token", this.currentUser.token);
 			this.m_SocketIO.Connect ();
 			this.m_SocketIO.On ("connect", delegate(SocketIOEvent obj) {
+				// CONNECTED SERVER
 				this.OnClientConnectCompleted ();
-				// MESSAGEs
+				// MESSAGES
 				this.m_SocketIO.On ("message", delegate(SocketIOEvent mes) {
 					this.OnClientReceiveMessage (mes.data);
 				});
@@ -291,16 +302,18 @@ namespace WarriorRoad {
 					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
 					this.m_MessageReceived += 1;
 					// RE-INIT WHEN SERVER NOT RESPONSE
-					if (this.m_MessageReceived > 3 && this.m_Inited == false) {
-						this.m_MessageReceived = 0;
-						this.OnClientInitAccount ();
-					}
+//					if (this.m_MessageReceived > 3 
+//						&& this.m_Inited == false 
+//						&& this.m_LogedIn == true) {
+//						this.m_MessageReceived = 0;
+//						this.OnClientInitAccount ();
+//					}
 				});
 				// INIT
-				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onInitMsg) {
-					Debug.LogWarning ("clientInit " + onInitMsg.ToString());
-					this.OnClientInitAccount ();
-				});
+//				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onInitMsg) {
+//					Debug.LogWarning ("clientInit " + onInitMsg.ToString());
+//					this.OnClientInitAccount ();
+//				});
 				// TASK MANAGER
 				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
 					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());
@@ -360,6 +373,8 @@ namespace WarriorRoad {
 			if (this.OnEventConectServerCompleted != null) {
 				this.OnEventConectServerCompleted ();
 			}
+			// INIT ACCOUNT
+			this.OnClientInitAccount ();
 		}
 
 		public virtual void OnClientConnectServerFailed (string error) {

@@ -16,7 +16,7 @@ namespace WarriorRoad {
 		public override void StartState()
 		{
 			base.StartState ();
-			this.m_Controller.InvokeAction ("StartInactiveState");
+			this.m_Controller.InvokeAction ("StartInactiveState", this.m_Controller);
 			this.m_Controller.SetActive (false);
 			this.m_Controller.gameObject.SetActive (false);
 			this.m_Controller.SetAnimation ("AnimParam", 10);

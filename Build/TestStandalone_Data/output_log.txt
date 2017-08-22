@@ -17,23 +17,30 @@ Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\M
 Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
 Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
 Loading E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-- Completed reload, in  0.050 seconds
+- Completed reload, in  0.147 seconds
 Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\System.dll (this message is harmless)
 Platform assembly: E:\Test\Gihub\WarriorRoad3D\trunk\Build\TestStandalone_Data\Managed\Mono.Security.dll (this message is harmless)
-desktop: 1366x768 60Hz; virtual: 3286x1147 at -1920,0
 <RI> Initializing input.
 <RI> Input initialized.
+desktop: 1366x768 60Hz; virtual: 3286x1147 at -1920,0
 <RI> Initialized touch support.
-UnloadTime: 1.728577 ms
+UnloadTime: 1.805985 ms
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 0.460583 ms
+UnloadTime: 13.746099 ms
 
-Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 680.
-Total: 1.590017 ms (FindLiveObjects: 0.127868 ms CreateObjectMapping: 0.141981 ms MarkObjects: 1.309476 ms  DeleteObjects: 0.009836 ms)
+Unloading 2145 unused Assets to reduce memory usage. Loaded Objects now: 752.
+Total: 4.650315 ms (FindLiveObjects: 0.174483 ms CreateObjectMapping: 0.290805 ms MarkObjects: 1.905628 ms  DeleteObjects: 2.278971 ms)
 
-8/1/2017 2:08:12 PM|Error|WebSocket.Send|A WebSocket connection isn't established.
-[SocketIOEvent: name=error, data=]
+OnClientLoginCompleted USER user0001 PASSWORD 123456789
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+[SocketIOEvent: name=clientCancelPlayerQueue, data={"canceled":true}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+clientChangeTask [SocketIOEvent: name=clientChangeTask, data={"taskChange":"LobbyScene","heroData":{"uID":"280a4c24-4d48-4515-a371-7de1622f5f4b","objectName":"Player5476c","objectAvatar":"Warrior-avatar","objectModel":"Warrior-model","characterClass":"Warrior","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":20,"maxDefendPoint":500,"characterHealthPoint":88,"characterMaxHealthPoint":100,"maxHealthPoint":9999,"currentGold":12700,"maxGold":1E+09,"goldPerStep":25,"currentEnergy":19,"maxEnergy":30,"lastUpdateEnergy":"2017-08-22T07:30:43.922Z","characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectModel":"NormalAttack-model","objectAvatar":"NormalAttack-avatar","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]},{"uID":"b4d0a149ec60fb7124d3d4d72ea8174b","objectName":"Bash","objectModel":"Bash-model","objectAvatar":"Bash-avatar","characterClasses":["Warrior"],"levelRequire":0,"skillDelay":1,"skillTime":1,"skillEffects":[{"skillValue":20,"skillMethod":"ApplyDamage"}]}],"characterLevel":1,"characterStep":18,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},"skillDatas":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectModel":"NormalAttack-model","objectAvatar":"NormalAttack-avatar","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]},{"uID":"b4d0a149ec60fb7124d3d4d72ea8174b","objectName":"Bash","objectModel":"Bash-model","objectAvatar":"Bash-avatar","characterClasses":["Warrior"],"levelRequire":0,"skillDelay":1,"skillTime":1,"skillEffects":[{"skillValue":20,"skillMethod":"ApplyDamage"}]}]}]
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
@@ -46,19 +53,101 @@ serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is ser
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
 Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 4.764065 ms
-
-Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 1897.
-Total: 4.599418 ms (FindLiveObjects: 0.230505 ms CreateObjectMapping: 0.300213 ms MarkObjects: 3.994715 ms  DeleteObjects: 0.072701 ms)
-
-serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
-serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
-
+UnloadTime: 3.560224 ms
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 2b64 -> priority: 1 
-  Thread -> id: 326c -> priority: 1 
+  Thread -> id: 117c -> priority: 1 
+
+Unloading 4 unused Assets to reduce memory usage. Loaded Objects now: 1040.
+Total: 9.975042 ms (FindLiveObjects: 0.184746 ms CreateObjectMapping: 0.139415 ms MarkObjects: 9.451165 ms  DeleteObjects: 0.198431 ms)
+
+  Thread -> id: 860 -> priority: 1 
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+[SocketIOEvent: name=clientCompletedSetupSkill, data={"skills":["Normal Attack","Bash"]}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.508193 ms
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 746.
+Total: 6.229643 ms (FindLiveObjects: 0.105203 ms CreateObjectMapping: 0.066714 ms MarkObjects: 5.910613 ms  DeleteObjects: 0.145830 ms)
+
+OnClientReceiveMapObjects {"mapPath":"ForestBlock","mapBlocks":[{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},null,{"objectName":"Rabbit","objectAvatar":"Rabbit-avatar","objectModel":"Rabbit-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Rabbit","objectAvatar":"Rabbit-avatar","objectModel":"Rabbit-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},null,{"objectName":"Rabbit","objectAvatar":"Rabbit-avatar","objectModel":"Rabbit-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Slime","objectAvatar":"Slime-avatar","objectModel":"Slime-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},null,{"objectName":"Bat","objectAvatar":"Bat-avatar","objectModel":"Bat-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Rabbit","objectAvatar":"Rabbit-avatar","objectModel":"Rabbit-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},null,null,{"objectName":"Slime","objectAvatar":"Slime-avatar","objectModel":"Slime-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Slime","objectAvatar":"Slime-avatar","objectModel":"Slime-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Slime","objectAvatar":"Slime-avatar","objectModel":"Slime-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}},{"objectName":"Ghost","objectAvatar":"Ghost-avatar","objectModel":"Ghost-model","characterAttackPoint":20,"maxAttackPoint":500,"characterAttackSpeed":1,"maxAttackSpeed":2,"characterDefendPoint":5,"maxDefendPoint":500,"characterHealthPoint":50,"characterMaxHealthPoint":50,"maxHealthPoint":9999,"characterSkillSlots":[{"uID":"502ec8465441f1d108b8c963ec402b08","objectName":"Normal Attack","objectAvatar":"NormalAttack-avatar","objectModel":"NormalAttack-model","characterClasses":["Warrior","Archer","Wizard"],"levelRequire":0,"skillDelay":0.1,"skillTime":0.1,"skillEffects":[{"skillValue":1,"skillMethod":"ApplyDamage"}]}],"characterLevel":4,"dataPerLevel":{"characterAttackPoint":2,"characterAttackSpeed":0.1,"characterDefendPoint":2,"characterMaxHealthPoint":5}}]}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnPlayerStartRollDice 
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+clientUpdated {"msg":"Update {\"characterHealthPoint\":88}"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnPlayerRollDice 
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnClientReceiveDice [SocketIOEvent: name=clientReceiveDice, data={"diceStep":4,"currentEnergy":18,"maxEnergy":30}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnPlayerStartRollDice 
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+clientUpdated {"msg":"Update {\"characterHealthPoint\":67}"}
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnPlayerRollDice 
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+OnClientReceiveDice [SocketIOEvent: name=clientReceiveDice, data={"diceStep":1,"currentEnergy":17,"maxEnergy":30}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+serverSendPing [SocketIOEvent: name=serverSendPing, data={"msgText":"This is server send ping."}]
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+

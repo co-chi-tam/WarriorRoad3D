@@ -46,9 +46,7 @@ namespace WarriorRoad {
 		public override void EndTask ()
 		{
 			base.EndTask ();
-			if (this.m_IsCompleteTask) {
-				this.OnUserAlready ();
-			}
+			this.OnUserAlready ();
 		}
 
 		#endregion

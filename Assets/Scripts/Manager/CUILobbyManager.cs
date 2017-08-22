@@ -10,6 +10,9 @@ namespace WarriorRoad {
 
 		#region Properties
 
+		[Header ("Animator")]
+		[SerializeField]	protected Animator m_Animator;
+
 		[Header ("Skill Info")]
 		[SerializeField]	protected CUISkillItemInfo m_SkillInfoPrefab;
 		[SerializeField]	protected GameObject m_SkillInfoRoot;

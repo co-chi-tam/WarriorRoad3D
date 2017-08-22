@@ -49,6 +49,8 @@ namespace WarriorRoad {
 			charCtrl.SetData (charData);
 			charCtrl.SetActive (true);
 			charCtrl.Init ();
+			// EVENTS
+			charCtrl.AddAction ("StartInactiveState", this.OnCharacterInactive);
 			// SET CURRENT BLOCK
 			charCtrl.SetPosition (spawnPoint.transform.position);
 			// COMPLETED
@@ -61,6 +63,11 @@ namespace WarriorRoad {
 					this.OnLoadMiniGameCompleted ();
 				}
 			}
+		}
+
+		protected virtual void OnCharacterInactive(object[] args) {
+			var charCtrl = args [0] as CCharacterController;
+			Debug.LogError ("OnCharacterInactive " + charCtrl.name);
 		}
 		
 	}
