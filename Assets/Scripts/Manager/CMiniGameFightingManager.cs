@@ -66,8 +66,8 @@ namespace WarriorRoad {
 		}
 
 		protected virtual void OnCharacterInactive(object[] args) {
-			var charCtrl = args [0] as CCharacterController;
-			Debug.LogError ("OnCharacterInactive " + charCtrl.name);
+//			var charCtrl = args [0] as CCharacterController;
+//			Debug.LogError ("OnCharacterInactive " + charCtrl.name);
 		}
 		
 	}

@@ -91,19 +91,26 @@ namespace WarriorRoad {
 			this.m_SkillInfoPrefab.gameObject.SetActive (false);
 		}
 
-
+		// SUBMIT SKILL
 		public virtual void OnSubmitPressed() {
 			this.m_LobbyTask.OnHeroAlreadySetupSkill (this.m_SkillSelected);
 		}
 
+		// START QUEUE
 		public virtual void OnStartQueuePressed() {
 			this.m_LobbyTask.OnClientRequestJoinPlayerQueue ();
 		}
 
+		// END QUEUE
 		public virtual void OnEndQueuePressed() {
 			this.m_LobbyTask.OnClientRequestLeavePlayerQueue ();
 		}
 
+		// LOG OUT
+		public virtual void OnLogOutPressed() {
+			CUserManager.Instance.Logout ();
+		}
+			
 		#endregion
 
 		#region Chat

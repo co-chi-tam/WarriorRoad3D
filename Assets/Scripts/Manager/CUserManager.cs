@@ -149,6 +149,9 @@ namespace WarriorRoad {
 			CRootTask.Instance.ProcessNextTask ("LoginScene");
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
 			CUICustomManager.Instance.ActiveLoading (false);
+			// CLOSE CONNECT
+			this.m_SocketIO.ClearAll ();
+			this.m_SocketIO.Close ();
 		}
 
 		public virtual void OnClientLoginCompleted(CUserData user) {
