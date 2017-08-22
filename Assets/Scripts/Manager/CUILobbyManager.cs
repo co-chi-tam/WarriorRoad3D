@@ -20,9 +20,8 @@ namespace WarriorRoad {
 		[SerializeField]	protected Text m_NoticeText;
 		[SerializeField]	protected CChatItem[] m_ChatItems;
 
-		[Header ("Queue Fighting")]
-		[SerializeField] 	protected Button m_StartQueueButton;
-		[SerializeField]	protected Button m_EndQueueButton;
+		[Header ("Energy")]
+		[SerializeField]	protected Text m_HeroEnergyText;
 
 		protected string m_CurrentChat = string.Empty;
 		protected List<CChatData> m_CurrentChatList;
@@ -132,6 +131,14 @@ namespace WarriorRoad {
 				this.m_LobbyTask.OnClientSendChat (this.m_CurrentChat);
 			}
 			this.m_CurrentChat = string.Empty;
+		}
+
+		#endregion
+
+		#region Energy
+
+		public virtual void UpdateEnergyText(string currentEnergy, string maxEnergy) {
+			this.m_HeroEnergyText.text = string.Format ("Energy {0}/{1}", currentEnergy, maxEnergy);
 		}
 
 		#endregion

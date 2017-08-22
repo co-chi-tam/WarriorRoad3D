@@ -12,7 +12,7 @@
 				"states": []
 			}]
 		},{
-			"condition_name": "!HaveEnemy||!IsActive",
+			"condition_name": "!HaveEnemy",
 			"state_name": "SkillInactiveState",
 			"states": []
 		}]

@@ -9,13 +9,13 @@ namespace WarriorRoad {
 
 		#region Properties
 
-		[SerializeField]	private string m_CurrentTaskName;	
-		[SerializeField]	private string m_PreviousTaskName;
+		[SerializeField]	protected string m_CurrentTaskName;	
+		[SerializeField]	protected string m_PreviousTaskName;
 
-		private CTask m_CurrentTask;
-		private CMapTask m_MapTask;
+		protected CTask m_CurrentTask;
+		protected CMapTask m_MapTask;
 
-		private string m_NextTaskInProcess = string.Empty;
+		protected string m_NextTaskInProcess = string.Empty;
 
 		#endregion
 

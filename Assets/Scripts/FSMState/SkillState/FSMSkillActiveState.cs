@@ -17,8 +17,9 @@ namespace WarriorRoad {
 		{
 			base.StartState ();
 			if (this.m_Controller != null) {
-				var target = this.m_Controller.GetTargetEnemy ();
-				if (target != null) {
+				var target = this.m_Controller.GetTargetEnemy () as CCharacterController;
+				if (target != null 
+					&& target.GetHealth() > 0) {
 					this.m_Controller.SetPosition (target.GetPosition ());
 					this.m_Controller.StartAction ();
 				}

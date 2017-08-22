@@ -11,6 +11,8 @@ namespace WarriorRoad {
 
 		protected CUILobbyManager m_LobbyManager;
 		protected CMiniFightingData m_CurrentFightingRoomData;
+		protected float m_UpdateEnergyPerSecond = 60f;
+		protected float m_UpdateEnergyTimer = 0f;
 
 		#endregion
 
@@ -30,6 +32,8 @@ namespace WarriorRoad {
 			this.RegisterEvent ("clientWaitPlayerQueue",  			this.OnClientWaitPlayerQueue);
 			this.RegisterEvent ("clientReceiveResultPlayerQueue",  	this.OnClientReceiveResultPlayerQueue);
 			this.RegisterEvent ("clientCancelPlayerQueue",  		this.OnClientCancelPlayerQueue);
+			// ENERGY
+			this.RegisterEvent ("clientUpdateEnergy", 				this.OnClientUpdateEnergy);
 		}
 
 		#endregion
@@ -39,14 +43,42 @@ namespace WarriorRoad {
 		public override void StartTask ()
 		{
 			base.StartTask ();
+			// SKILL DATA
 			var skillList = CTaskUtil.Get (CTaskUtil.SKILL_DATA_LIST) as List<CSkillData>;
 			this.m_LobbyManager = CUILobbyManager.GetInstance ();
 			this.m_LobbyManager.OnSetupHeroSkill ("Normal Attack", 3, skillList, null);
+			this.m_UpdateEnergyTimer = this.m_UpdateEnergyPerSecond;
+			// HERO DATA
+			var heroData = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			this.m_LobbyManager.UpdateEnergyText (heroData.currentEnergy.ToString (), heroData.maxEnergy.ToString ());
 		}
 
-		public override void EndTask ()
+	public override void UpdateTask (float dt)
 		{
-			base.EndTask ();
+			base.UpdateTask (dt);
+			if (this.m_UpdateEnergyTimer < 0f) {
+				this.OnClientRequestEnergy ();
+				this.m_UpdateEnergyTimer = this.m_UpdateEnergyPerSecond;
+			} else {
+				this.m_UpdateEnergyTimer -= dt;
+			}
+		}
+
+		#endregion
+
+		#region Energy
+
+		public virtual void OnClientRequestEnergy() {
+			if (this.m_UserManager.IsConnected() == false)
+				return;
+			this.m_UserManager.Emit ("clientRequestEnergy", new JSONObject());
+		}
+
+		public virtual void OnClientUpdateEnergy(SocketIOEvent obj) {
+			Debug.Log (obj.ToString ());
+			var currentEnergy = obj.data.GetField ("current").ToString ();
+			var maxEnergy = obj.data.GetField ("max").ToString ();
+			this.m_LobbyManager.UpdateEnergyText (currentEnergy, maxEnergy);
 		}
 
 		#endregion

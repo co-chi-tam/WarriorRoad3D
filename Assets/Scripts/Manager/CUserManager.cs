@@ -29,9 +29,12 @@ namespace WarriorRoad {
 		public Action<string> OnEventClientError;
 
 		// PRIVATE FIELDS
-		private float m_PingDelayTime = 3f;
-		private JSONObject jsonPingObject;
-		private int m_MessageReceived;
+		// PING
+		protected float m_PingDelayTime = 3f;
+		protected JSONObject jsonPingObject;
+		protected int m_MessageReceived;
+		// INITED
+		protected bool m_Inited = false;
 
 		#endregion
 
@@ -134,6 +137,8 @@ namespace WarriorRoad {
 			} else {
 				this.OnClientError ("Field do not empty.");
 			}
+			// INITED
+			this.m_Inited = false;
 		}
 
 		public virtual void Logout() {
@@ -195,6 +200,8 @@ namespace WarriorRoad {
 			} else {
 				this.OnClientError ("Field do not empty.");
 			}
+			// INIT
+			this.m_Inited = false;
 		}
 
 		public virtual void OnClientRegisterCompleted(CUserData user) {
@@ -220,6 +227,12 @@ namespace WarriorRoad {
 			// Start message UI.
 			CUICustomManager.Instance.ActiveMessage (true, warning);
 			Debug.LogWarning (warning);
+		}
+
+		public virtual void OnClientNotice (string notice) {
+			// Start message UI.
+			CUICustomManager.Instance.ActiveMessage (true, notice);
+			Debug.Log (notice);
 		}
 
 		#endregion
@@ -276,9 +289,14 @@ namespace WarriorRoad {
 				// PING
 				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
 					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
-					this.m_MessageReceived += 1;	
+					this.m_MessageReceived += 1;
+					// RE-INIT WHEN SERVER NOT RESPONSE
+					if (this.m_MessageReceived > 3 && this.m_Inited == false) {
+						this.m_MessageReceived = 0;
+						this.OnClientInitAccount ();
+					}
 				});
-				// PING
+				// INIT
 				this.m_SocketIO.On ("clientInit", delegate(SocketIOEvent onInitMsg) {
 					Debug.LogWarning ("clientInit " + onInitMsg.ToString());
 					this.OnClientInitAccount ();
@@ -287,6 +305,21 @@ namespace WarriorRoad {
 				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
 					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());
 					this.OnClientChangeSceneTask (onClientChangeTaskMsg.data);
+				});
+				// DEBUG
+				this.m_SocketIO.On ("debug", delegate(SocketIOEvent debugMsg) {
+#if DEBUG_MODE
+					Debug.Log (debugMsg.ToString ());
+#endif
+				});
+				// NOTICE
+				this.m_SocketIO.On ("notice", delegate(SocketIOEvent noticeMsg) {
+					var noticeData = noticeMsg.data.ToString();
+					if (string.IsNullOrEmpty (noticeData) == false) {
+						this.OnClientNotice (noticeMsg.ToString ());
+					} else {
+						this.OnClientNotice ("WARNING: NOT DEFINE.");
+					}
 				});
 				// ERROR
 				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
@@ -350,6 +383,8 @@ namespace WarriorRoad {
 			if (this.m_SocketIO.IsConnected == false)
 				return;
 			this.m_SocketIO.Emit ("clientInitAccount", new JSONObject());
+			// INIT
+			this.m_Inited = false;
 		}
 
 		public virtual void OnClientLeaveGame () {
@@ -387,6 +422,8 @@ namespace WarriorRoad {
 			CRootTask.Instance.ProcessNextTask (processTask);
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
 			CUICustomManager.Instance.ActiveLoading (false);
+			// INITED
+			this.m_Inited = true;
 		}
 
 		protected virtual void OnClientSetupCreateHeroScene(JSONObject receiveData) {
