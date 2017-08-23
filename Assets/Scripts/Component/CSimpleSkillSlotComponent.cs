@@ -7,17 +7,25 @@ namespace WarriorRoad {
 	[Serializable]
 	public class CSimpleSkillSlotComponent : CComponent {
 
+		#region Fields
+
 		[Header("Data")]
 		[SerializeField]	protected CSkillData[] m_SkillSlot;
 
 		protected ISimpleStatusContext m_Owner;
+		protected CObjectController m_OwnerController;
 		protected float[] m_DelayTemps;
 		protected int m_DefaultNormalAttack = 0;
+
+		#endregion
+
+		#region Implemenation Component
 
 		public new void Init (ISimpleStatusContext owner, CSkillData[] slots, int defaultSkill = 0)
 		{
 			base.Init ();
 			this.m_Owner = owner;
+			this.m_OwnerController = owner.GetController () as CObjectController;
 			this.m_SkillSlot = new CSkillData[slots.Length];
 			Array.Copy (slots, this.m_SkillSlot, slots.Length);
 			this.m_DefaultNormalAttack = defaultSkill;
@@ -36,6 +44,10 @@ namespace WarriorRoad {
 				this.m_DelayTemps [i] -= dt;
 			}
 		}
+
+		#endregion
+
+		#region Main methods
 
 		public virtual void ActiveSkillSlot(int slot, params ISimpleStatusContext[] targets) {
 			if (slot < 0
@@ -60,16 +72,17 @@ namespace WarriorRoad {
 				yield return skillCtrl != null;
 				skillCtrl = CObjectPoolManager.Get<CSkillController> (skillData.objectName);
 			}
-			var ownerCtrl = this.m_Owner.GetController () as CObjectController;
 			var targetCtrl = targets [0].GetController () as CObjectController;
 			skillCtrl.SetData (skillData);
-			skillCtrl.SetOwner (ownerCtrl);
+			skillCtrl.SetOwner (this.m_OwnerController);
 			skillCtrl.SetTargetEnemy (targetCtrl);
 			skillCtrl.SetActive (true);
 			skillCtrl.SetPosition (targetCtrl.GetPosition());
 			skillCtrl.SetRotation (this.m_Owner.GetPosition());
 			this.m_DelayTemps [slot] = skillDelay;
 		}
-		
+
+		#endregion
+
 	}
 }

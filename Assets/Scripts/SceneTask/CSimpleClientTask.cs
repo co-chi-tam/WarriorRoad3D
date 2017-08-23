@@ -25,14 +25,12 @@ namespace WarriorRoad {
 		#region Implementation Task
 
 		protected virtual void RegisterEvent(string name, Action<SocketIOEvent> evnt) {
-			this.m_UserManager.On (name, evnt);
+			this.m_UserManager.OnOnce (name, evnt);
 		}
 
 		public override void StartTask ()
 		{
 			base.StartTask ();
-			// RESET RANDOM SEED.
-			UnityEngine.Random.InitState ((int) DateTime.Now.Ticks);
 		}
 
 		#endregion

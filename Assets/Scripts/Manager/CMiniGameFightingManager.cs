@@ -8,6 +8,8 @@ using SimpleSingleton;
 namespace WarriorRoad {
 	public class CMiniGameFightingManager : CMonoSingleton<CMiniGameFightingManager> {
 
+		#region Fields
+
 		[Header ("Player")]
 		[SerializeField]	protected GameObject m_PlayerSpawnPoint;
 		[SerializeField]	protected CHeroController m_PlayerController;
@@ -15,8 +17,16 @@ namespace WarriorRoad {
 		[SerializeField]	protected GameObject m_EnemySpawnPoint;
 		[SerializeField]	protected CHeroController m_EnemyController;
 
+		public bool m_BattleEnd = false;
+
+		// EVENT
 		public Action OnLoadMiniGameCompleted;
 
+		#endregion
+
+		#region Main methods
+
+		// START LOAD CHARACTER
 		public virtual void StartLoading() {
 			var miniFightingData	= CTaskUtil.Get (CTaskUtil.MINI_FIGHTING_DATA) as CMiniFightingData;
 			// LOAD PLAYER CONTROLLER
@@ -33,6 +43,7 @@ namespace WarriorRoad {
 			UnityEngine.Random.InitState (miniFightingData.randomSeed);
 		}
 
+		// SET UP ALL TARGET
 		public virtual void SetupTargets() {
 			// SET ENEMY
 			this.m_PlayerController.SetTargetEnemy (this.m_EnemyController);
@@ -42,6 +53,7 @@ namespace WarriorRoad {
 			this.m_EnemyController.SetRotation  (this.m_PlayerController.GetPosition ());
 		}
 
+		// HANDLE LOAD CHARACTER
 		protected virtual IEnumerator HandleSpawnCharacter(CHeroData charData, GameObject spawnPoint, Action<CHeroController> completed) {
 			var charCtrl = Instantiate (Resources.Load<CHeroController>("CharacterPrefabs/" + charData.objectModel));
 			yield return charCtrl;
@@ -62,13 +74,26 @@ namespace WarriorRoad {
 				if (this.OnLoadMiniGameCompleted != null) {
 					this.OnLoadMiniGameCompleted ();
 				}
+				this.m_BattleEnd = false;
 			}
 		}
 
+		// ON CHARACTER DEATH OR INACTIVE
 		protected virtual void OnCharacterInactive(object[] args) {
 //			var charCtrl = args [0] as CCharacterController;
 //			Debug.LogError ("OnCharacterInactive " + charCtrl.name);
+			this.PrintBattleLog ();
 		}
+
+		// PRINT BATTLE LOG WARNING
+		protected virtual void PrintBattleLog() {
+			if (this.m_BattleEnd == true)
+				return;
+			this.m_BattleEnd = true;
+
+		}
+
+		#endregion
 		
 	}
 }

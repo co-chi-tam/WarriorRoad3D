@@ -98,6 +98,11 @@ public class CSceneManager: CMonoSingleton<CSceneManager> {
 		m_NeedDraw = true;
 	}
 
+	// Load scene
+	public virtual void LoadScene(string sceneName) {
+		StartCoroutine (this.HandleLoadSceneAsync (sceneName, null));
+	}
+
 	/// <summary>
 	/// Loads the scene async.
 	/// </summary>

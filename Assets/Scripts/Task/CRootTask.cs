@@ -21,13 +21,17 @@ namespace WarriorRoad {
 
 		#region Implementation MonoBehavious
 
+		public virtual void InitTask() {
+			this.m_MapTask = new CMapTask ();
+			this.m_CurrentTask = this.m_MapTask.GetFirstTask ();
+			this.m_CurrentTaskName = this.m_CurrentTask.GetTaskName ();
+		}
+
 		protected override void Awake ()
 		{
 			base.Awake ();
 			DontDestroyOnLoad (this.gameObject);
-			this.m_MapTask = new CMapTask ();
-			this.m_CurrentTask = this.m_MapTask.GetFirstTask ();
-			this.m_CurrentTaskName = this.m_CurrentTask.GetTaskName ();
+			this.InitTask ();
 			CLog.Init ();
 		}
 

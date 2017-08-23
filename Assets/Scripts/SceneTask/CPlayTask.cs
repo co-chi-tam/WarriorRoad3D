@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
@@ -19,12 +20,6 @@ namespace WarriorRoad {
 		{
 			this.taskName = "PlayScene";
 			this.nextTask = "LoginScene";
-			// MAP
-			this.RegisterEvent  ("clientInitMap", 		this.OnClientReceiveMapObjects);
-			// DICE
-			this.RegisterEvent ("clientReceiveDice", 	this.OnClientReceiveDice); 
-			// UPDATE CLIENT
-			this.RegisterEvent ("clientUpdated", 		this.OnClientUpdate);
 		}
 
 		#endregion
@@ -34,6 +29,14 @@ namespace WarriorRoad {
 		public override void StartTask ()
 		{
 			base.StartTask ();
+			// MAP
+			this.RegisterEvent  ("clientInitMap", 		this.OnClientReceiveMapObjects);
+			// DICE
+			this.RegisterEvent ("clientReceiveDice", 	this.OnClientReceiveDice); 
+			// UPDATE CLIENT
+			this.RegisterEvent ("clientUpdated", 		this.OnClientUpdate);
+			// RESET RANDOM SEED.
+			UnityEngine.Random.InitState ((int) DateTime.Now.Ticks);
 			this.m_IsLoadingTask = false;
 			this.m_GameManager = CGameManager.GetInstance ();
 			this.m_GameManager.OnEventLoadingCompleted -= this.OnLoadTaskCompleted;

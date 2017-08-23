@@ -22,6 +22,15 @@ namespace WarriorRoad {
 		{
 			this.taskName = "LobbyScene";
 			this.nextTask = "PlayScene";
+		}
+
+		#endregion
+
+		#region Implementation Task
+
+		public override void StartTask ()
+		{
+			base.StartTask ();
 			// ON CLIENT RECEIVE SKILLS
 			this.RegisterEvent ("clientReceiveSkills", 				this.OnClientReceiveSkills);
 			// ON CLIENT SET UP SKILL COMPLETED
@@ -34,15 +43,6 @@ namespace WarriorRoad {
 			this.RegisterEvent ("clientCancelPlayerQueue",  		this.OnClientCancelPlayerQueue);
 			// ENERGY
 			this.RegisterEvent ("clientUpdateEnergy", 				this.OnClientUpdateEnergy);
-		}
-
-		#endregion
-
-		#region Implementation Task
-
-		public override void StartTask ()
-		{
-			base.StartTask ();
 			// SKILL DATA
 			var skillList = CTaskUtil.Get (CTaskUtil.SKILL_DATA_LIST) as List<CSkillData>;
 			this.m_LobbyManager = CUILobbyManager.GetInstance ();
@@ -195,6 +195,7 @@ namespace WarriorRoad {
 			miniFightingData.playerData = TinyJSON.JSON.Load (playerDataStr).Make<CHeroData> ();
 			miniFightingData.enemyData 	= TinyJSON.JSON.Load (enemyDataStr).Make<CHeroData> ();
 			miniFightingData.randomSeed = int.Parse (randomSeedStr);
+			CTaskUtil.Set (CTaskUtil.MINI_FIGHTING_TEXT, 	responseData.ToString ());
 			CTaskUtil.Set (CTaskUtil.MINI_FIGHTING_DATA, 	miniFightingData);
 			// COMPLETE TASK
 			this.m_NextTask = "MiniGameFightingScene";

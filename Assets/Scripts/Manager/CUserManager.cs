@@ -145,13 +145,12 @@ namespace WarriorRoad {
 		public virtual void Logout() {
 			PlayerPrefs.SetString (CTaskUtil.USER_NAME, string.Empty);
 			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, string.Empty);
+			// CLOSE CONNECT
+			this.m_SocketIO.Close ();
 			// COMPLETE TASK
 			CRootTask.Instance.ProcessNextTask ("LoginScene");
 			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
 			CUICustomManager.Instance.ActiveLoading (false);
-			// CLOSE CONNECT
-			this.m_SocketIO.ClearAll ();
-			this.m_SocketIO.Close ();
 		}
 
 		public virtual void OnClientLoginCompleted(CUserData user) {
@@ -259,6 +258,13 @@ namespace WarriorRoad {
 			this.m_SocketIO.On (name, obj);
 		} 
 
+		public virtual void OnOnce(string name, Action<SocketIOEvent> obj) {
+			if (this.m_SocketIO == null) {
+				return;
+			}
+			this.m_SocketIO.OnOnce (name, obj);
+		}
+
 		public virtual void Off (string name, Action<SocketIOEvent> obj) {
 			if (this.m_SocketIO == null) {
 				return;
@@ -293,15 +299,15 @@ namespace WarriorRoad {
 			this.m_SocketIO.AddHeader ("username", this.currentUser.userName);
 			this.m_SocketIO.AddHeader ("token", this.currentUser.token);
 			this.m_SocketIO.Connect ();
-			this.m_SocketIO.On ("connect", delegate(SocketIOEvent obj) {
+			this.m_SocketIO.OnOnce ("connect", delegate(SocketIOEvent obj) {
 				// CONNECTED SERVER
 				this.OnClientConnectCompleted ();
 				// MESSAGES
-				this.m_SocketIO.On ("message", delegate(SocketIOEvent mes) {
+				this.m_SocketIO.OnOnce ("message", delegate(SocketIOEvent mes) {
 					this.OnClientReceiveMessage (mes.data);
 				});
 				// PING
-				this.m_SocketIO.On ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
+				this.m_SocketIO.OnOnce ("serverSendPing", delegate(SocketIOEvent onServerPingMsg) {
 					Debug.LogWarning ("serverSendPing " + onServerPingMsg.ToString());
 					this.m_MessageReceived += 1;
 					// RE-INIT WHEN SERVER NOT RESPONSE
@@ -318,18 +324,18 @@ namespace WarriorRoad {
 //					this.OnClientInitAccount ();
 //				});
 				// TASK MANAGER
-				this.m_SocketIO.On ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
+				this.m_SocketIO.OnOnce ("clientChangeTask", (SocketIOEvent onClientChangeTaskMsg) => {
 					Debug.LogWarning ("clientChangeTask " + onClientChangeTaskMsg.ToString());
 					this.OnClientChangeSceneTask (onClientChangeTaskMsg.data);
 				});
 				// DEBUG
-				this.m_SocketIO.On ("debug", delegate(SocketIOEvent debugMsg) {
+				this.m_SocketIO.OnOnce ("debug", delegate(SocketIOEvent debugMsg) {
 #if DEBUG_MODE
 					Debug.Log (debugMsg.ToString ());
 #endif
 				});
 				// NOTICE
-				this.m_SocketIO.On ("notice", delegate(SocketIOEvent noticeMsg) {
+				this.m_SocketIO.OnOnce ("notice", delegate(SocketIOEvent noticeMsg) {
 					var noticeData = noticeMsg.data.ToString();
 					if (string.IsNullOrEmpty (noticeData) == false) {
 						this.OnClientNotice (noticeMsg.ToString ());
@@ -338,7 +344,7 @@ namespace WarriorRoad {
 					}
 				});
 				// ERROR
-				this.m_SocketIO.On ("error", delegate(SocketIOEvent errorMsg) {
+				this.m_SocketIO.OnOnce ("error", delegate(SocketIOEvent errorMsg) {
 					var errorData = errorMsg.data.ToString();
 					if (string.IsNullOrEmpty (errorData) == false) {
 						this.OnClientError (errorMsg.ToString ());
@@ -347,7 +353,7 @@ namespace WarriorRoad {
 					}
 				});
 				// WARNING
-				this.m_SocketIO.On ("warning", delegate(SocketIOEvent warningMsg) {
+				this.m_SocketIO.OnOnce ("warning", delegate(SocketIOEvent warningMsg) {
 					var warningData = warningMsg.data.ToString();
 					if (string.IsNullOrEmpty (warningData) == false) {
 						this.OnClientWarning (warningMsg.ToString ());

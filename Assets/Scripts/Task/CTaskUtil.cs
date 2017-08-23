@@ -18,6 +18,7 @@ namespace WarriorRoad {
 		public static string SKILL_DATA_LIST 	= "SKILL_DATA_LIST";
 		public static string HERO_TEMPLATES 	= "HERO_TEMPLATES";
 
+		public static string MINI_FIGHTING_TEXT	= "MINI_FIGHTING_TEXT";
 		public static string MINI_FIGHTING_DATA	= "MINI_FIGHTING_DATA";
 
 		public static Dictionary<string, string> VERIFY_HEADERS = new Dictionary<string, string> () { 
@@ -29,6 +30,7 @@ namespace WarriorRoad {
 			{ HERO_DATA, 			new CCharacterData() },
 			{ SKILL_DATA_LIST, 		new List<CSkillData>() },
 			{ HERO_TEMPLATES, 		new Dictionary<string, CCharacterData>() },
+			{ MINI_FIGHTING_TEXT,	string.Empty },
 			{ MINI_FIGHTING_DATA, 	new CMiniFightingData() }
 		};
 

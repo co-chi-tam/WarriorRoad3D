@@ -204,6 +204,16 @@ namespace SocketIO
 			handlers[ev].Add(callback);
 		}
 
+		public void OnOnce(string ev, Action<SocketIOEvent> callback)
+		{
+			if (!handlers.ContainsKey(ev)) {
+				handlers[ev] = new List<Action<SocketIOEvent>>();
+			}
+			if (!handlers [ev].Contains (callback)) {
+				handlers [ev].Add (callback);
+			}
+		}
+
 		public void Off(string ev, Action<SocketIOEvent> callback)
 		{
 			if (!handlers.ContainsKey(ev)) {

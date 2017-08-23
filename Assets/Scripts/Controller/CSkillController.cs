@@ -5,6 +5,8 @@ using UnityEngine;
 namespace WarriorRoad {
 	public class CSkillController : CObjectController, ISimpleContext {
 
+		#region Fields
+
 		[Header("Data")]
 		[SerializeField]	protected CSkillData m_SkillData;
 
@@ -16,8 +18,13 @@ namespace WarriorRoad {
 		[SerializeField]	protected CFSMComponent m_FSMComponent;
 
 		protected ISimpleStatusContext m_Owner;
+		protected CObjectController m_OwnerController;
 
 		protected float m_SkillTime = 0f;
+
+		#endregion
+
+		#region Implementation Monobehaviour
 
 		protected override void Awake ()
 		{
@@ -25,6 +32,10 @@ namespace WarriorRoad {
 			this.m_FSMComponent.Init (this);
 			this.m_EffectComponent.Init (this.m_SkillData, this.m_Owner);
 		}
+
+		#endregion
+
+		#region Implementation Controller
 
 		protected override void RegisterComponent ()
 		{
@@ -36,6 +47,8 @@ namespace WarriorRoad {
 		public virtual void StartAction() {
 			this.m_EffectComponent.ApplyEffect ();
 		}
+
+		#endregion
 
 		#region FSM
 
@@ -59,6 +72,8 @@ namespace WarriorRoad {
 		}
 
 		#endregion
+
+		#region Getter && Setter
 
 		public override void SetActive (bool value)
 		{
@@ -100,12 +115,15 @@ namespace WarriorRoad {
 
 		public override void SetOwner(CObjectController value) {
 			this.m_Owner = value as ISimpleStatusContext;
+			this.m_OwnerController = value;
 			this.m_EffectComponent.SetOwner (this.m_Owner);
 		}
 
 		public override CObjectController GetOwner() {
 			return this.m_Owner.GetController() as CObjectController;
 		}
+
+		#endregion
 
 	}
 }
