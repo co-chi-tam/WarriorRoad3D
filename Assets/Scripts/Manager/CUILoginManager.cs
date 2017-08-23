@@ -9,10 +9,18 @@ using SocketIO;
 namespace WarriorRoad {
 	public class CUILoginManager : CMonoSingleton<CUILoginManager> {
 
+		[Header ("Login Object")]
+		[SerializeField]	protected InputField m_UserNameInputField;
+		[SerializeField]	protected InputField m_UserPasswordInputField;
+
 		protected CUserManager m_UserManager;
 
 		protected virtual void Start() {
-			this.m_UserManager = CUserManager.GetInstance ();
+			this.m_UserManager 	= CUserManager.GetInstance ();
+			var userName 		= PlayerPrefs.GetString (CTaskUtil.USER_NAME, string.Empty);
+			var userPassword 	= PlayerPrefs.GetString (CTaskUtil.USER_PASSWORD, string.Empty);
+			this.m_UserNameInputField.text 		= userName;
+			this.m_UserPasswordInputField.text 	= userPassword;
 		}
 
 		public virtual void OnRegisterPressed() {

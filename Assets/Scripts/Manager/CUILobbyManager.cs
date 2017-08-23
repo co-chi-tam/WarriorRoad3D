@@ -108,7 +108,7 @@ namespace WarriorRoad {
 
 		// LOG OUT
 		public virtual void OnLogOutPressed() {
-			CUserManager.Instance.Logout ();
+			CUserManager.Instance.LogoutUser ();
 		}
 			
 		#endregion

@@ -74,15 +74,15 @@ namespace WarriorRoad {
 		protected virtual void OnApplicationFocus (bool value) {
 #if !UNITY_EDITOR
 			if (value == false) {
-				this.OnClientInitAccount ();
-			}
+				this.ReloginCurrentUser ();
+			} 
 #endif
 		}
 
 		protected virtual void OnApplicationPause (bool value) {
 #if !UNITY_EDITOR
 			if (value) {
-				this.OnClientInitAccount ();
+				this.ReloginCurrentUser ();
 			}
 #endif
 		}
@@ -142,7 +142,16 @@ namespace WarriorRoad {
 			this.m_Inited = false;
 		}
 
-		public virtual void Logout() {
+		public virtual void ReloginCurrentUser() {
+			// CLOSE CONNECT
+			this.m_SocketIO.Close ();
+			// COMPLETE TASK
+			CRootTask.Instance.ProcessNextTask ("LoginScene");
+			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
+			CUICustomManager.Instance.ActiveLoading (false);
+		}
+
+		public virtual void LogoutUser() {
 			PlayerPrefs.SetString (CTaskUtil.USER_NAME, string.Empty);
 			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, string.Empty);
 			// CLOSE CONNECT
