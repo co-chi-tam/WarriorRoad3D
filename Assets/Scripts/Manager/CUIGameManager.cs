@@ -18,6 +18,7 @@ namespace WarriorRoad {
 
 		[Header ("Animator")]
 		[SerializeField]	protected Animator m_Animator;
+		[SerializeField]	protected Animator m_ResultAnimator;
 
 		protected CUICharacterInfo m_CurrentCharacterInfo;
 
@@ -40,6 +41,18 @@ namespace WarriorRoad {
 
 		public virtual void OnBackTaskPressed () {
 			CGameManager.Instance.OnPlayerBackTask ();
+		}
+
+		#endregion
+
+		#region WINNING && CLOSING
+
+		public virtual void PlayWinningAnimation() {
+			this.m_ResultAnimator.SetTrigger ("IsWinning");
+		}
+
+		public virtual void PlayClosingAnimation() {
+			this.m_ResultAnimator.SetTrigger ("IsClosing");
 		}
 
 		#endregion

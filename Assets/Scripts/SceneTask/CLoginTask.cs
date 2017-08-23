@@ -19,8 +19,8 @@ namespace WarriorRoad {
 			this.nextTask = "LobbyScene";
 #if UNITY_EDITOR 
 //			PlayerPrefs.DeleteAll();
-			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0001");
-			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
+//			PlayerPrefs.SetString (CTaskUtil.USER_NAME, "user0001");
+//			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, "123456789");
 #endif
 		}
 
@@ -32,8 +32,8 @@ namespace WarriorRoad {
 		public override void StartTask ()
 		{
 			base.StartTask ();
-			var userName = PlayerPrefs.GetString (CTaskUtil.USER_NAME, string.Empty);
-			var userPassword = PlayerPrefs.GetString (CTaskUtil.USER_PASSWORD, string.Empty);
+			var userName 		= PlayerPrefs.GetString (CTaskUtil.USER_NAME, string.Empty);
+			var userPassword 	= PlayerPrefs.GetString (CTaskUtil.USER_PASSWORD, string.Empty);
 			if (string.IsNullOrEmpty (userName) == false 
 				&& string.IsNullOrEmpty (userPassword) == false) {
 				var currentUser = this.m_UserManager.currentUser;

@@ -12,6 +12,7 @@ namespace WarriorRoad {
 		public static string REGISTER_URL	= HOST + "register";
 		public static string USER_NAME		= "USER_NAME";
 		public static string USER_PASSWORD	= "USER_PASSWORD";
+		public static string USER_STATE		= "USER_STATE";
 
 		public static string USER_DATA 			= "USER_DATA";
 		public static string HERO_DATA 			= "HERO_DATA";

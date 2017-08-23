@@ -41,6 +41,18 @@ namespace WarriorRoad {
 			this.m_MiniGameFightingManager.SetupTargets ();
 		}
 
+		public virtual void OnClientEndFighting(string winnerId, string closerId) {
+			if (this.m_UserManager.IsConnected() == false)
+				return;
+			var miniFightingData = CTaskUtil.Get (CTaskUtil.MINI_FIGHTING_DATA) as CMiniFightingData;
+			var dictData = new Dictionary<string, string> ();
+			dictData ["isoTime"] = miniFightingData.isoTime;
+			dictData ["winnerId"] = winnerId;
+			dictData ["closerId"] = closerId;
+			dictData ["randomSeed"] = miniFightingData.randomSeed.ToString ();
+			var jsonSend = JSONObject.Create (dictData);
+			this.m_UserManager.Emit ("clientEndMiniFightingGame", jsonSend);
+		}
 
 		#endregion
 

@@ -33,11 +33,13 @@ db.clHeroes.insertMany([{
     'characterMaxHealthPoint': 100,
     'maxHealthPoint': 9999,
     'currentGold': 500,
-    'maxGold': 999999999,
+    'maxGold': 999999999,
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
+    'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
     'characterLevel': 1,
@@ -64,11 +66,13 @@ db.clHeroes.insertMany([{
     'characterMaxHealthPoint': 80,
     'maxHealthPoint': 9999,
     'currentGold': 500,
-    'maxGold': 999999999,
+    'maxGold': 999999999,
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
+    'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
     'characterLevel': 1,
@@ -95,11 +99,13 @@ db.clHeroes.insertMany([{
     'characterMaxHealthPoint': 90,
     'maxHealthPoint': 9999,
     'currentGold': 500,
-    'maxGold': 999999999,
+    'maxGold': 999999999,
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
+    'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
     'characterLevel': 1,
@@ -278,9 +284,13 @@ db.clMonsters.insertMany([{
   
 db.createCollection("clMaps");
 db.clMaps.createIndex({'uID': 1}, {unique: true});
-db.clMaps.find({});
-db.clMaps.remove({});
-    
+db.clMaps.find({});
+db.clMaps.remove({});
+
+db.createCollection("clBattleLogs");
+db.clBattleLogs.createIndex({'uID': 1}, {unique: true});
+db.clBattleLogs.find({});    
+
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
 db.clMonsters.find({objectName: /i/i}});
@@ -290,11 +300,13 @@ db.clHeroes.find({characterLevel: { $gte:1, $lt: 4 }})
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }}}, {$sample: {size: 5}}])
 db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: '91c7e267-4767-482f-9e16-8af0ba056ca0s'}}}, {$sample: {size: 5}}])
 
-db.clHeroes.find({objectName: 'Playera8b7b'});
-
-db.clSkills.find({});
-db.clHeroes.updateMany({}, {$set: {goldPerStep: 25}});
-
-
+db.clHeroes.find({objectName: 'Playera8b7b'});
+
+db.clSkills.find({});
+db.clHeroes.updateMany({}, {$set: {
+    currentGlory: 0,
+    maxGlory: 999999999}});
+
+
 
 

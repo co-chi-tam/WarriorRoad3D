@@ -17,10 +17,18 @@ namespace WarriorRoad {
 		[SerializeField]	protected GameObject m_EnemySpawnPoint;
 		[SerializeField]	protected CHeroController m_EnemyController;
 
-		public bool m_BattleEnd = false;
-
+		protected bool m_BattleEnd = false;
+		protected CMiniGameFightingTask m_MiniGameTask;
 		// EVENT
 		public Action OnLoadMiniGameCompleted;
+
+		#endregion
+
+		#region Implementation Monobehaviour
+
+		protected virtual void Start() {
+			this.m_MiniGameTask = CRootTask.Instance.GetCurrentTask () as CMiniGameFightingTask;
+		}
 
 		#endregion
 
@@ -80,17 +88,23 @@ namespace WarriorRoad {
 
 		// ON CHARACTER DEATH OR INACTIVE
 		protected virtual void OnCharacterInactive(object[] args) {
-//			var charCtrl = args [0] as CCharacterController;
-//			Debug.LogError ("OnCharacterInactive " + charCtrl.name);
-			this.PrintBattleLog ();
+			var currentHero = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
+			var closerCtrl = args [0] as CCharacterController;
+			Debug.LogWarning ("OnCharacterInactive " + closerCtrl.name);
+			this.PrintBattleLog (closerCtrl.GetData().uID);
 		}
 
 		// PRINT BATTLE LOG WARNING
-		protected virtual void PrintBattleLog() {
+		protected virtual void PrintBattleLog(string closerId) {
 			if (this.m_BattleEnd == true)
 				return;
 			this.m_BattleEnd = true;
-
+			var playerId 	= this.m_PlayerController.GetData ().uID;
+			var enemyId 	= this.m_EnemyController.GetData ().uID;
+			var winnerId 	= playerId != closerId ? playerId : enemyId;
+			if (winnerId != closerId) {
+				this.m_MiniGameTask.OnClientEndFighting (winnerId, closerId);
+			}
 		}
 
 		#endregion

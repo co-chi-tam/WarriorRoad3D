@@ -35,6 +35,10 @@ namespace WarriorRoad {
 			this.RegisterEvent ("clientReceiveDice", 	this.OnClientReceiveDice); 
 			// UPDATE CLIENT
 			this.RegisterEvent ("clientUpdated", 		this.OnClientUpdate);
+			// WINNER
+			this.RegisterEvent ("clientWinningGame", 	this.OnClientWinningGame);
+			// CLOSER
+			this.RegisterEvent ("clientClosingGame", 	this.OnClientClosingGame);
 			// RESET RANDOM SEED.
 			UnityEngine.Random.InitState ((int) DateTime.Now.Ticks);
 			this.m_IsLoadingTask = false;
@@ -99,6 +103,16 @@ namespace WarriorRoad {
 			if (this.m_UserManager.IsConnected() == false)
 				return;
 			this.m_UserManager.Emit ("clientEndGame", new JSONObject());
+		}
+
+		public virtual void OnClientWinningGame(SocketIOEvent org) {
+			Debug.LogWarning (org.ToString ());
+			CUIGameManager.Instance.PlayWinningAnimation ();
+		}
+
+		public virtual void OnClientClosingGame(SocketIOEvent org) {
+			Debug.LogWarning (org.ToString ());
+			CUIGameManager.Instance.PlayClosingAnimation ();
 		}
 
 		#endregion

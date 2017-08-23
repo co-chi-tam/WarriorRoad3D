@@ -22,6 +22,7 @@ namespace WarriorRoad {
 		{
 			base.StartTask ();
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
+			Application.targetFrameRate = 60;
 			this.m_IsCompleteTask = false;
 		}
 

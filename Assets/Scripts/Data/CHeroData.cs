@@ -11,6 +11,8 @@ namespace WarriorRoad {
 		public int goldPerStep;
 		public int currentEnergy;
 		public int maxEnergy;
+		public int currentGlory;
+		public int maxGlory;
 
 		public CHeroData ()
 		{
@@ -19,6 +21,8 @@ namespace WarriorRoad {
 			this.goldPerStep	= 50;
 			this.currentEnergy 	= 0;
 			this.maxEnergy 		= 30;
+			this.currentGlory	= 0;
+			this.maxGlory 		= 999999999;
 		}
 		
 	}

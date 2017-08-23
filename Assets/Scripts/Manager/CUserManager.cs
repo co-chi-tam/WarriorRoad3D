@@ -71,21 +71,21 @@ namespace WarriorRoad {
 			this.OnClientLeaveGame ();
 		}
 
-		protected virtual void OnApplicationFocus (bool value) {
-#if !UNITY_EDITOR
-			if (value == false) {
-				this.ReloginCurrentUser ();
-			} 
-#endif
-		}
+//		protected virtual void OnApplicationFocus (bool value) {
+//#if !UNITY_EDITOR
+//			if (value == false && this.m_LogedIn) {
+//				this.LogoutUser ();
+//			} 
+        //#endif
+//		}
 
-		protected virtual void OnApplicationPause (bool value) {
-#if !UNITY_EDITOR
-			if (value) {
-				this.ReloginCurrentUser ();
-			}
-#endif
-		}
+//		protected virtual void OnApplicationPause (bool value) {
+//#if !UNITY_EDITOR
+//			if (value && this.m_LogedIn) {
+//				this.LogoutUser ();
+//			}
+//#endif
+//		}
 
 		#endregion
 
@@ -142,16 +142,8 @@ namespace WarriorRoad {
 			this.m_Inited = false;
 		}
 
-		public virtual void ReloginCurrentUser() {
-			// CLOSE CONNECT
-			this.m_SocketIO.Close ();
-			// COMPLETE TASK
-			CRootTask.Instance.ProcessNextTask ("LoginScene");
-			CRootTask.Instance.GetCurrentTask().OnTaskCompleted();
-			CUICustomManager.Instance.ActiveLoading (false);
-		}
-
 		public virtual void LogoutUser() {
+			// CLEAR CACHE
 			PlayerPrefs.SetString (CTaskUtil.USER_NAME, string.Empty);
 			PlayerPrefs.SetString (CTaskUtil.USER_PASSWORD, string.Empty);
 			// CLOSE CONNECT
@@ -173,6 +165,7 @@ namespace WarriorRoad {
 			CTaskUtil.Set (CTaskUtil.USER_DATA, user);
 			// LOGGED IN
 			this.m_LogedIn = true;
+			PlayerPrefs.SetString (CTaskUtil.USER_STATE, "LOGGED_IN");
 		}
 
 		#endregion
@@ -261,28 +254,28 @@ namespace WarriorRoad {
 		#region Socket
 
 		public virtual void On (string name, Action<SocketIOEvent> obj) {
-			if (this.m_SocketIO == null) {
+			if (this.m_SocketIO.IsConnected == false) {
 				return;
 			}
 			this.m_SocketIO.On (name, obj);
 		} 
 
 		public virtual void OnOnce(string name, Action<SocketIOEvent> obj) {
-			if (this.m_SocketIO == null) {
+			if (this.m_SocketIO.IsConnected == false) {
 				return;
 			}
 			this.m_SocketIO.OnOnce (name, obj);
 		}
 
 		public virtual void Off (string name, Action<SocketIOEvent> obj) {
-			if (this.m_SocketIO == null) {
+			if (this.m_SocketIO.IsConnected == false) {
 				return;
 			}
 			this.m_SocketIO.Off (name, obj);
 		}
 
 		public virtual void Emit (string name, JSONObject data) {
-			if (this.m_SocketIO == null) {
+			if (this.m_SocketIO.IsConnected == false) {
 				return;
 			}
 			this.m_SocketIO.Emit (name, data);
@@ -393,6 +386,7 @@ namespace WarriorRoad {
 			}
 			// INIT ACCOUNT
 			this.OnClientInitAccount ();
+			PlayerPrefs.SetString (CTaskUtil.USER_STATE, "CONNECTED");
 		}
 
 		public virtual void OnClientConnectServerFailed (string error) {
