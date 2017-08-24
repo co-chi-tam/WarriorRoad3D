@@ -37,8 +37,8 @@ db.clHeroes.insertMany([{
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
-    'currentGlory': 0,
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
     'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
@@ -70,8 +70,8 @@ db.clHeroes.insertMany([{
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
-    'currentGlory': 0,
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
     'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
@@ -103,8 +103,8 @@ db.clHeroes.insertMany([{
     'goldPerStep': 25,
     'currentEnergy': 30,
     'maxEnergy': 30,
-    'lastUpdateEnergy': new Date(),
-    'currentGlory': 0,
+    'lastUpdateEnergy': new Date(),
+    'currentGlory': 0,
     'maxGlory': 999999999,
     'characterSkillSlots': [],
     'uOwner': '',
@@ -285,12 +285,12 @@ db.clMonsters.insertMany([{
 db.createCollection("clMaps");
 db.clMaps.createIndex({'uID': 1}, {unique: true});
 db.clMaps.find({});
-db.clMaps.remove({});
-
-db.createCollection("clBattleLogs");
+db.clMaps.remove({});
+
+db.createCollection("clBattleLogs");
 db.clBattleLogs.createIndex({'uID': 1}, {unique: true});
-db.clBattleLogs.find({}); 
-db.clBattleLogs.remove({});   
+db.clBattleLogs.find({}); 
+db.clBattleLogs.remove({});   
 
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
@@ -304,8 +304,8 @@ db.clHeroes.aggregate([{$match: {characterLevel: { $gte:1, $lt: 4 }, uID: {$ne: 
 db.clHeroes.find({objectName: 'Playera8b7b'});
 
 db.clSkills.find({});
-db.clHeroes.updateMany({}, {$set: {
-    currentGlory: 0,
+db.clHeroes.updateMany({}, {$set: {
+    currentGlory: 0,
     maxGlory: 999999999}});
 
 
