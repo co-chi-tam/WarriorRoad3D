@@ -187,14 +187,8 @@ namespace WarriorRoad {
 
 		public virtual void OnClientReceiveResultPlayerQueue(SocketIOEvent obj) {
 			Debug.LogWarning (obj.ToString ());
-			var responseData 	= obj.data;
-			var playerDataStr 	= obj.data.GetField ("playerData").ToString();
-			var enemyDataStr 	= obj.data.GetField ("enemyData").ToString();
-			var randomSeedStr 	= obj.data.GetField ("randomSeed").ToString();
-			var miniFightingData = new CMiniFightingData ();
-			miniFightingData.playerData = TinyJSON.JSON.Load (playerDataStr).Make<CHeroData> ();
-			miniFightingData.enemyData 	= TinyJSON.JSON.Load (enemyDataStr).Make<CHeroData> ();
-			miniFightingData.randomSeed = int.Parse (randomSeedStr);
+			var responseData 		= obj.data;
+			var miniFightingData	= TinyJSON.JSON.Load (responseData.ToString()).Make<CMiniFightingData> ();
 			CTaskUtil.Set (CTaskUtil.MINI_FIGHTING_TEXT, 	responseData.ToString ());
 			CTaskUtil.Set (CTaskUtil.MINI_FIGHTING_DATA, 	miniFightingData);
 			// COMPLETE TASK

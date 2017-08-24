@@ -16,6 +16,8 @@ namespace WarriorRoad {
 		[Header ("Enemy")]
 		[SerializeField]	protected GameObject m_EnemySpawnPoint;
 		[SerializeField]	protected CHeroController m_EnemyController;
+		[Header ("Data")]
+		[SerializeField]	protected CMiniFightingData m_MiniFightingData;
 
 		protected bool m_BattleEnd = false;
 		protected CMiniGameFightingTask m_MiniGameTask;
@@ -36,19 +38,19 @@ namespace WarriorRoad {
 
 		// START LOAD CHARACTER
 		public virtual void StartLoading() {
-			var miniFightingData	= CTaskUtil.Get (CTaskUtil.MINI_FIGHTING_DATA) as CMiniFightingData;
+			this.m_MiniFightingData	= CTaskUtil.Get (CTaskUtil.MINI_FIGHTING_DATA) as CMiniFightingData;
 			// LOAD PLAYER CONTROLLER
-			StartCoroutine (this.HandleSpawnCharacter (miniFightingData.playerData, 
+			StartCoroutine (this.HandleSpawnCharacter (this.m_MiniFightingData.playerData, 
 				this.m_PlayerSpawnPoint, (ctrl) => {
 					this.m_PlayerController = ctrl;
 				}));
 			// LOAD ENEMY CONTROLLER
-			StartCoroutine (this.HandleSpawnCharacter (miniFightingData.enemyData, 
+			StartCoroutine (this.HandleSpawnCharacter (this.m_MiniFightingData.enemyData, 
 				this.m_EnemySpawnPoint, (ctrl) => {
 					this.m_EnemyController = ctrl;
 				}));
 			// LOAD SEED
-			UnityEngine.Random.InitState (miniFightingData.randomSeed);
+			UnityEngine.Random.InitState (this.m_MiniFightingData.randomSeed);
 		}
 
 		// SET UP ALL TARGET
@@ -90,8 +92,11 @@ namespace WarriorRoad {
 		protected virtual void OnCharacterInactive(object[] args) {
 			var currentHero = CTaskUtil.Get (CTaskUtil.HERO_DATA) as CHeroData;
 			var closerCtrl = args [0] as CCharacterController;
-			Debug.LogWarning ("OnCharacterInactive " + closerCtrl.name);
-			this.PrintBattleLog (closerCtrl.GetData().uID);
+			if (currentHero.uID == closerCtrl.GetData ().uID) {
+				this.m_MiniGameTask.OnClientClosedBattle ();
+			} else {
+				this.PrintBattleLog (closerCtrl.GetData ().uID);
+			}
 		}
 
 		// PRINT BATTLE LOG WARNING

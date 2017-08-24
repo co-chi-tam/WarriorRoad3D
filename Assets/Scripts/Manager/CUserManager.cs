@@ -332,9 +332,9 @@ namespace WarriorRoad {
 				});
 				// DEBUG
 				this.m_SocketIO.OnOnce ("debug", delegate(SocketIOEvent debugMsg) {
-#if DEBUG_MODE
+
 					Debug.Log (debugMsg.ToString ());
-#endif
+
 				});
 				// NOTICE
 				this.m_SocketIO.OnOnce ("notice", delegate(SocketIOEvent noticeMsg) {
@@ -362,6 +362,10 @@ namespace WarriorRoad {
 					} else {
 						this.OnClientWarning ("WARNING: NOT DEFINE.");
 					}
+				});
+				// CLOSE
+				this.m_SocketIO.OnOnce ("close", delegate(SocketIOEvent closeMsg) {
+					this.OnClientError (closeMsg.ToString ());
 				});
 			});
 		}

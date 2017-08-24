@@ -289,7 +289,8 @@ db.clMaps.remove({});
 
 db.createCollection("clBattleLogs");
 db.clBattleLogs.createIndex({'uID': 1}, {unique: true});
-db.clBattleLogs.find({});    
+db.clBattleLogs.find({}); 
+db.clBattleLogs.remove({});   
 
 db.clMonsters.find({});
 db.clMonsters.find({objectName: {$regex: /i/i}});
