@@ -7,8 +7,8 @@ var hero 			= require('./controllers/hero_controller');
 var monster 		= require('./controllers/monster_controller');
 var game 			= require('./controllers/game_controller');
 var skill 			= require('./controllers/skill_controller');
-var miniFighting 	= require('./controllers/mini_game_fighting_controller');
 var playerQueue 	= require('./controllers/player_queue_controller');
+var miniFighting 	= require('./controllers/mini_game_fighting_controller');
 
 exports.setRequestUrl = function(app, database){
 	// INIT
@@ -17,8 +17,8 @@ exports.setRequestUrl = function(app, database){
 	monster.init		(database);
 	game.init 			(database);
 	skill.init			(database);
-	miniFighting.init 	(database);
 	playerQueue.init 	(database);
+	miniFighting.init 	(database);
 	
 	// URL POST REGISTER
     app.post('/register',		user.postUserRegister);

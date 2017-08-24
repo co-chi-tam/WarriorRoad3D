@@ -19,6 +19,7 @@ var monster 	= require('./controllers/monster_controller');
 var game 		= require('./controllers/game_controller');
 var skill 		= require('./controllers/skill_controller');
 var playerQueue = require('./controllers/player_queue_controller');
+var miniFighting = require('./controllers/mini_game_fighting_controller');
 
 exports.initRouter = function (wsClient, wsServer, request, database) {
 	// INIT
@@ -30,6 +31,7 @@ exports.initRouter = function (wsClient, wsServer, request, database) {
 	game.init			(database);
 	skill.init			(database);
 	playerQueue.init 	(database);
+	miniFighting.init 	(database);
 	// MESSAGE MIDDLEWARE
 	wsClient.on('message', function(message) {
 		var decode = Decode (message);
@@ -79,7 +81,8 @@ wsEventRouter.on ('clientSetupSkills', 	skill.clientSetupSkills);
 // ROOM
 wsEventRouter.on ('clientRequestJoinPlayerQueue',	playerQueue.clientRequestJoinPlayerQueue);
 wsEventRouter.on ('clientRequestLeavePlayerQueue',	playerQueue.clientRequestLeavePlayerQueue);
-
+// MINI GAME FIGHTING
+wsEventRouter.on ('clientEndMiniFightingGame', 		miniFighting.clientEndMiniFightingGame);
 // ============= SERVER EVENTS ============= 
 // ROOM
 wsEventRouter.on ('serverPlayerJoinedPlayerQueue', 	playerQueue.serverPlayerJoinedPlayerQueue);

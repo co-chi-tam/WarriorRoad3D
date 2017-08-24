@@ -35,6 +35,8 @@ var heroModel = function(database) {
 			currentEnergy: 30,
 			maxEnergy: 30,
 			lastUpdateEnergy: new Date(),
+			currentGlory: 0,
+			maxGlory: 999999999,
 			characterSkillSlots: [
 				{
 					uID: '502ec8465441f1d108b8c963ec402b08',
@@ -84,6 +86,8 @@ var heroModel = function(database) {
 			currentEnergy: 30,
 			maxEnergy: 30,
 			lastUpdateEnergy: new Date(),
+			currentGlory: 0,
+			maxGlory: 999999999,
 			characterSkillSlots: [
 				{
 					uID: '502ec8465441f1d108b8c963ec402b08',
@@ -133,6 +137,8 @@ var heroModel = function(database) {
 			currentEnergy: 30,
 			maxEnergy: 30,
 			lastUpdateEnergy: new Date(),
+			currentGlory: 0,
+			maxGlory: 999999999,
 			characterSkillSlots: [
 				{
 					uID: '502ec8465441f1d108b8c963ec402b08',
@@ -189,6 +195,8 @@ var heroModel = function(database) {
 			currentEnergy: tmpHero.currentEnergy,
 			maxEnergy: tmpHero.maxEnergy,
 			lastUpdateEnergy: new Date(),
+			currentGlory: tmpHero.currentGlory,
+			maxGlory: tmpHero.maxGlory,
 			characterSkillSlots: tmpHero.characterSkillSlots,
 			uOwner: ownerId,
 			characterLevel: 1,
@@ -224,7 +232,10 @@ var heroModel = function(database) {
 			currentEnergy: hero.currentEnergy,
 			maxEnergy: hero.maxEnergy,
 			lastUpdateEnergy: hero.lastUpdateEnergy,
+			currentGlory: hero.currentGlory,
+			maxGlory: hero.maxGlory,
 			characterSkillSlots: hero.characterSkillSlots,
+			uOwner: hero.uOwner,
 			characterLevel: hero.characterLevel,
 			characterStep: hero.characterStep,
 			dataPerLevel: {
@@ -305,7 +316,28 @@ var heroModel = function(database) {
 			}
 		});
 	};
-	
+	// FIND AND UPDATE HERO
+	this.findAndModifyHero = function (queryFind, queryUpdate) {
+		return new Promise(function (resolve, reject) {
+			simpleModel.findData (queryFind)
+			// FOUND HERO
+			.then((foundHero) => {
+				simpleModel.findAndModifyData (queryFind, queryUpdate)
+				// UPDATED
+				.then ((completeUpdate) => {
+					resolve (foundHero[0]);
+				})
+				// ERROR UPDATE
+				.catch ((errorUpdate) => {
+					reject('ERROR ' + errorUpdate);
+				});
+			})
+			// ERROR FOUND
+			.catch ((errorFound) => {
+				reject('ERROR ' + errorFound);
+			});
+		});
+	};
 	// GET HERO BY LEVEL
 	this.findHeroBaseLevel = function(exceptID, minLevel, maxLevel, size) {
 		return self.findHeroBaseCondition ({characterLevel: { $gte: minLevel, $lt: maxLevel }, uID: { $ne: exceptID }}, size);
@@ -314,49 +346,33 @@ var heroModel = function(database) {
 	this.updateHero = function (ownerId, query) {
 		return new Promise(function (resolve, reject) {
 			if (ownerId) {
-				simpleModel.findData ({'uOwner': ownerId})
-				// FOUND HERO OWNER
-				.then((compFindHero) => {
-					simpleModel.updateData ({'uOwner': ownerId}, query)
-					// UPDATED
-					.then ((completeUpdate) => {
-						resolve (completeUpdate);
-					})
-					// ERROR UPDATE
-					.catch ((errorUpdate) => {
-						reject('ERROR ' + errorUpdate);
-					});
+				simpleModel.updateData ({'uOwner': ownerId}, query)
+				// UPDATED
+				.then ((completeUpdate) => {
+					resolve (completeUpdate);
 				})
-				// NOT FOUND HERO DATA
-				.catch((errFindHero) => {
-					reject (errFindHero);
+				// ERROR UPDATE
+				.catch ((errorUpdate) => {
+					reject('ERROR ' + errorUpdate);
 				});
 			} else {
 				reject ('Fields empty.');
 			}
 		});
-	}
+	};
 	
 	// UPDATE HERO STEP
 	this.modifyHero = function (ownerId, query) {
 		return new Promise(function (resolve, reject) {
 			if (ownerId) {
-				simpleModel.findData ({'uOwner': ownerId})
-				// FOUND HERO OWNER
-				.then((compFindHero) => {
-					simpleModel.findAndModifyData ({'uOwner': ownerId}, query)
-					// UPDATED
-					.then ((completeUpdate) => {
-						resolve (completeUpdate);
-					})
-					// ERROR UPDATE
-					.catch ((errorUpdate) => {
-						reject('ERROR ' + errorUpdate);
-					});
+				simpleModel.findAndModifyData ({'uOwner': ownerId}, query)
+				// UPDATED
+				.then ((completeUpdate) => {
+					resolve (completeUpdate);
 				})
-				// NOT FOUND HERO DATA
-				.catch((errFindHero) => {
-					reject (errFindHero);
+				// ERROR UPDATE
+				.catch ((errorUpdate) => {
+					reject('ERROR ' + errorUpdate);
 				});
 			} else {
 				reject ('Fields empty.');

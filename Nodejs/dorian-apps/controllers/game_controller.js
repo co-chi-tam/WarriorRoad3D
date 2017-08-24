@@ -74,14 +74,14 @@ exports.getGenerateMap = function (request, response) {
 // CLIENT GENERATE MAP
 exports.clientInitMap = function (sender) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var clientEvent = 'clientInitMap';
-	var clientData = {};
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((foundHero) => {
 		map.findMap(userTmpDatabase.userId)
 		// FOUND MAP 
 		.then((foundMap) => {
+			var clientEvent = 'clientInitMap';
+			var clientData = {};
 			clientData.mapPath = foundMap.mapPath;
 			clientData.mapBlocks = foundMap.mapObjects;
 			socket.sendMessage (sender, clientEvent, clientData);
@@ -98,22 +98,24 @@ exports.clientInitMap = function (sender) {
 				map.createMap (userTmpDatabase.userId, mapPath, mapBlocks)
 				// CREATED MAP
 				.then((created) => {
+					var clientEvent = 'clientInitMap';
+					var clientData = {};
 					clientData.mapPath = mapPath;
 					clientData.mapBlocks = mapBlocks;
 					socket.sendMessage (sender, clientEvent, clientData);
 				})
 				.catch ((error) => {
 					// SEND CLIENT ERROR
-					clientEvent = 'error';
-					clientData = { 'error': error };
+					var clientEvent = 'error';
+					var clientData = { 'error': error };
 					socket.sendMessage (sender, clientEvent, clientData);
 				});
 			})
 			// GENERATE ERROR
 			.catch ((error) => {
 				// SEND CLIENT ERROR
-				clientEvent = 'error';
-				clientData = { 'error': error };
+				var clientEvent = 'error';
+				var clientData = { 'error': error };
 				socket.sendMessage (sender, clientEvent, clientData);
 			});
 		});
@@ -121,8 +123,8 @@ exports.clientInitMap = function (sender) {
 	// ERROR FIND
 	.catch ((errorFind) => {
 		// SEND CLIENT ERROR
-		clientEvent = 'error';
-		clientData = { 'error': errorFind };
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
 		socket.sendMessage (sender, clientEvent, clientData);
 	});
 }
@@ -130,8 +132,6 @@ exports.clientInitMap = function (sender) {
 // CLIENT COMPLETED MAP
 exports.clientCompletedMap = function (sender) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var clientEvent = 'clientChangeTask';
-	var clientData = {};
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((foundHero) => {
@@ -158,54 +158,38 @@ exports.clientCompletedMap = function (sender) {
 					currentGold: currentGold })
 				// UPDATE COMPLETED
 				.then ((updated) => {
-					foundHero.characterStep = 0;
-					foundHero.characterLevel = charLevelUp;
-					foundHero.characterHealthPoint = foundHero.characterMaxHealthPoint;
-					foundHero.currentGold = currentGold;
-					skill.findSkills (foundHero.characterClass, foundHero.characterLevel)
-					// FOUND
-					.then((skills) => {
-						clientData.taskChange   = 'LobbyScene';
-						clientData.heroData 	= foundHero;
-						clientData.skillDatas 	= skills;
-						socket.sendMessage (sender, clientEvent, clientData);
-					})
-					// ERROR
-					.catch ((error) => {
-						// SEND CLIENT ERROR
-						clientEvent = 'error';
-						clientData = { 'error': error };
-						socket.sendMessage (sender, clientEvent, clientData);
-					});
+					var clientEvent = 'clientWinningGame';
+					var clientData = { 'title': 'WINNER', 'message': 'YOU WIN !!!' };
+					socket.sendMessage (sender, clientEvent, clientData);
 				})
 				// UPDATE ERROR
 				.catch ((errorUpdate) => {
 					// SEND CLIENT ERROR
-					clientEvent = 'error';
-					clientData = { 'error': errorUpdate };
+					var clientEvent = 'error';
+					var clientData = { 'error': errorUpdate };
 					socket.sendMessage (sender, clientEvent, clientData);
 				});
 			})
 			.catch ((error) => {
 				// SEND CLIENT ERROR
-				clientEvent = 'error';
-				clientData = { 'error': error };
+				var clientEvent = 'error';
+				var clientData = { 'error': error };
 				socket.sendMessage (sender, clientEvent, clientData);
 			});
 		})
 		// GENERATE ERROR
 		.catch ((error) => {
 			// SEND CLIENT ERROR
-			clientEvent = 'error';
-			clientData = { 'error': error };
+			var clientEvent = 'error';
+			var clientData = { 'error': error };
 			socket.sendMessage (sender, clientEvent, clientData);
 		});
 	})
 	// ERROR FIND
 	.catch ((errorFind) => {
 		// SEND CLIENT ERROR
-		clientEvent = 'error';
-		clientData = { 'error': errorFind };
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
 		socket.sendMessage (sender, clientEvent, clientData);
 	});
 }
@@ -213,8 +197,6 @@ exports.clientCompletedMap = function (sender) {
 // CLIENT END GAME
 exports.clientEndGame = function (sender) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var clientEvent = 'clientChangeTask';
-	var clientData = {};
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((foundHero) => {
@@ -233,52 +215,38 @@ exports.clientEndGame = function (sender) {
 				hero.updateHero (userTmpDatabase.userId, { characterStep: 0, characterHealthPoint: foundHero.characterMaxHealthPoint })
 				// UPDATE COMPLETED
 				.then ((updated) => {
-					foundHero.characterStep = 0;
-					foundHero.characterHealthPoint = foundHero.characterMaxHealthPoint;
-					skill.findSkills (foundHero.characterClass, foundHero.characterLevel)
-					// FOUND
-					.then((skills) => {
-						clientData.taskChange   = 'LobbyScene';
-						clientData.heroData 	= foundHero;
-						clientData.skillDatas 	= skills;
-						socket.sendMessage (sender, clientEvent, clientData);
-					})
-					// ERROR
-					.catch ((error) => {
-						// SEND CLIENT ERROR
-						clientEvent = 'error';
-						clientData = { 'error': error };
-						socket.sendMessage (sender, clientEvent, clientData);
-					});
+					var clientEvent = 'clientClosingGame';
+					var clientData = { 'title': 'CLOOSER', 'message': 'YOU CLOSE !!!' };
+					socket.sendMessage (sender, clientEvent, clientData);
 				})
 				// UPDATE ERROR
 				.catch ((errorUpdate) => {
 					// SEND CLIENT ERROR
-					clientEvent = 'error';
-					clientData = { 'error': errorUpdate };
+					var clientEvent = 'error';
+					var clientData = { 'error': errorUpdate };
 					socket.sendMessage (sender, clientEvent, clientData);
 				});
 			})
 			.catch ((error) => {
 				// SEND CLIENT ERROR
-				clientEvent = 'error';
-				clientData = { 'error': error };
+				var clientEvent = 'error';
+				var clientData = { 'error': error };
 				socket.sendMessage (sender, clientEvent, clientData);
 			});
 		})
 		// GENERATE ERROR
 		.catch ((error) => {
 			// SEND CLIENT ERROR
-			clientEvent = 'error';
-			clientData = { 'error': error };
+			var clientEvent = 'error';
+			var clientData = { 'error': error };
 			socket.sendMessage (sender, clientEvent, clientData);
 		});
 	})
 	// ERROR FIND
 	.catch ((errorFind) => {
 		// SEND CLIENT ERROR
-		clientEvent = 'error';
-		clientData = { 'error': errorFind };
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
 		socket.sendMessage (sender, clientEvent, clientData);
 	});
 }
@@ -286,12 +254,10 @@ exports.clientEndGame = function (sender) {
 // CLIENT ROLL DICE
 exports.clientRollDice = function (sender) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var randomStep = getRandomInt(1, 6);
-	var clientEvent = 'clientReceiveDice';
-	var clientData = {};
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((foundHero) => {
+		var randomStep = getRandomInt(1, 6);
 		var currentEnergy = foundHero.currentEnergy;
 		var maxEnergy = foundHero.maxEnergy;
 		var currentGold = foundHero.currentGold;
@@ -306,8 +272,8 @@ exports.clientRollDice = function (sender) {
 					currentGold: totalGold}})
 			// UPDATE COMPLETED
 			.then ((updated) => {
-				clientEvent = 'clientReceiveDice';
-				clientData = {
+				var clientEvent = 'clientReceiveDice';
+				var clientData = {
 					diceStep: randomStep,
 					currentEnergy: currentEnergy - 1,
 					maxEnergy: maxEnergy
@@ -317,22 +283,22 @@ exports.clientRollDice = function (sender) {
 			// UPDATE ERROR
 			.catch ((errorUpdate) => {
 				// SEND CLIENT ERROR
-				clientEvent = 'error';
-				clientData = { 'error': errorUpdate };
+				var clientEvent = 'error';
+				var clientData = { 'error': errorUpdate };
 				socket.sendMessage (sender, clientEvent, clientData);
 			});
 		} else {
 			// SEND CLIENT ERROR
-			clientEvent = 'warning';
-			clientData = { 'warning': 'Not enough energy. Plz try later.' };
+			var clientEvent = 'warning';
+			var clientData = { 'warning': 'Not enough energy. Plz try later.' };
 			socket.sendMessage (sender, clientEvent, clientData);
 		}
 	})
 	// ERROR FIND
 	.catch ((errorFind) => {
 		// SEND CLIENT ERROR
-		clientEvent = 'error';
-		clientData = { 'error': errorFind };
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
 		socket.sendMessage (sender, clientEvent, clientData);
 	});
 }
@@ -340,13 +306,13 @@ exports.clientRollDice = function (sender) {
 // CLIENT SEND CHAT
 exports.clientSendChat = function(sender, data, server) {
 	var userTmpDatabase = sender.userTmpDatabase;
-	var clientEvent = 'clientReceiveChat';
-	var clientData = {};
 	var chatStr = data.chatString;
 	if (chatStr) {
 		hero.findHero(userTmpDatabase.userId)
 		// FOUND HERO
 		.then ((foundHero) => {
+			var clientEvent = 'clientReceiveChat';
+			var clientData = {};
 			clientData.chatOwner = foundHero.objectName;
 			clientData.chatStr = chatStr;
 			server.sendTo (sendBroadcastData (clientEvent, clientData));
@@ -354,14 +320,14 @@ exports.clientSendChat = function(sender, data, server) {
 		// ERROR FIND
 		.catch ((errorFind) => {
 			// SEND CLIENT ERROR
-			clientEvent = 'error';
-			clientData = { 'error': errorFind };
+			var clientEvent = 'error';
+			var clientData = { 'error': errorFind };
 			socket.sendMessage (sender, clientEvent, clientData);
 		});
 	} else {
 		// SEND CLIENT ERROR
-		clientEvent = 'error';
-		clientData = { 'error': errorFind };
+		var clientEvent = 'error';
+		var clientData = { 'error': errorFind };
 		socket.sendMessage (sender, clientEvent, clientData);
 	}
 }

@@ -43,7 +43,7 @@ var wsServer = function (server, database, broadcastEvent) {
 		print ('New client connected.');
 		wsClient.userAction = EUserAction.UNKNOWN;
 		// SEND WELCOME MESSAGE
-		socket.sendMessage (wsClient, 'clientInit', {'msgText': 'This is welcome message.'});
+		// socket.sendMessage (wsClient, 'clientInit', {'msgText': 'This is welcome message.'});
 		// CLOSE EVENT
 		wsClient.on('close', function(message) {
 			self.removeClient(wsClient);

@@ -10,6 +10,7 @@ const _ = require ('underscore');
 require('../Utils/Log')();
 require('../models/resultResponse')();
 require ('../models/syncWorkerModel')();
+require ('../models/privateSocketModel')();
 
 var self = this;
 var user;
@@ -126,7 +127,7 @@ exports.clientSendPing = function(sender){
 };
 
 // INIT ACCOUNT
-exports.clientInitAccount = function (sender, data, clients) {
+exports.clientInitAccount = function (sender, data, server) {
 	var userTmpDatabase = sender.userTmpDatabase;
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
@@ -134,9 +135,11 @@ exports.clientInitAccount = function (sender, data, clients) {
 		var clientEvent = 'clientChangeTask';
 		var clientData = {};
 		// SEND CLIENT HERO DATA.
+		// SEND CLIENT TO LOBBY SCENE
 		clientData.taskChange = 'LobbyScene';
 		var characterClass = foundHero.characterClass;
 		var characterLevel = foundHero.characterLevel;
+		// CALCULATE ENERGY
 		var currentTime = new Date();
 		var lastTime = new Date (Date.parse (foundHero.lastUpdateEnergy.toISOString()));
 		var lostTime = currentTime.getTime() - lastTime.getTime();
@@ -171,6 +174,19 @@ exports.clientInitAccount = function (sender, data, clients) {
 			var clientData = { 'error': error };
 			socket.sendMessage (sender, clientEvent, clientData);
 		});
+		// SYNC WORKER LEAVE QUEUE
+		server.sendTo (sendSyncData ('serverPlayerLeavePlayerQueue', {
+			playerRequest: {
+				userId: userTmpDatabase.userId,
+				playerId: foundHero.uID,
+				objectName: foundHero.objectName,
+				objectModel: foundHero.objectModel,
+				objectAvatar: foundHero.objectAvatar,
+				characterLevel: foundHero.characterLevel,
+				currentGold: foundHero.currentGold,
+				userAction: sender.userAction
+			}
+		}));
 	})
 	// ERROR FIND
 	.catch ((errorFind) => {

@@ -1,11 +1,12 @@
 "use strict";
 
-const Promise = require('promise');
-const UserModel = require('../models/userModel');
-const HeroModel = require('../models/heroModel');
-const SocketModel = require('../models/socketModel');
-const EUserAction = require('../models/userAction');
-const _ = require ('underscore');
+const Promise 		= require('promise');
+const UserModel 	= require('../models/userModel');
+const HeroModel 	= require('../models/heroModel');
+const SocketModel 	= require('../models/socketModel');
+const EUserAction 	= require('../models/userAction');
+const _ 			= require ('underscore');
+const crypto 		= require('crypto');
 
 require('../Utils/Log')();
 require('../models/resultResponse')();
@@ -81,7 +82,7 @@ exports.clientRequestLeavePlayerQueue = function (sender, data, server) {
 	hero.findHero(userTmpDatabase.userId)
 	// FOUND HERO
 	.then ((player) => {
-		// SYNC WORKER ROOM INFO
+		// SYNC WORKER LEAVE QUEUE
 		server.sendTo (sendSyncData ('serverPlayerLeavePlayerQueue', {
 			playerRequest: {
 				userId: userTmpDatabase.userId,
@@ -138,11 +139,17 @@ exports.serverPlayerJoinedPlayerQueue = function(syncData, server) {
 			// FOUND HERO
 			.then ((otherPlayerHero) => {
 				// SEND CLIENT BATTLE INFO
+				var currentISOTime = new Date().toISOString();
+				// var battleLogId = crypto.createHash('md5').update('log+' 
+									// + playerHero.uID + '-vs-' + otherPlayerHero.uID 
+									// + '+' + currentISOTime).digest('hex');
 				var clientEvent = 'clientReceiveResultPlayerQueue';
-				var clientData = { playerData: playerHero,
+				playerHero.characterHealthPoint = playerHero.characterMaxHealthPoint;
+				otherPlayerHero.characterHealthPoint = otherPlayerHero.characterMaxHealthPoint;
+				var clientData = { 	isoTime: currentISOTime,
+									playerData: playerHero,
 									enemyData: otherPlayerHero,
-									randomSeed: defaultRandomSeed
-								};
+									randomSeed: defaultRandomSeed };
 				// SEND PLAYER REQUEST
 				server.receivePrivate ({
 						privateId: playerRequest.userId,

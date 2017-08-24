@@ -1,9 +1,9 @@
 require('../Utils/Log')();
 
-const uuid = require('node-uuid');
-const crypto = require('crypto');
-const simpleData = require ('./simpleData');
-const Promise = require('promise');
+const uuid 			= require('node-uuid');
+const crypto 		= require('crypto');
+const simpleData 	= require ('./simpleData');
+const Promise 		= require('promise');
 
 var userModel = function(database) {
 	// SCOPE
@@ -81,12 +81,13 @@ var userModel = function(database) {
 			simpleModel.findData ({$and: [{'uName': userName}, {'uPassword': userPassword}]})
 			// FOUND USER
 			.then ((completeFind) => {
+				// INFO LOGIN
 				var loggedUser = completeFind[0];
 				var currentDate = new Date();
 				var expireDate = new Date();
 				expireDate.setDate (currentDate.getDate() + userExpire);
 				var token = crypto.createHash('md5').update('user-' + loggedUser.uName + '+' + loggedUser.uEmail + '-' + loggedUser.uDisplayName + "+" + expireDate).digest('hex').toString();
-				
+				// UPDATE USER
 				simpleModel.updateData ({$and: [{'uName': userName}, {'uPassword': userPassword}]}, {'uLastLogin': new Date(), 'uToken': token, 'uExpireTime': expireDate})
 				// UPDATE LOGGED IN
 				.then ((completeUpdate) => {
@@ -116,6 +117,7 @@ var userModel = function(database) {
 			.then ((completeFind) => {
 				var currentTime = new Date ();
 				var expireTime = new Date (Date.parse (completeFind[0]['uExpireTime'].toISOString()));
+				// AUTHORIZE TOKEN ==> WARNING
 				if (currentTime.getTime() < expireTime.getTime()) {
 					resolve ({
 						userId: completeFind[0]['uID'],
